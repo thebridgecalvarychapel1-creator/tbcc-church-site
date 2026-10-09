@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Bridge Calvary Chapel - Make Disciples of Christ Jesus">
+    <title>Bridge Calvary Chapel</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== ANIMATED BACKGROUND LAYER ===== -->
+<div class="page-bg">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="bg-orb bg-orb-4"></div>
+</div>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="logo-img" onerror="this.style.display='none'">
+            <div class="logo-text">
+                <span class="logo-the">THE</span>
+                <span class="logo-bridge">BRIDGE</span>
+                <span class="logo-calvary">CALVARY CHAPEL</span>
+            </div>
+        </a>
+
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="index.html" class="nav-link active">Home</a></li>
+            <li><a href="about.html" class="nav-link">About Us</a></li>
+            <li><a href="ministries.html" class="nav-link">Ministries</a></li>
+            <li><a href="sermons.html" class="nav-link">Sermons</a></li>
+            <li><a href="events-announcements.html" class="nav-link">Events</a></li>
+            <li><a href="donations.html" class="nav-link">Donations</a></li>
+            <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
+        </ul>
+
+        <div class="nav-actions">
+            <a href="donations.html" class="btn-give">
+                <i class="fas fa-heart"></i> <span>Give</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+    <div class="hero-bg">
+        <img id="heroImage" src="" alt="Bridge Calvary Chapel" loading="eager">
+        <div class="hero-overlay"></div>
+    </div>
+
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-content">
+                <span class="hero-eyebrow" id="heroEyebrow"></span>
+                <h1 class="hero-title">
+                    <span class="hero-line" id="heroLine1"></span>
+                    <span class="hero-line" id="heroLine2"></span>
+                    <span class="hero-line hero-highlight" id="heroLine3"></span>
+                </h1>
+                <p class="hero-tagline" id="heroTagline"></p>
+                <p class="hero-description" id="heroDescription"></p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" id="btnWatchWelcome" type="button">
+                        <i class="fas fa-play-circle"></i> Watch Church Welcome
+                    </button>
+                    <a href="plan-your-visit.html" class="btn btn-outline">
+                        Plan Your Visit <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="hero-card-wrapper">
+                <div class="service-card">
+                    <div class="service-card-header">
+                        <div class="service-icon-circle"><i class="fas fa-calendar-alt"></i></div>
+                        <span class="service-label" id="serviceTitle">Next Live Service</span>
+                    </div>
+                    <h3 class="service-day" id="serviceDay"></h3>
+                    <p class="service-time"><span id="serviceTime"></span> <span class="am-pm">AM</span></p>
+                    <p class="service-invite" id="serviceInvite"></p>
+                    <a href="events-announcements.html" class="btn-service">
+                        View Details <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-divider">
+        <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
+            <path d="M0,100 L0,40 Q720,120 1440,30 L1440,100 Z" fill="#F5F8FC"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== FAMILY INTRO ===== -->
+<section class="family-intro">
+    <div class="container">
+        <div class="family-card" id="familyCard" role="button" tabindex="0">
+            <div class="family-photos">
+                <div class="photo-main"><img id="familyMainImg" src="" alt="Church family" loading="lazy"></div>
+                <div class="photo-small photo-small-1"><img id="familySmall1" src="" alt="Fellowship" loading="lazy"></div>
+                <div class="photo-small photo-small-2"><img id="familySmall2" src="" alt="Worship" loading="lazy"></div>
+            </div>
+            <div class="family-stats">
+                <div class="stats-icon"><i class="fas fa-users"></i></div>
+                <div class="stats-number" id="familyStatNumber"></div>
+                <p class="stats-label" id="familyStatLabel"></p>
+            </div>
+            <div class="family-verse">
+                <i class="fas fa-quote-left verse-quote"></i>
+                <p class="verse-text" id="familyVerseText"></p>
+                <span class="verse-ref" id="familyVerseRef"></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CORE VALUES ===== -->
+<section class="values-section">
+    <div class="container">
+        <div class="values-grid" id="valuesGrid"></div>
+    </div>
+</section>
+
+<!-- ===== UPCOMING EVENTS ===== -->
+<section class="events-section">
+    <div class="container">
+        <div class="events-wrapper">
+            <div class="events-info">
+                <span class="section-eyebrow"><i class="fas fa-calendar-check"></i> Upcoming Events</span>
+                <h2 class="section-title">Come Be Part of <span>What's Happening</span></h2>
+                <p class="section-description">Encounter God, build relationships, and grow in your faith through our upcoming events.</p>
+                <a href="events-announcements.html" class="btn btn-primary">
+                    View All Events <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="events-slider" id="eventsSlider"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== MINISTRIES ===== -->
+<section class="ministries-section">
+    <div class="container">
+        <div class="ministries-layout">
+            <div class="ministries-info">
+                <span class="section-eyebrow"><i class="fas fa-church"></i> Our Ministries</span>
+                <h2 class="section-title">Serving God. <span>Building Lives.</span></h2>
+                <p class="section-description">Discover our ministries and find your place to serve, grow and make an impact.</p>
+                <a href="ministries.html" class="btn btn-primary">
+                    Explore Ministries <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="ministries-grid" id="ministriesGrid"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== SERMONS ===== -->
+<section class="sermons-section">
+    <div class="container">
+        <div class="sermons-wrapper">
+            <div class="sermons-info">
+                <span class="section-eyebrow"><i class="fas fa-play-circle"></i> Latest Sermons</span>
+                <h2 class="section-title">Find Encouragement <span>in His Word</span></h2>
+                <p class="section-description">Watch our latest sermons and be inspired by God's truth.</p>
+                <a href="sermons.html" class="btn btn-primary">
+                    View All Sermons <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="sermons-slider" id="sermonsSlider"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== ENGAGEMENT CARDS ===== -->
+<section class="engagement-section">
+    <div class="container">
+        <div class="engagement-grid">
+            <div class="engagement-card">
+                <div class="engagement-image">
+                    <img src="assets/images/engagement/small-group.jpg" alt="Small group" onerror="this.style.background='#071E42'">
+                </div>
+                <div class="engagement-content">
+                    <span class="engagement-label">JOIN A SMALL GROUP</span>
+                    <h3>Grow Deeper in Your Faith</h3>
+                    <p>Through real community and friendship.</p>
+                    <button class="btn-engagement" data-panel="smallgroup" type="button">
+                        Find a Group <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="engagement-card">
+                <div class="engagement-image">
+                    <img src="assets/images/engagement/volunteer.jpg" alt="Volunteering" onerror="this.style.background='#071E42'">
+                </div>
+                <div class="engagement-content">
+                    <span class="engagement-label">GET INVOLVED</span>
+                    <h3>Make an Eternal Impact</h3>
+                    <p>Use your gifts to serve others.</p>
+                    <button class="btn-engagement" data-panel="volunteer" type="button">
+                        Start Volunteering <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="engagement-card">
+                <div class="engagement-image">
+                    <img src="assets/images/engagement/newsletter.jpg" alt="Newsletter" onerror="this.style.background='#071E42'">
+                </div>
+                <div class="engagement-content">
+                    <span class="engagement-label">STAY CONNECTED</span>
+                    <h3>Get the Latest Updates</h3>
+                    <p>Sermons, events and more.</p>
+                    <form class="newsletter-form" id="newsletterForm" onsubmit="return false;">
+                        <input type="email" placeholder="Enter your email address" required>
+                        <button type="submit">Subscribe</button>
+                    </form>
+                    <p class="newsletter-note">Join our newsletter</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear">2025</span> Bridge Calvary Chapel. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== VIDEO MODAL ===== -->
+<div class="video-modal" id="videoModal" role="dialog" aria-modal="true">
+    <div class="video-modal-overlay" data-close-modal></div>
+    <div class="video-modal-content">
+        <button class="video-modal-close" data-close-modal aria-label="Close" type="button">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="video-container">
+            <video id="welcomeVideo" controls preload="metadata" playsinline></video>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CENTERED MODAL PANEL ===== -->
+<div class="modal-panel-overlay" id="modalOverlay"></div>
+<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
+        <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-panel-body" id="modalBody"></div>
+</div>
+
+<!-- ===== SCRIPTS ===== -->
+<script src="js/supabase.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

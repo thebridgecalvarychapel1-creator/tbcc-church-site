@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Events & Announcements - Bridge Calvary Chapel">
+    <title>Events & Announcements - Bridge Calvary Chapel</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/events.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="logo-img" onerror="this.style.display='none'">
+            <div class="logo-text">
+                <span class="logo-the">THE</span>
+                <span class="logo-bridge">BRIDGE</span>
+                <span class="logo-calvary">CALVARY CHAPEL</span>
+            </div>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About Us</a></li>
+            <li><a href="ministries.html" class="nav-link">Ministries</a></li>
+            <li><a href="sermons.html" class="nav-link">Sermons</a></li>
+            <li><a href="events-announcements.html" class="nav-link active">Events</a></li>
+            <li><a href="donations.html" class="nav-link">Donations</a></li>
+            <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="#" class="nav-search-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+            <a href="donations.html" class="btn-give"><i class="fas fa-heart"></i> Give</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="events-hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-eyebrow" id="heroEyebrow"></span>
+            <h1 class="hero-title">
+                <span class="line1" id="heroLine1"></span>
+                <span class="line2" id="heroLine2"></span>
+            </h1>
+            <p class="hero-subtitle" id="heroSubtitle"></p>
+            <p class="hero-description" id="heroDescription"></p>
+            <p class="hero-verse" id="heroVerse"></p>
+            <div class="hero-buttons">
+                <button class="btn-hero btn-hero-primary" onclick="document.getElementById('eventsSection').scrollIntoView({behavior:'smooth'})" type="button">
+                    <i class="fas fa-calendar-alt"></i> View Events <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn-hero btn-hero-outline" onclick="document.getElementById('announcementsSection').scrollIntoView({behavior:'smooth'})" type="button">
+                    <i class="fas fa-bullhorn"></i> Announcements
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,20 L1440,60 Z" fill="#F1F8FF"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== UPCOMING EVENTS ===== -->
+<div class="section-wrap" id="eventsSection">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div>
+                    <span class="section-label">Upcoming Events</span>
+                    <h2 class="section-title" id="eventsCount">Events</h2>
+                </div>
+            </div>
+            <a href="#eventsSection" class="section-link">View All Events <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="events-grid" id="eventsGrid"></div>
+    </div>
+</div>
+
+<!-- ===== WEEKLY SCHEDULE ===== -->
+<div class="weekly-section">
+    <div class="weekly-bg" id="weeklyBg"></div>
+    <div class="weekly-overlay"></div>
+    <div class="inner">
+        <div class="weekly-header">
+            <div class="section-icon"><i class="fas fa-calendar-week"></i></div>
+            <h2 class="weekly-title" id="weeklyTitle"></h2>
+        </div>
+        <div class="weekly-grid" id="weeklyGrid"></div>
+        <div class="weekly-verse">
+            <div class="weekly-verse-bg" id="weeklyVerseBg"></div>
+            <div class="weekly-verse-content">
+                <p class="weekly-verse-text" id="weeklyVerseText"></p>
+                <span class="weekly-verse-ref" id="weeklyVerseRef"></span>
+            </div>
+            <div class="weekly-encouragement" id="weeklyEncouragement"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ANNOUNCEMENTS ===== -->
+<div class="section-wrap" id="announcementsSection">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon"><i class="fas fa-bullhorn"></i></div>
+                <div>
+                    <span class="section-label">Latest Announcements</span>
+                </div>
+            </div>
+        </div>
+        <div class="announcements-carousel-wrapper">
+            <button class="carousel-btn carousel-prev" id="annPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+            <div class="announcements-carousel" id="announcementsCarousel"></div>
+            <button class="carousel-btn carousel-next" id="annNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CONNECT STRIP ===== -->
+<div class="connect-strip">
+    <div class="connect-item">
+        <div class="connect-icon"><i class="fas fa-users"></i></div>
+        <div>
+            <div class="connect-title" id="connectTitle"></div>
+            <p class="connect-desc" id="connectDesc"></p>
+        </div>
+    </div>
+    <div class="connect-item">
+        <div class="connect-icon"><i class="fas fa-envelope"></i></div>
+        <div style="flex: 1;">
+            <div class="connect-title" id="connectNewsTitle"></div>
+            <p class="connect-desc" id="connectNewsDesc"></p>
+            <form class="newsletter-form" id="connectNewsletter">
+                <input type="email" placeholder="Enter your email address" required aria-label="Email">
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </div>
+    <div class="connect-item">
+        <div class="connect-icon"><i class="fas fa-phone"></i></div>
+        <div class="connect-contact">
+            <div class="connect-title">Contact Us</div>
+            <p><i class="fas fa-phone"></i> <span id="connectPhone"></span></p>
+            <p><i class="fas fa-envelope"></i> <span id="connectEmail"></span></p>
+            <p><i class="fas fa-map-marker-alt"></i> <span id="connectAddress"></span></p>
+        </div>
+    </div>
+    <div class="connect-item">
+        <div class="connect-icon"><i class="fas fa-share-alt"></i></div>
+        <div>
+            <div class="connect-title">Follow Us</div>
+            <div class="footer-social" style="margin-top: 6px;">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
+                <div class="footer-logo-text">
+                    <span class="footer-the">THE</span>
+                    <span class="footer-bridge">BRIDGE</span>
+                    <span class="footer-calvary">CALVARY CHAPEL</span>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="sermons.html">Sermons</a></li>
+                    <li><a href="events-announcements.html">Events</a></li>
+                    <li><a href="donations.html">Donations</a></li>
+                    <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Follow Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear">2025</span> <span id="footerCopyrightName">Bridge Calvary Chapel</span>. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <span class="divider">|</span>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
+        <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-panel-body" id="modalBody"></div>
+</div>
+
+<script src="js/supabase.js"></script>
+<script src="js/events.js"></script>
+</body>
+</html>

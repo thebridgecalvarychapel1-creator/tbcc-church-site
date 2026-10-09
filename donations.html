@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Donations & Store - Bridge Calvary Chapel">
+    <title>Donations & Store - Bridge Calvary Chapel</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/donations.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="logo-img" onerror="this.style.display='none'">
+            <div class="logo-text">
+                <span class="logo-the">THE</span>
+                <span class="logo-bridge">BRIDGE</span>
+                <span class="logo-calvary">CALVARY CHAPEL</span>
+            </div>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About Us</a></li>
+            <li><a href="ministries.html" class="nav-link">Ministries</a></li>
+            <li><a href="sermons.html" class="nav-link">Sermons</a></li>
+            <li><a href="events-announcements.html" class="nav-link">Events</a></li>
+            <li><a href="donations.html" class="nav-link active">Donations</a></li>
+            <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="nav-search-icon cart-icon" id="cartBtn" aria-label="Cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+            </button>
+            <a href="#categoriesSection" class="btn-give"><i class="fas fa-heart"></i> Give</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="donations-hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="container">
+        <div class="hero-grid">
+            <div>
+                <span class="hero-eyebrow" id="heroEyebrow"></span>
+                <h1 class="hero-title" id="heroTitle"></h1>
+                <p class="hero-verse" id="heroVerse"></p>
+                <p class="hero-desc" id="heroDesc"></p>
+                <div class="hero-buttons">
+                    <button class="btn-hero btn-hero-primary" onclick="document.getElementById('categoriesSection').scrollIntoView({behavior:'smooth'})" type="button">
+                        <i class="fas fa-hand-holding-heart"></i> Donate Now
+                    </button>
+                    <a class="btn-hero btn-hero-outline" href="#storeSection">
+                        Visit Store <i class="fas fa-shopping-bag"></i>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <div class="hero-stats-box" id="heroStats"></div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,20 L1440,60 Z" fill="#FFF8F0"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== ORDERING STEPS INDICATOR ===== -->
+<section class="steps-strip">
+    <div class="container">
+        <div class="steps-inner">
+            <div class="step-item active">
+                <div class="step-num">1</div>
+                <div class="step-info"><strong>Choose</strong><span>Pick what to give or buy</span></div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item">
+                <div class="step-num">2</div>
+                <div class="step-info"><strong>Review Cart</strong><span>Check your items</span></div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item">
+                <div class="step-num">3</div>
+                <div class="step-info"><strong>Your Details</strong><span>Name & contact</span></div>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-item">
+                <div class="step-num">4</div>
+                <div class="step-info"><strong>Send Order</strong><span>WhatsApp or Email</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== DONATION CATEGORIES ===== -->
+<section class="categories-section" id="categoriesSection">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon icon-gold"><i class="fas fa-gifts"></i></div>
+                <div>
+                    <span class="section-label" id="catLabel"></span>
+                    <h2 class="section-title" id="catTitle"></h2>
+                    <p class="section-desc" id="catDesc"></p>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <span class="pill-count" id="catCount"></span>
+                <div class="search-input-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="catSearch" placeholder="Search donation categories...">
+                </div>
+            </div>
+        </div>
+        <div class="categories-grid" id="categoriesGrid"></div>
+    </div>
+</section>
+
+<!-- ===== DIRECT GIVING ===== -->
+<section class="direct-giving" id="directGiving">
+    <div class="direct-header">
+        <div class="section-icon icon-maroon"><i class="fas fa-university"></i></div>
+        <div>
+            <span class="section-label label-maroon">DIRECT CHURCH GIVING</span>
+            <h2 class="section-title" id="directTitle"></h2>
+        </div>
+    </div>
+    <p class="direct-desc" id="directDesc"></p>
+    <div class="direct-grid" id="directGrid"></div>
+</section>
+
+<!-- ===== STORE ===== -->
+<section class="store-section" id="storeSection">
+    <div class="store-bg-orb store-orb-1"></div>
+    <div class="store-bg-orb store-orb-2"></div>
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon icon-orange"><i class="fas fa-store"></i></div>
+                <div>
+                    <span class="section-label label-orange">CHURCH MERCHANDISE</span>
+                    <h2 class="section-title" id="storeTitle"></h2>
+                    <p class="section-desc" id="storeDesc"></p>
+                </div>
+            </div>
+        </div>
+        <div class="products-grid" id="productsGrid"></div>
+    </div>
+</section>
+
+<!-- ===== IMPACT / CONTACT / PRAYER ===== -->
+<section class="info-row">
+    <div class="container">
+        <div class="info-row-grid">
+            <div class="info-card">
+                <div class="info-icon"><i class="fas fa-phone"></i></div>
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> <span id="contactPhone"></span></p>
+                <p><i class="fas fa-envelope"></i> <span id="contactEmail"></span></p>
+                <p><i class="fas fa-map-marker-alt"></i> <span id="contactAddress"></span></p>
+                <a class="btn-info" href="events-contact.html">Contact Us <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="info-card">
+                <div class="info-icon icon-rose"><i class="fas fa-pray"></i></div>
+                <h3>Request Prayer</h3>
+                <p style="display:block;">We would be honored to pray for you. Share your prayer request with our prayer team.</p>
+                <button class="btn-info rose" id="btnPrayerRequest" type="button">Request Prayer <i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div class="info-card impact-card">
+                <div class="impact-card-bg" id="impactBg"></div>
+                <div class="impact-content">
+                    <h3 class="impact-title" id="impactTitle"></h3>
+                    <div class="impact-stats" id="impactStats"></div>
+                    <p class="impact-desc" id="impactDesc"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo-link">
+                    <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
+                    <div class="footer-logo-text">
+                        <span class="footer-the">THE</span>
+                        <span class="footer-bridge">BRIDGE</span>
+                        <span class="footer-calvary">CALVARY CHAPEL</span>
+                    </div>
+                </a>
+                <p id="footerTagline"></p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="sermons.html">Sermons</a></li>
+                    <li><a href="events-announcements.html">Events</a></li>
+                    <li><a href="donations.html">Donations</a></li>
+                    <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone"></i><span id="footerPhone"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span id="footerEmail"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span id="footerAddress"></span></div>
+            </div>
+            <div class="footer-col">
+                <h4>Join Our Newsletter</h4>
+                <p style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px;">Get updates directly in your inbox.</p>
+                <form class="footer-newsletter-form" id="footerNewsletter">
+                    <input type="email" placeholder="Your email address" required aria-label="Email">
+                    <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                </form>
+                <h4 style="margin-top:14px;">Follow Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear">2025</span> <span id="footerCopyrightName">Bridge Calvary Chapel</span>. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <span style="opacity:0.3;">|</span>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
+        <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-panel-body" id="modalBody"></div>
+</div>
+
+<!-- ===== CART DRAWER ===== -->
+<div class="modal-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+    <div class="cart-header">
+        <h3><i class="fas fa-shopping-cart"></i> Your Cart <span id="cartCount" style="color:#8B6F47;font-size:12px;font-weight:600;margin-left:4px;"></span></h3>
+        <button class="cart-close" id="cartClose" aria-label="Close cart" type="button"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-body" id="cartBody"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+        <div class="cart-total-row">
+            <span class="cart-total-lbl">Total</span>
+            <span class="cart-total-value" id="cartTotal">$0.00</span>
+        </div>
+        <div class="cart-actions">
+            <button class="modal-btn modal-btn-secondary" id="cartClear" type="button"><i class="fas fa-trash"></i> Clear</button>
+            <button class="modal-btn modal-btn-primary" id="cartCheckout" type="button"><i class="fas fa-check"></i> Continue</button>
+        </div>
+    </div>
+</aside>
+
+<script src="js/supabase.js"></script>
+<script src="js/donations.js"></script>
+</body>
+</html>

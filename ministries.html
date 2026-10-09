@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Our Ministries - Bridge Calvary Chapel">
+    <title>Our Ministries - Bridge Calvary Chapel</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/ministries.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="logo-img" onerror="this.style.display='none'">
+            <div class="logo-text">
+                <span class="logo-the">THE</span>
+                <span class="logo-bridge">BRIDGE</span>
+                <span class="logo-calvary">CALVARY CHAPEL</span>
+            </div>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About Us</a></li>
+            <li><a href="ministries.html" class="nav-link active">Ministries</a></li>
+            <li><a href="sermons.html" class="nav-link">Sermons</a></li>
+            <li><a href="events-announcements.html" class="nav-link">Events</a></li>
+            <li><a href="donations.html" class="nav-link">Donations</a></li>
+            <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="#" class="nav-search-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+            <a href="donations.html" class="btn-give"><i class="fas fa-heart"></i> Give</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="ministries-hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-eyebrow" id="heroEyebrow"></span>
+            <h1 class="hero-title">
+                <span class="line1" id="heroLine1"></span>
+                <span class="line2" id="heroLine2"></span>
+            </h1>
+            <p class="hero-subtitle" id="heroSubtitle"></p>
+            <p class="hero-description" id="heroDescription"></p>
+            <div class="hero-buttons">
+                <button class="btn-hero btn-hero-primary" onclick="document.getElementById('ministriesGrid').scrollIntoView({behavior:'smooth'})" type="button">
+                    <i class="fas fa-play"></i> Explore Ministries <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn-hero btn-hero-outline" onclick="document.getElementById('getInvolved').scrollIntoView({behavior:'smooth'})" type="button">
+                    Get Involved <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,20 L1440,60 Z" fill="#FFFFFF"/>
+        </svg>
+    </div>
+    <div class="scroll-indicator">
+        <i class="fas fa-mouse"></i> Scroll to discover <i class="fas fa-chevron-down"></i>
+    </div>
+</section>
+
+<!-- ===== CATEGORIES & GRID ===== -->
+<section class="categories-section">
+    <div class="container">
+        <div class="categories-header">
+            <div class="categories-left">
+                <span class="cat-label" id="catLabel"></span>
+                <div class="cat-title-row">
+                    <h2 class="cat-title" id="catTitle"></h2>
+                    <span class="cat-count" id="catCount">0 Ministries</span>
+                </div>
+            </div>
+            <div class="verse-card">
+                <p class="verse-text" id="headerVerseText"></p>
+                <span class="verse-ref" id="headerVerseRef"></span>
+            </div>
+        </div>
+
+        <div class="ministries-grid" id="ministriesGrid"></div>
+
+        <!-- Bible Verse Banner -->
+        <div class="verse-banner" id="verseBanner"></div>
+    </div>
+</section>
+
+<!-- ===== GET INVOLVED ===== -->
+<section class="involved-section" id="getInvolved">
+    <div class="involved-bg" id="involvedBg"></div>
+    <div class="involved-overlay"></div>
+    <div class="container">
+        <div class="involved-layout">
+            <div class="involved-content">
+                <span class="involved-label" id="involvedLabel"></span>
+                <h2 class="involved-title" id="involvedTitle"></h2>
+                <p class="involved-desc" id="involvedDesc"></p>
+            </div>
+            <div class="involved-cards">
+                <div class="involved-card involved-card-1" id="cardJoinMinistry" tabindex="0" role="button">
+                    <div class="involved-card-icon"><i class="fas fa-users"></i></div>
+                    <h4>Join a Ministry</h4>
+                    <p>Find the right ministry for your gifts and passion.</p>
+                    <i class="fas fa-arrow-right arrow"></i>
+                </div>
+                <div class="involved-card involved-card-2" id="cardVolunteer" tabindex="0" role="button">
+                    <div class="involved-card-icon"><i class="fas fa-hands-helping"></i></div>
+                    <h4>Volunteer</h4>
+                    <p>Serve others and make an impact.</p>
+                    <i class="fas fa-arrow-right arrow"></i>
+                </div>
+                <div class="involved-card involved-card-3" id="cardPrayer" tabindex="0" role="button">
+                    <div class="involved-card-icon"><i class="fas fa-pray"></i></div>
+                    <h4>Request Prayer</h4>
+                    <p>We're here to pray with you.</p>
+                    <i class="fas fa-arrow-right arrow"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo-link">
+                    <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
+                    <div class="footer-logo-text">
+                        <span class="footer-the">THE</span>
+                        <span class="footer-bridge">BRIDGE</span>
+                        <span class="footer-calvary">CALVARY CHAPEL</span>
+                    </div>
+                </a>
+                <p id="footerTagline"></p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="sermons.html">Sermons</a></li>
+                    <li><a href="events-announcements.html">Events</a></li>
+                    <li><a href="donations.html">Donations</a></li>
+                    <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone"></i><span id="footerPhone"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span id="footerEmail"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span id="footerAddress"></span></div>
+            </div>
+            <div class="footer-col">
+                <h4>Join Our Newsletter</h4>
+                <p style="font-size:11.5px;color:rgba(255,255,255,0.6);margin-bottom:6px;">Get updates directly in your inbox.</p>
+                <form class="footer-newsletter-form" id="footerNewsletter">
+                    <input type="email" placeholder="Your email address" required aria-label="Email">
+                    <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                </form>
+                <h4 style="margin-top:16px;">Follow Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear">2025</span> <span id="footerCopyrightName">Bridge Calvary Chapel</span>. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <span class="divider">|</span>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
+        <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-panel-body" id="modalBody"></div>
+</div>
+
+<script src="js/supabase.js"></script>
+<script src="js/ministries.js"></script>
+</body>
+</html>

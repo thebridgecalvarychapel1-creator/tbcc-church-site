@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sermons & Teachings - Bridge Calvary Chapel">
+    <title>Sermons & Teachings - Bridge Calvary Chapel</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/sermons.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="logo-img" onerror="this.style.display='none'">
+            <div class="logo-text">
+                <span class="logo-the">THE</span>
+                <span class="logo-bridge">BRIDGE</span>
+                <span class="logo-calvary">CALVARY CHAPEL</span>
+            </div>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About Us</a></li>
+            <li><a href="ministries.html" class="nav-link">Ministries</a></li>
+            <li><a href="sermons.html" class="nav-link active">Sermons</a></li>
+            <li><a href="events-announcements.html" class="nav-link">Events</a></li>
+            <li><a href="donations.html" class="nav-link">Donations</a></li>
+            <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="#" class="nav-search-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+            <a href="donations.html" class="btn-give"><i class="fas fa-heart"></i> Give</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="sermons-hero">
+    <div class="hero-bg" id="heroBg"></div>
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-left">
+                <span class="hero-eyebrow" id="heroEyebrow"></span>
+                <h1 class="hero-title">
+                    <span class="line1" id="heroLine1"></span>
+                    <span class="line2" id="heroLine2"></span>
+                </h1>
+                <p class="hero-script" id="heroScript"></p>
+                <div class="hero-stats" id="heroStats"></div>
+                <div class="hero-buttons">
+                    <button class="btn-hero btn-hero-primary" onclick="document.getElementById('library').scrollIntoView({behavior:'smooth'})" type="button">
+                        <i class="fas fa-play"></i> Browse Sermons <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <a class="btn-hero btn-hero-outline" id="btnYouTubeHero" target="_blank" rel="noopener">
+                        <i class="fab fa-youtube"></i> YouTube Channel <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-card-wrapper">
+                <div class="subscribe-card">
+                    <div class="subscribe-header">
+                        <div class="subscribe-icon-circle"><i class="fas fa-play"></i></div>
+                        <div class="subscribe-title" id="subTitle"></div>
+                    </div>
+                    <p class="subscribe-desc" id="subDesc"></p>
+                    <div class="subscribe-stats" id="subStats"></div>
+                    <a class="btn-subscribe" id="btnSubscribeHero" target="_blank" rel="noopener">
+                        <i class="fab fa-youtube"></i> Subscribe Now
+                    </a>
+                    <p class="subscribe-note" id="subNote"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-wave">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,20 L1440,60 Z" fill="#F1F8FF"/>
+        </svg>
+    </div>
+</section>
+
+<!-- ===== FILTER BAR ===== -->
+<section class="filter-bar">
+    <div class="container">
+        <div class="filter-inner">
+            <div class="filter-tabs" id="filterTabs"></div>
+            <div class="filter-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search sermons...">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LIBRARY ===== -->
+<section class="library" id="library">
+    <div class="container">
+        <div class="library-layout">
+            <div>
+                <div class="library-header">
+                    <div class="library-header-icon"><i class="fas fa-play"></i></div>
+                    <span class="library-header-label">Sermon Library</span>
+                    <span class="library-count" id="libraryCount"></span>
+                </div>
+                <div class="sermon-grid" id="sermonGrid"></div>
+                <div class="load-more-wrap">
+                    <button class="btn-load-more" id="btnLoadMore" type="button">
+                        <i class="fas fa-sync-alt"></i> Load More Sermons
+                    </button>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="sidebar-card">
+                    <div class="sidebar-header">
+                        <div class="sidebar-header-icon"><i class="fas fa-bell"></i></div>
+                        <div class="sidebar-title" id="sideSubTitle"></div>
+                    </div>
+                    <p class="sidebar-desc" id="sideSubDesc"></p>
+                    <div class="sidebar-stats" id="sideSubStats"></div>
+                    <a class="btn-sidebar-sub" id="btnSubscribeSide" target="_blank" rel="noopener">
+                        <i class="fab fa-youtube"></i> Subscribe Now
+                    </a>
+                    <p class="sidebar-note" id="sideSubNote"></p>
+                </div>
+
+                <div class="sidebar-card">
+                    <div class="sidebar-header">
+                        <div class="sidebar-header-icon"><i class="fas fa-book-open"></i></div>
+                        <div class="sidebar-title" id="versesTitle"></div>
+                    </div>
+                    <div id="versesList"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- ===== YOUTUBE BANNER ===== -->
+<section class="youtube-banner">
+    <div class="youtube-banner-bg" id="bannerBg"></div>
+    <div class="youtube-banner-overlay"></div>
+    <div class="inner">
+        <div class="banner-content">
+            <div class="banner-icon"><i class="fas fa-play"></i></div>
+            <div>
+                <span class="banner-label" id="bannerLabel"></span>
+                <h3 class="banner-title" id="bannerTitle"></h3>
+                <p class="banner-desc" id="bannerDesc"></p>
+            </div>
+        </div>
+        <a class="btn-banner" id="btnBannerYouTube" target="_blank" rel="noopener">
+            <i class="fab fa-youtube"></i> Visit Our YouTube Channel
+        </a>
+    </div>
+</section>
+
+<!-- ===== FEATURED ===== -->
+<section class="featured">
+    <div class="container">
+        <div class="featured-layout">
+            <div class="featured-intro">
+                <div class="featured-intro-icon"><i class="fas fa-play"></i></div>
+                <span class="featured-label" id="featuredLabel"></span>
+                <h2 class="featured-title" id="featuredTitle"></h2>
+                <p class="featured-tagline" id="featuredTagline"></p>
+                <div class="featured-underline"></div>
+            </div>
+            <div class="featured-cards" id="featuredCards"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo-link">
+                    <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
+                    <div class="footer-logo-text">
+                        <span class="footer-the">THE</span>
+                        <span class="footer-bridge">BRIDGE</span>
+                        <span class="footer-calvary">CALVARY CHAPEL</span>
+                    </div>
+                </a>
+                <p id="footerTagline"></p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="sermons.html">Sermons</a></li>
+                    <li><a href="events-announcements.html">Events</a></li>
+                    <li><a href="donations.html">Donations</a></li>
+                    <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone"></i><span id="footerPhone"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span id="footerEmail"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span id="footerAddress"></span></div>
+            </div>
+            <div class="footer-col">
+                <h4>Join Our Newsletter</h4>
+                <p style="font-size:11.5px;color:rgba(255,255,255,0.6);margin-bottom:6px;">Get updates directly in your inbox.</p>
+                <form class="footer-newsletter-form" id="footerNewsletter">
+                    <input type="email" placeholder="Your email address" required aria-label="Email">
+                    <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                </form>
+                <h4 style="margin-top:16px;">Follow Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear">2025</span> <span id="footerCopyrightName">Bridge Calvary Chapel</span>. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <span class="divider">|</span>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" aria-hidden="true">
+    <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
+        <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-panel-body" id="modalBody"></div>
+</div>
+
+<script src="js/supabase.js"></script>
+<script src="js/sermons.js"></script>
+</body>
+</html>
