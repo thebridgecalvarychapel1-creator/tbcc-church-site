@@ -348,13 +348,24 @@ ul { list-style: none; }
     border-color: var(--electric-blue);
     box-shadow: 0 16px 40px rgba(3, 27, 67, 0.15), 0 0 40px rgba(7, 139, 255, 0.2);
 }
+
+/* ---- RESPONSIVE THUMBNAIL ----
+   Uses aspect-ratio instead of a fixed height so it scales on every device.
+   16:9 on desktop; a bit taller on phone for readability. */
 .sermon-thumb {
     position: relative;
-    height: 130px;
+    width: 100%;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     background: linear-gradient(135deg, var(--navy-deep), var(--royal-blue));
 }
-.sermon-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.sermon-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+    display: block;
+}
 .sermon-card:hover .sermon-thumb img { transform: scale(1.06); }
 .sermon-thumb::after {
     content: ''; position: absolute; inset: 0;
@@ -382,16 +393,16 @@ ul { list-style: none; }
 .sermon-badge-cat.guest { background: linear-gradient(120deg, #3F51B5, #5C6BC0); }
 .sermon-badge-dur { right: 10px; background: rgba(3, 27, 67, 0.75); }
 
-.sermon-body { padding: 12px 14px 14px; display: flex; flex-direction: column; flex: 1; }
+.sermon-body { padding: 14px 16px 16px; display: flex; flex-direction: column; flex: 1; }
 .sermon-title {
-    font-size: 13.5px; font-weight: 700; color: var(--navy);
+    font-size: 14px; font-weight: 700; color: var(--navy);
     line-height: 1.35; margin-bottom: 8px;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden;
 }
 .sermon-meta {
     display: flex; align-items: center; gap: 6px;
-    font-size: 11px; color: var(--text-blue-gray);
+    font-size: 11.5px; color: var(--text-blue-gray);
     margin-bottom: 4px;
 }
 .sermon-meta i { color: var(--royal-blue); font-size: 10px; width: 12px; }
@@ -399,7 +410,7 @@ ul { list-style: none; }
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .sermon-desc {
-    font-size: 11.5px; line-height: 1.5;
+    font-size: 12px; line-height: 1.5;
     color: var(--text-blue-gray);
     margin: 8px 0 12px;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
@@ -407,10 +418,10 @@ ul { list-style: none; }
 }
 .btn-watch {
     display: inline-flex; align-items: center; justify-content: center;
-    gap: 7px; padding: 9px 16px;
+    gap: 7px; padding: 10px 16px;
     background: linear-gradient(120deg, var(--royal-blue), var(--electric-blue));
     color: var(--white);
-    font-size: 12px; font-weight: 600;
+    font-size: 12.5px; font-weight: 600;
     border-radius: 50px;
     margin-top: auto;
     transition: all 0.25s;
@@ -418,25 +429,76 @@ ul { list-style: none; }
 .btn-watch:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(7, 139, 255, 0.55); }
 .btn-watch i { font-size: 11px; }
 
-/* Sidebar */
-.sidebar { display: flex; flex-direction: column; gap: 16px; position: sticky; top: 130px; }
+/* ============================================
+   SIDEBAR — with glow animation on cards
+   ============================================ */
+.sidebar { display: flex; flex-direction: column; gap: 20px; position: sticky; top: 130px; }
+
 .sidebar-card {
+    position: relative;
     background: var(--white);
     border: 1px solid var(--border-blue);
     border-radius: 14px;
-    padding: 18px 16px;
+    padding: 20px 18px;
+    transition: all 0.35s;
+    overflow: hidden;
 }
+
+/* ---- Stay Connected card — blue/cyan glow ---- */
+.sidebar-card:nth-child(1) {
+    background: linear-gradient(160deg, #F1F8FF 0%, #E3F1FF 100%);
+    border-color: rgba(7, 139, 255, 0.35);
+    animation: sidebarGlowBlue 4s ease-in-out infinite;
+}
+@keyframes sidebarGlowBlue {
+    0%, 100% {
+        box-shadow:
+            0 0 0 1px rgba(7, 139, 255, 0.25),
+            0 8px 28px rgba(7, 139, 255, 0.20),
+            0 0 30px rgba(18, 216, 245, 0.20);
+    }
+    50% {
+        box-shadow:
+            0 0 0 1px rgba(18, 216, 245, 0.55),
+            0 8px 34px rgba(7, 139, 255, 0.35),
+            0 0 60px rgba(18, 216, 245, 0.45);
+    }
+}
+
+/* ---- Bible Memory Verses card — cyan/purple glow ---- */
+.sidebar-card:nth-child(2) {
+    background: linear-gradient(160deg, #F3F7FF 0%, #EDF2FF 100%);
+    border-color: rgba(123, 47, 247, 0.30);
+    animation: sidebarGlowPurple 4s ease-in-out infinite;
+    animation-delay: 2s;
+}
+@keyframes sidebarGlowPurple {
+    0%, 100% {
+        box-shadow:
+            0 0 0 1px rgba(123, 47, 247, 0.20),
+            0 8px 28px rgba(123, 47, 247, 0.18),
+            0 0 30px rgba(18, 216, 245, 0.20);
+    }
+    50% {
+        box-shadow:
+            0 0 0 1px rgba(18, 216, 245, 0.55),
+            0 8px 34px rgba(123, 47, 247, 0.32),
+            0 0 60px rgba(18, 216, 245, 0.45);
+    }
+}
+
 .sidebar-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .sidebar-header-icon {
     width: 32px; height: 32px; border-radius: 50%;
-    background: var(--pale-blue);
-    border: 1px solid var(--border-blue);
+    background: linear-gradient(120deg, var(--royal-blue), var(--electric-blue));
+    border: none;
     display: flex; align-items: center; justify-content: center;
-    color: var(--royal-blue); font-size: 13px;
+    color: var(--white); font-size: 13px;
     flex-shrink: 0;
+    box-shadow: 0 0 18px rgba(7, 139, 255, 0.45);
 }
-.sidebar-title { font-size: 13.5px; font-weight: 700; color: var(--navy); line-height: 1.25; }
-.sidebar-desc { font-size: 11.5px; color: var(--text-blue-gray); line-height: 1.55; margin-bottom: 14px; }
+.sidebar-title { font-size: 14px; font-weight: 700; color: var(--navy); line-height: 1.25; }
+.sidebar-desc { font-size: 12px; color: var(--text-blue-gray); line-height: 1.55; margin-bottom: 14px; }
 .sidebar-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
 .sidebar-stat { text-align: center; }
 .sidebar-stat-icon { font-size: 14px; color: var(--royal-blue); margin-bottom: 3px; }
@@ -444,15 +506,16 @@ ul { list-style: none; }
 .sidebar-stat-label { font-size: 9px; color: var(--text-blue-gray); display: block; }
 .btn-sidebar-sub {
     display: inline-flex; align-items: center; justify-content: center;
-    gap: 7px; width: 100%; padding: 10px;
+    gap: 7px; width: 100%; padding: 11px;
     background: linear-gradient(120deg, var(--royal-blue), var(--electric-blue));
     color: var(--white);
-    font-size: 12px; font-weight: 700;
+    font-size: 12.5px; font-weight: 700;
     border-radius: 50px;
     transition: all 0.25s;
     margin-bottom: 10px;
+    box-shadow: 0 6px 20px rgba(7, 139, 255, 0.35);
 }
-.btn-sidebar-sub:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(7, 139, 255, 0.5); }
+.btn-sidebar-sub:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(7, 139, 255, 0.55); }
 .sidebar-note { font-size: 10.5px; color: var(--text-blue-gray); text-align: center; }
 
 /* Verse mini cards */
@@ -620,7 +683,10 @@ ul { list-style: none; }
     box-shadow: 0 14px 34px rgba(3, 27, 67, 0.14), 0 0 30px rgba(7, 139, 255, 0.2);
 }
 .featured-thumb {
-    position: relative; height: 100px; overflow: hidden;
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
     background: linear-gradient(135deg, var(--navy-deep), var(--royal-blue));
 }
 .featured-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
@@ -803,6 +869,7 @@ ul { list-style: none; }
 
 @media (max-width: 640px) {
     .sermon-grid { grid-template-columns: 1fr; }
+    .sermon-thumb { aspect-ratio: 16 / 10; }   /* slightly taller on phone */
     .filter-bar { position: static; }
     .filter-inner { flex-direction: column; align-items: stretch; gap: 12px; }
     .filter-search { width: 100%; }
@@ -817,5 +884,8 @@ ul { list-style: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
 }

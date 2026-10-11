@@ -8,11 +8,8 @@ console.log('📦 supabase.js loading...');
 const SUPABASE_URL = 'https://mtmgvmvhgkoqjuhiqvsk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10bWd2bXZoZ2tvcWp1aGlxdnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDUxNTEsImV4cCI6MjEwNzEyMTE1MX0.NqaWJyVulLgAvakFDqn5M8TD-IpSSgSn2LLEmL16c_U';
 
-// ============================================
-// CHURCH CONTACT
-// ============================================
 window.CHURCH_CONTACT = {
-    whatsapp: '256773486604',
+    whatsapp: '256785228381',
     email: 'thebridgecalvarychapel1@gmail.com',
     name: 'Bridge Calvary Chapel'
 };
@@ -120,10 +117,61 @@ window.db = {
         return data || [];
     },
 
-    // ---- FORM SUBMISSIONS (only send columns that exist) ----
+    // ---- LEADERS (for About page leadership section) ----
+    async getLeaders() {
+        if (!supabaseClient) return [];
+        const { data, error } = await supabaseClient
+            .from('leaders')
+            .select('*')
+            .eq('is_published', true)
+            .order('display_order');
+        if (error) { console.error('getLeaders:', error); return []; }
+        console.log('✅ getLeaders returned', (data || []).length, 'rows');
+        return data || [];
+    },
+
+    // ---- SHOP POPUP ----
+    async getShopPopup() {
+        if (!supabaseClient) return null;
+        const { data, error } = await supabaseClient
+            .from('shop_popup')
+            .select('*')
+            .eq('enabled', true)
+            .order('updated_at', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        if (error) { console.error('getShopPopup:', error); return null; }
+        return data;
+    },
+
+    // ---- LATEST DEVOTION ----
+    async getLatestDevotion() {
+        if (!supabaseClient) return null;
+        const { data, error } = await supabaseClient
+            .from('devotions')
+            .select('*')
+            .eq('is_published', true)
+            .order('devotion_date', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        if (error) { console.error('getLatestDevotion:', error); return null; }
+        return data;
+    },
+
+    // ---- ROTATING POPUP CARDS ----
+    async getPopupCards() {
+        if (!supabaseClient) return [];
+        const { data, error } = await supabaseClient
+            .from('popup_cards')
+            .select('*')
+            .eq('enabled', true)
+            .order('display_order');
+        if (error) { console.error('getPopupCards:', error); return []; }
+        return data || [];
+    },
+
     async submitGroupRequest(payload) {
         if (!supabaseClient) throw new Error('Supabase not ready');
-        // Only send columns that exist in group_join_requests
         const clean = {
             group_name: payload.group_name || '',
             name: payload.name || '',
@@ -140,7 +188,6 @@ window.db = {
 
     async submitVolunteerRequest(payload) {
         if (!supabaseClient) throw new Error('Supabase not ready');
-        // Only send columns that exist in volunteer_requests
         const clean = {
             ministry: payload.ministry || '',
             name: payload.name || '',
@@ -167,3 +214,15 @@ window.db = {
         return { success: true };
     }
 };
+
+// ============================================
+// IMAGE HELPER
+// ============================================
+window.img = function (content, sectionName) {
+    if (!content || !sectionName) return '';
+    var s = content[sectionName];
+    if (!s) return '';
+    return s.image || s.hero_image || s.background_image || s.main_image || s.small_image || '';
+};
+
+console.log('✅ supabase.js loaded with getLeaders()');

@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/events.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
@@ -34,6 +35,7 @@
         </ul>
         <div class="nav-actions">
             <a href="#" class="nav-search-icon" aria-label="Search"><i class="fas fa-search"></i></a>
+            <a href="donations.html" class="nav-search-icon" aria-label="Cart"><i class="fas fa-shopping-cart"></i></a>
             <a href="donations.html" class="btn-give"><i class="fas fa-heart"></i> Give</a>
             <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
                 <i class="fas fa-bars"></i>
@@ -48,13 +50,9 @@
     <div class="hero-overlay"></div>
     <div class="container">
         <div class="hero-content">
-            <span class="hero-eyebrow" id="heroEyebrow"></span>
-            <h1 class="hero-title">
-                <span class="line1" id="heroLine1"></span>
-                <span class="line2" id="heroLine2"></span>
-            </h1>
-            <p class="hero-subtitle" id="heroSubtitle"></p>
-            <p class="hero-description" id="heroDescription"></p>
+            <span class="hero-eyebrow" id="heroEyebrow">BRIDGE CALVARY CHAPEL</span>
+            <h1 class="hero-title" id="heroTitle"></h1>
+            <p class="hero-desc" id="heroDesc"></p>
             <p class="hero-verse" id="heroVerse"></p>
             <div class="hero-buttons">
                 <button class="btn-hero btn-hero-primary" onclick="document.getElementById('eventsSection').scrollIntoView({behavior:'smooth'})" type="button">
@@ -68,59 +66,106 @@
     </div>
     <div class="hero-wave">
         <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
-            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,20 L1440,60 Z" fill="#F1F8FF"/>
+            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,20 L1440,60 Z" fill="#FFFFFF"/>
         </svg>
     </div>
 </section>
 
-<!-- ===== UPCOMING EVENTS ===== -->
-<div class="section-wrap" id="eventsSection">
+<!-- ===== OUR CHURCH PROGRAMS ===== -->
+<section class="section-wrap white">
     <div class="container">
         <div class="section-header">
             <div class="section-header-left">
-                <div class="section-icon"><i class="fas fa-calendar-alt"></i></div>
+                <div class="section-icon"><i class="fas fa-church"></i></div>
+                <div>
+                    <span class="section-label">Our Church Programs</span>
+                    <h2 class="section-title">Join us for weekly programs</h2>
+                    <p class="section-desc">Join us for weekly programs that help you grow in faith, connect with others, and serve God together.</p>
+                </div>
+            </div>
+        </div>
+        <div class="programs-grid" id="programsGrid"></div>
+    </div>
+</section>
+
+<!-- ===== UPCOMING EVENTS ===== -->
+<section class="section-wrap pale" id="eventsSection">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon"><i class="fas fa-calendar-check"></i></div>
                 <div>
                     <span class="section-label">Upcoming Events</span>
-                    <h2 class="section-title" id="eventsCount">Events</h2>
+                    <h2 class="section-title">Be part of what's happening!</h2>
+                    <p class="section-desc">Join our upcoming events and be part of the church family.</p>
                 </div>
             </div>
             <a href="#eventsSection" class="section-link">View All Events <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="events-grid" id="eventsGrid"></div>
     </div>
-</div>
+</section>
 
-<!-- ===== WEEKLY SCHEDULE ===== -->
-<div class="weekly-section">
-    <div class="weekly-bg" id="weeklyBg"></div>
-    <div class="weekly-overlay"></div>
-    <div class="inner">
-        <div class="weekly-header">
-            <div class="section-icon"><i class="fas fa-calendar-week"></i></div>
-            <h2 class="weekly-title" id="weeklyTitle"></h2>
-        </div>
-        <div class="weekly-grid" id="weeklyGrid"></div>
-        <div class="weekly-verse">
-            <div class="weekly-verse-bg" id="weeklyVerseBg"></div>
-            <div class="weekly-verse-content">
-                <p class="weekly-verse-text" id="weeklyVerseText"></p>
-                <span class="weekly-verse-ref" id="weeklyVerseRef"></span>
+<!-- ===== DAILY INSPIRATION & DEVOTION ===== -->
+<section class="devotion-banner" id="devotionBanner">
+    <div class="devotion-bg" id="devotionBg"></div>
+    <div class="container">
+        <div class="devotion-inner">
+            <div class="devotion-content">
+                <div class="devotion-icon"><i class="fas fa-book-bible"></i></div>
+                <span class="devotion-label">DAILY INSPIRATION & DEVOTION</span>
+                <h2 class="devotion-title" id="devotionTitle">Start each day with God's Word.</h2>
+                <p class="devotion-verse" id="devotionVerse"></p>
+                <p class="devotion-desc" id="devotionDesc"></p>
+                <button class="btn-devotion" id="btnReadDevotion" type="button">
+                    <i class="fas fa-book-open"></i> Read Today's Devotion
+                </button>
             </div>
-            <div class="weekly-encouragement" id="weeklyEncouragement"></div>
+            <div class="devotion-script" id="devotionScript">Grow<br>in His Word<br>Every Day</div>
         </div>
     </div>
-</div>
+</section>
 
-<!-- ===== ANNOUNCEMENTS ===== -->
-<div class="section-wrap" id="announcementsSection">
+<!-- ===== THIS WEEK AT BRIDGE CALVARY ===== -->
+<section class="weekly-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon"><i class="fas fa-calendar-week"></i></div>
+                <div>
+                    <span class="section-label">This Week</span>
+                    <h2 class="section-title">This Week at Bridge Calvary</h2>
+                    <p class="section-desc">Here's what's happening this week at our church.</p>
+                </div>
+            </div>
+        </div>
+        <div class="weekly-grid" id="weeklyGrid"></div>
+
+        <!-- Verse banner -->
+        <div class="verse-banner">
+            <div class="verse-banner-bg" id="weeklyVerseBg"></div>
+            <div class="verse-banner-content">
+                <p class="verse-banner-text" id="weeklyVerseText"></p>
+                <span class="verse-banner-ref" id="weeklyVerseRef"></span>
+            </div>
+            <div class="verse-banner-script" id="weeklyVerseScript">His plans are greater than ours</div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LATEST ANNOUNCEMENTS ===== -->
+<section class="section-wrap pale" id="announcementsSection">
     <div class="container">
         <div class="section-header">
             <div class="section-header-left">
                 <div class="section-icon"><i class="fas fa-bullhorn"></i></div>
                 <div>
                     <span class="section-label">Latest Announcements</span>
+                    <h2 class="section-title">Stay updated</h2>
+                    <p class="section-desc">Stay informed with the latest news and updates from Bridge Calvary Chapel.</p>
                 </div>
             </div>
+            <a href="#announcementsSection" class="section-link">View All Announcements <i class="fas fa-arrow-right"></i></a>
         </div>
         <div class="announcements-carousel-wrapper">
             <button class="carousel-btn carousel-prev" id="annPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
@@ -128,62 +173,48 @@
             <button class="carousel-btn carousel-next" id="annNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
         </div>
     </div>
-</div>
+</section>
 
-<!-- ===== CONNECT STRIP ===== -->
-<div class="connect-strip">
-    <div class="connect-item">
-        <div class="connect-icon"><i class="fas fa-users"></i></div>
-        <div>
-            <div class="connect-title" id="connectTitle"></div>
-            <p class="connect-desc" id="connectDesc"></p>
-        </div>
-    </div>
-    <div class="connect-item">
-        <div class="connect-icon"><i class="fas fa-envelope"></i></div>
-        <div style="flex: 1;">
-            <div class="connect-title" id="connectNewsTitle"></div>
-            <p class="connect-desc" id="connectNewsDesc"></p>
-            <form class="newsletter-form" id="connectNewsletter">
-                <input type="email" placeholder="Enter your email address" required aria-label="Email">
-                <button type="submit">Subscribe</button>
-            </form>
-        </div>
-    </div>
-    <div class="connect-item">
-        <div class="connect-icon"><i class="fas fa-phone"></i></div>
-        <div class="connect-contact">
-            <div class="connect-title">Contact Us</div>
-            <p><i class="fas fa-phone"></i> <span id="connectPhone"></span></p>
-            <p><i class="fas fa-envelope"></i> <span id="connectEmail"></span></p>
-            <p><i class="fas fa-map-marker-alt"></i> <span id="connectAddress"></span></p>
-        </div>
-    </div>
-    <div class="connect-item">
-        <div class="connect-icon"><i class="fas fa-share-alt"></i></div>
-        <div>
-            <div class="connect-title">Follow Us</div>
-            <div class="footer-social" style="margin-top: 6px;">
-                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-                <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+<!-- ===== SHOP PROMO ===== -->
+<section class="shop-promo">
+    <div class="shop-promo-bg" id="shopPromoBg"></div>
+    <div class="container">
+        <div class="shop-promo-inner">
+            <div class="shop-promo-content">
+                <span class="shop-promo-label">CHURCH SHOP</span>
+                <h2 class="shop-promo-title">Wear your faith. Support the ministry.</h2>
+                <p class="shop-promo-desc">Browse our official church merchandise — T-shirts, hoodies, caps, mugs, Bibles, notebooks, and more. Every purchase supports the work of Bridge Calvary Chapel.</p>
+                <a href="donations.html#shopSection" class="btn-shop-promo">
+                    <i class="fas fa-shopping-bag"></i> Buy Christian Products
+                </a>
+            </div>
+            <div class="shop-promo-image">
+                <img src="assets/images/events/shop-promo.jpg" alt="Church Merchandise" onerror="this.style.display='none'">
             </div>
         </div>
     </div>
-</div>
+</section>
 
 <!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="container">
-        <div class="footer-inner">
+        <div class="footer-grid">
             <div class="footer-brand">
-                <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
-                <div class="footer-logo-text">
-                    <span class="footer-the">THE</span>
-                    <span class="footer-bridge">BRIDGE</span>
-                    <span class="footer-calvary">CALVARY CHAPEL</span>
+                <a href="index.html" class="footer-logo-link">
+                    <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
+                    <div class="footer-logo-text">
+                        <span class="footer-the">THE</span>
+                        <span class="footer-bridge">BRIDGE</span>
+                        <span class="footer-calvary">CALVARY CHAPEL</span>
+                    </div>
+                </a>
+                <p id="footerTagline">Helping people find the perfect place to call home. You're invited and welcome.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
             <div class="footer-col">
@@ -195,16 +226,28 @@
                     <li><a href="sermons.html">Sermons</a></li>
                     <li><a href="events-announcements.html">Events</a></li>
                     <li><a href="donations.html">Donations</a></li>
+                    <li><a href="donations.html#shopSection">Church Shop</a></li>
                     <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
                 </ul>
             </div>
             <div class="footer-col">
-                <h4>Follow Us</h4>
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone"></i><span id="footerPhone"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span id="footerEmail"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span id="footerAddress"></span></div>
+            </div>
+            <div class="footer-col">
+                <h4>Join Our Newsletter</h4>
+                <p style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px;">Get updates directly in your inbox.</p>
+                <form class="footer-newsletter-form" id="footerNewsletter">
+                    <input type="email" placeholder="Your email address" required aria-label="Email">
+                    <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                </form>
+                <h4 style="margin-top:14px;">Follow Us</h4>
                 <div class="footer-social">
                     <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                     <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
@@ -212,7 +255,7 @@
             <p>&copy; <span id="currentYear">2025</span> <span id="footerCopyrightName">Bridge Calvary Chapel</span>. All rights reserved.</p>
             <div class="footer-bottom-links">
                 <a href="#">Privacy Policy</a>
-                <span class="divider">|</span>
+                <span style="opacity:0.3;">|</span>
                 <a href="#">Terms of Service</a>
             </div>
         </div>

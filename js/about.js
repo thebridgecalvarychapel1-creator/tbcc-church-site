@@ -1,9 +1,30 @@
 // ============================================
-// BRIDGE CALVARY CHAPEL — ABOUT US PAGE
+// ABOUT US PAGE — Bridge Calvary Chapel
 // File: js/about.js
 // ============================================
 
 var aboutContent = {};
+var leadersCache = [];
+
+// ---------- HELPERS ----------
+function setText(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.textContent = val; }
+function setHTML(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.innerHTML = val; }
+function setBg(id, url) { var el = document.getElementById(id); if (el && url) el.style.backgroundImage = 'url("' + url + '")'; }
+function setSrc(id, val) {
+    var el = document.getElementById(id);
+    if (el && val) {
+        el.style.display = 'block';
+        el.src = val;
+    }
+}
+function escapeHtml(str) {
+    if (str === undefined || str === null) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function secImg(name) {
+    var s = aboutContent[name] || {};
+    return s.image || s.hero_image || s.background_image || s.main_image || '';
+}
 
 // ============================================
 // MODAL
@@ -21,7 +42,6 @@ window.openModal = function (html) {
     var c = panel.querySelector('.modal-panel-close');
     if (c) c.focus();
 };
-
 window.closeModal = function () {
     var overlay = document.getElementById('modalOverlay');
     var panel = document.getElementById('modalPanel');
@@ -33,418 +53,355 @@ window.closeModal = function () {
 };
 
 // ============================================
-// HELPERS
-// ============================================
-function setText(id, val) { var el = document.getElementById(id); if (el && val) el.textContent = val; }
-function setHTML(id, val) { var el = document.getElementById(id); if (el && val) el.innerHTML = val; }
-
-// ============================================
-// RENDER HERO
+// HERO
 // ============================================
 function renderHero() {
     var h = aboutContent.about_hero || {};
-    setText('heroEyebrow', h.eyebrow);
-    setText('heroDescription', h.description);
+    setText('heroScript', h.title_line1 || 'About Us');
+    setText('heroSubtitle', h.subtitle || 'A Church for Every Generation');
+    setText('heroTagline', h.tagline || 'Real People • Real Faith • Real Life');
 
-    var titleEl = document.getElementById('heroTitle');
-    if (titleEl && h.title) {
-        var html = h.title;
-        if (h.title_highlight) {
-            html = h.title.replace(h.title_highlight, '<span class="highlight">' + h.title_highlight + '</span>');
-        }
-        titleEl.innerHTML = html;
-    }
-    if (h.hero_image) {
-        var bg = document.getElementById('heroBg');
-        if (bg) bg.style.backgroundImage = 'url("' + h.hero_image + '")';
+    // Prefer 'image' key, fall back to 'hero' key, then other image keys
+    var url = h.image || h.hero_image || h.background_image || h.main_image || h.hero || '';
+    if (url) {
+        setBg('heroBg', url);
+        console.log('🖼️ Hero image set from:', url);
+    } else {
+        console.warn('⚠️ No hero image URL found in about_hero');
     }
 }
 
 // ============================================
-// RENDER VALUES (4 cards)
+// HISTORY CARD
 // ============================================
-function renderValues() {
-    var grid = document.getElementById('valuesGrid');
-    if (!grid) return;
-    var html = '';
-    for (var i = 1; i <= 4; i++) {
-        var d = aboutContent['about_value_' + i];
-        if (!d) continue;
-        html += '<article class="value-card" data-modal="value_' + i + '" tabindex="0" role="button">'
-            + '<div class="value-card-icon"><i class="fas ' + (d.icon || 'fa-star') + '"></i></div>'
-            + '<h3>' + (d.title || '') + '</h3>'
-            + '<p>' + (d.desc || '') + '</p>'
-            + '</article>';
-    }
-    grid.innerHTML = html;
-
-    grid.querySelectorAll('[data-modal]').forEach(function (el) {
-        el.addEventListener('click', function () { openValueModal(el.dataset.modal.replace('value_', '')); });
-        el.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
-        });
-    });
-}
-
-window.openValueModal = function (num) {
-    var d = aboutContent['about_value_' + num];
-    if (!d) return;
-    var html = ''
-        + '<div class="modal-icon-wrapper"><i class="fas ' + (d.icon || 'fa-star') + '"></i></div>'
-        + '<h2>' + (d.title || '') + '</h2>'
-        + '<p class="modal-description">' + (d.detail || d.desc || '') + '</p>';
-    openModal(html);
-};
-
-// ============================================
-// RENDER HISTORY
-// ============================================
-function renderHistory() {
+function renderHistoryCard() {
     var h = aboutContent.about_history || {};
+    setText('historyHeading', h.heading || 'OUR HISTORY');
+    setText('historyIntro', h.intro || '');
+    setText('historyBtnLabel', h.learn_more_label || 'Learn More');
 
-    setText('historyLabel', h.label);
-    var titleEl = document.getElementById('historyTitle');
-    if (titleEl && h.title) {
-        var html = h.title;
-        if (h.title_highlight) {
-            html = h.title.replace(h.title_highlight, '<span class="highlight">' + h.title_highlight + '</span>');
-        }
-        titleEl.innerHTML = html;
+    // Set the image IMMEDIATELY on page load (this is the fix)
+    var url = h.main_image || h.image || h.small_image_1 || '';
+    if (url) {
+        setSrc('historyPhoto', url);
+        console.log('🖼️ History image set from:', url);
+    } else {
+        console.warn('⚠️ No history image URL found in about_history');
     }
 
-    var textHTML = '';
-    if (h.paragraph1) textHTML += '<p class="history-text">' + h.paragraph1 + '</p>';
-    if (h.paragraph2) textHTML += '<p class="history-text">' + h.paragraph2 + '</p>';
-    if (h.paragraph3) textHTML += '<p class="history-text">' + h.paragraph3 + '</p>';
-    setHTML('historyText', textHTML);
-
-    // Collage
-    var collage = document.getElementById('historyCollage');
-    if (collage) {
-        var collageHTML = ''
-            + '<div class="collage-main" data-img="' + (h.main_image || '') + '">'
-            +   '<img src="' + (h.main_image || '') + '" alt="Church history" onerror="this.style.display=\'none\'">'
-            + '</div>'
-            + '<div class="collage-small collage-small-1" data-img="' + (h.small_image_1 || '') + '">'
-            +   '<img src="' + (h.small_image_1 || '') + '" alt="Fellowship" onerror="this.style.display=\'none\'">'
-            + '</div>'
-            + '<div class="collage-small collage-small-2" data-img="' + (h.small_image_2 || '') + '">'
-            +   '<img src="' + (h.small_image_2 || '') + '" alt="Worship" onerror="this.style.display=\'none\'">'
-            + '</div>'
-            + '<div class="collage-small collage-small-3" data-img="' + (h.small_image_3 || '') + '">'
-            +   '<img src="' + (h.small_image_3 || '') + '" alt="Community" onerror="this.style.display=\'none\'">'
-            + '</div>';
-        collage.innerHTML = collageHTML;
-
-        collage.querySelectorAll('[data-img]').forEach(function (el) {
-            el.addEventListener('click', function () {
-                var img = el.dataset.img;
-                if (!img) return;
-                openModal('<h2>Our Story</h2><img class="modal-panel-image" src="' + img + '" alt="Church history"><p class="modal-description">' + (h.paragraph1 || '') + '</p>');
-            });
-        });
+    var card = document.getElementById('historyCard');
+    var btn = document.getElementById('historyBtn');
+    var open = function () { openHistoryPanel(); };
+    if (card) {
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
     }
+    if (btn) btn.addEventListener('click', function (e) { e.stopPropagation(); open(); });
+}
 
-    // Stats
-    var stats = document.getElementById('historyStats');
-    if (stats) {
-        var statsHTML = '';
-        for (var i = 1; i <= 4; i++) {
-            var num = h['stat' + i + '_number'];
-            var label = h['stat' + i + '_label'];
-            var icon = h['stat' + i + '_icon'];
-            if (!num) continue;
-            statsHTML += '<div class="stat-row">'
-                + '<div class="stat-icon"><i class="fas ' + (icon || 'fa-chart-bar') + '"></i></div>'
-                + '<div class="stat-content">'
-                +   '<span class="stat-number">' + num + '</span>'
-                +   '<span class="stat-label">' + (label || '') + '</span>'
-                + '</div>'
-                + '</div>';
-        }
-        stats.innerHTML = statsHTML;
-    }
+function openHistoryPanel() {
+    var h = aboutContent.about_history || {};
+    var img = h.main_image || h.image || '';
+    var html = ''
+        + (img ? '<img class="modal-panel-image" src="' + escapeHtml(img) + '" alt="" onerror="this.style.display=\'none\'">' : '')
+        + '<h2>' + escapeHtml(h.heading || 'Our History') + '</h2>'
+        + '<p class="modal-subtitle">Since ' + escapeHtml(h.title_highlight || '1995') + '</p>'
+        + (h.paragraph1 ? '<p class="modal-description">' + escapeHtml(h.paragraph1) + '</p>' : '')
+        + (h.paragraph2 ? '<p class="modal-description">' + escapeHtml(h.paragraph2) + '</p>' : '')
+        + (h.paragraph3 ? '<p class="modal-description">' + escapeHtml(h.paragraph3) + '</p>' : '');
+    openModal(html);
 }
 
 // ============================================
-// RENDER MISSION
+// PASTOR CARD
+// ============================================
+function renderPastorCard() {
+    var pastor = leadersCache[0] || null;
+    var pastorImage = '';
+    if (pastor) {
+        setText('pastorName', pastor.name || '');
+        setText('pastorRole', pastor.tagline || pastor.role || '');
+        setText('pastorVerse', pastor.bio || '');
+        pastorImage = pastor.image_url || '';
+    } else {
+        var l = aboutContent.about_leader_1 || {};
+        setText('pastorName', l.name || 'Our Pastor');
+        setText('pastorRole', l.role || '');
+        setText('pastorVerse', l.bio || '');
+        pastorImage = l.image || '';
+    }
+    if (pastorImage) {
+        setSrc('pastorPhoto', pastorImage);
+        console.log('🖼️ Pastor image set from:', pastorImage);
+    } else {
+        console.warn('⚠️ No pastor image URL found');
+    }
+
+    var card = document.getElementById('pastorCard');
+    var btn = document.getElementById('pastorBtn');
+    var open = function () {
+        if (pastor) { openLeaderProfile(pastor); return; }
+        var l = aboutContent.about_leader_1 || {};
+        openLeaderProfile({ name: l.name, role: l.role, bio: l.bio, full_bio: l.full_bio, image_url: l.image });
+    };
+    if (card) {
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    }
+    if (btn) btn.addEventListener('click', function (e) { e.stopPropagation(); open(); });
+}
+
+// ============================================
+// MISSION + ACCORDIONS
 // ============================================
 function renderMission() {
     var m = aboutContent.about_mission || {};
-    setText('missionLabel', m.label);
-    setText('missionTitle', m.title);
-    setText('missionDesc', m.description);
-    if (m.background_image) {
-        var bg = document.getElementById('missionBg');
-        if (bg) bg.style.backgroundImage = 'url("' + m.background_image + '")';
-    }
+    setText('missionHeading', m.heading || 'OUR MISSION');
+    setText('missionSub', m.subheading || '');
+    setText('missionBody', m.body || m.description || '');
+    setText('missionBtnLabel', m.button_label || 'Explore Our Mission');
 
-    var pills = document.getElementById('missionPills');
-    if (!pills) return;
-    var html = '';
-    for (var i = 1; i <= 5; i++) {
-        var p = aboutContent['about_mission_pillar_' + i];
-        if (!p) continue;
-        html += '<button class="mission-pill" data-modal="mission_' + i + '" type="button">'
-            + '<span class="mission-pill-icon"><i class="fas ' + (p.icon || 'fa-star') + '"></i></span>'
-            + '<span>' + (p.label || '') + '</span>'
-            + '</button>';
-    }
-    pills.innerHTML = html;
-
-    pills.querySelectorAll('[data-modal]').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-            var key = btn.dataset.modal;
-            var d = aboutContent[key] || aboutContent['about_' + key];
-            if (!d) return;
-            var detail = d.detail || '';
-            var scripture = d.scripture || '';
-            var html = ''
-                + '<div class="modal-icon-wrapper"><i class="fas ' + (d.icon || 'fa-star') + '"></i></div>'
-                + '<h2>' + (d.label || '') + '</h2>'
-                + '<p class="modal-description">' + detail + '</p>'
-                + (scripture ? '<div class="modal-scripture"><p>' + scripture + '</p></div>' : '');
-            openModal(html);
-        });
+    var btn = document.getElementById('missionBtn');
+    if (btn) btn.addEventListener('click', function () {
+        openModal(
+            '<div class="modal-icon-wrapper"><i class="fas fa-bullseye"></i></div>'
+            + '<h2>' + escapeHtml(m.heading || 'Our Mission') + '</h2>'
+            + '<p class="modal-subtitle">' + escapeHtml(m.subheading || '') + '</p>'
+            + '<p class="modal-description">' + escapeHtml(m.body || m.description || '') + '</p>'
+        );
     });
 }
 
-// ============================================
-// RENDER VISION
-// ============================================
-function renderVision() {
-    var v = aboutContent.about_vision || {};
-    setText('visionLabel', v.label);
+function renderAccordions() {
+    var container = document.getElementById('accordion');
+    if (!container) return;
 
-    var grid = document.getElementById('visionGrid');
-    if (!grid) return;
-    var html = '';
-    for (var i = 1; i <= 5; i++) {
-        var d = aboutContent['about_vision_' + i];
-        if (!d) continue;
-        html += '<div class="vision-step" data-modal="vision_' + i + '" tabindex="0" role="button">'
-            + '<div class="vision-number">' + (d.number || '0' + i) + '</div>'
-            + '<h3>' + (d.title || '') + '</h3>'
-            + '<p>' + (d.desc || '') + '</p>'
-            + '</div>';
-    }
-    grid.innerHTML = html;
-
-    grid.querySelectorAll('[data-modal]').forEach(function (el) {
-        var open = function () {
-            var num = el.dataset.modal.replace('vision_', '');
-            var d = aboutContent['about_vision_' + num];
-            if (!d) return;
-            var html = ''
-                + '<div class="modal-icon-wrapper"><i class="fas fa-cross"></i></div>'
-                + '<h2>' + (d.title || '') + '</h2>'
-                + '<p class="modal-subtitle">Vision Step ' + (d.number || '0' + num) + '</p>'
-                + '<p class="modal-description">' + (d.detail || d.desc || '') + '</p>'
-                + (d.scripture ? '<div class="modal-scripture"><p>' + d.scripture + '</p></div>' : '');
-            openModal(html);
-        };
-        el.addEventListener('click', open);
-        el.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-        });
-    });
-}
-
-// ============================================
-// RENDER BELIEFS
-// ============================================
-function renderBeliefs() {
-    var b = aboutContent.about_beliefs || {};
-    setText('beliefsLabel', b.label);
-    setText('beliefsTitle', b.title);
-
-    var cards = document.getElementById('beliefsCards');
-    if (!cards) return;
-    var html = '';
-    for (var i = 1; i <= 6; i++) {
-        var d = aboutContent['about_belief_' + i];
-        if (!d) continue;
-        html += '<div class="belief-card" data-modal="belief_' + i + '" tabindex="0" role="button">'
-            + '<div class="belief-card-icon"><i class="fas ' + (d.icon || 'fa-star') + '"></i></div>'
-            + '<div>'
-            +   '<h4>' + (d.title || '') + '</h4>'
-            +   '<p>' + (d.desc || '') + '</p>'
-            + '</div>'
-            + '</div>';
-    }
-    cards.innerHTML = html;
-
-    cards.querySelectorAll('[data-modal]').forEach(function (el) {
-        var open = function () {
-            var num = el.dataset.modal.replace('belief_', '');
-            var d = aboutContent['about_belief_' + num];
-            if (!d) return;
-            var html = ''
-                + '<div class="modal-icon-wrapper"><i class="fas ' + (d.icon || 'fa-star') + '"></i></div>'
-                + '<h2>' + (d.title || '') + '</h2>'
-                + '<p class="modal-subtitle">' + (d.desc || '') + '</p>'
-                + '<p class="modal-description">' + (d.detail || '') + '</p>'
-                + (d.scripture ? '<div class="modal-scripture"><p>' + d.scripture + '</p></div>' : '');
-            openModal(html);
-        };
-        el.addEventListener('click', open);
-        el.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-        });
-    });
-}
-
-// ============================================
-// RENDER CORE VALUES
-// ============================================
-function renderCore() {
-    var c = aboutContent.about_core || {};
-    setText('coreLabel', c.label);
-
-    var grid = document.getElementById('coreGrid');
-    if (!grid) return;
-    var html = '';
-    for (var i = 1; i <= 5; i++) {
-        var d = aboutContent['about_core_' + i];
-        if (!d) continue;
-        html += '<div class="core-card" data-modal="core_' + i + '" tabindex="0" role="button">'
-            + '<div class="core-image">'
-            +   '<img src="' + (d.image || '') + '" alt="' + (d.title || '') + '" onerror="this.style.display=\'none\'">'
-            +   '<div class="core-icon-badge"><i class="fas ' + (d.icon || 'fa-star') + '"></i></div>'
-            + '</div>'
-            + '<div class="core-body">'
-            +   '<h4>' + (d.title || '') + '</h4>'
-            +   '<p>' + (d.desc || '') + '</p>'
-            + '</div>'
-            + '</div>';
-    }
-    grid.innerHTML = html;
-
-    grid.querySelectorAll('[data-modal]').forEach(function (el) {
-        var open = function () {
-            var num = el.dataset.modal.replace('core_', '');
-            var d = aboutContent['about_core_' + num];
-            if (!d) return;
-            var html = ''
-                + '<img class="modal-panel-image" src="' + (d.image || '') + '" alt="' + (d.title || '') + '" onerror="this.style.display=\'none\'">'
-                + '<h2>' + (d.title || '') + '</h2>'
-                + '<p class="modal-description">' + (d.detail || '') + '</p>'
-                + (d.scripture ? '<div class="modal-scripture"><p>' + d.scripture + '</p></div>' : '');
-            openModal(html);
-        };
-        el.addEventListener('click', open);
-        el.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-        });
-    });
-}
-
-// ============================================
-// RENDER LEADERSHIP
-// ============================================
-function renderLeadership() {
-    var l = aboutContent.about_leadership || {};
-    setText('leadershipLabel', l.label);
-    setText('leadershipSubtitle', l.subtitle);
-
-    var grid = document.getElementById('leadershipGrid');
-    if (!grid) return;
-    var html = '';
-    for (var i = 1; i <= 3; i++) {
-        var d = aboutContent['about_leader_' + i];
-        if (!d) continue;
-        html += '<div class="leader-card" data-modal="leader_' + i + '" tabindex="0" role="button">'
-            + '<div class="leader-portrait">'
-            +   '<img src="' + (d.image || '') + '" alt="' + (d.name || '') + '" onerror="this.style.background=\'linear-gradient(135deg,#031B43,#005BEA)\'">'
-            + '</div>'
-            + '<div class="leader-info">'
-            +   '<h3>' + (d.name || '') + '</h3>'
-            +   '<span class="leader-role">' + (d.role || '') + '</span>'
-            +   '<p>' + (d.bio || '') + '</p>'
-            + '</div>'
-            + '</div>';
-    }
-    grid.innerHTML = html;
-
-    grid.querySelectorAll('[data-modal]').forEach(function (el) {
-        var open = function () {
-            var num = el.dataset.modal.replace('leader_', '');
-            var d = aboutContent['about_leader_' + num];
-            if (!d) return;
-            var html = ''
-                + '<img class="modal-panel-image" src="' + (d.image || '') + '" alt="' + (d.name || '') + '" onerror="this.style.display=\'none\'">'
-                + '<h2>' + (d.name || '') + '</h2>'
-                + '<p class="modal-subtitle">' + (d.role || '') + '</p>'
-                + '<p class="modal-description">' + (d.full_bio || d.bio || '') + '</p>';
-            openModal(html);
-        };
-        el.addEventListener('click', open);
-        el.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-        });
-    });
-}
-
-// ============================================
-// RENDER COMMUNITY
-// ============================================
-function renderCommunity() {
-    var c = aboutContent.about_community || {};
-    setText('communityLabel', c.label);
-    setText('communityTitle', c.title);
-
-    var grid = document.getElementById('communityGrid');
-    if (!grid) return;
     var html = '';
     for (var i = 1; i <= 4; i++) {
-        var d = aboutContent['about_community_' + i];
+        var d = aboutContent['about_mission_acc_' + i];
         if (!d) continue;
-        html += '<div class="community-card" data-modal="community_' + i + '" tabindex="0" role="button">'
-            + '<div class="community-image">'
-            +   '<img src="' + (d.image || '') + '" alt="' + (d.title || '') + '" onerror="this.style.display=\'none\'">'
-            +   '<div class="community-icon"><i class="fas ' + (d.icon || 'fa-star') + '"></i></div>'
-            + '</div>'
-            + '<div class="community-body">'
-            +   '<h4>' + (d.title || '') + '</h4>'
-            +   '<p>' + (d.desc || '') + '</p>'
-            + '</div>'
+        html += '<div class="accordion-item" data-acc="' + i + '">'
+            + '<button class="accordion-header" type="button">'
+            +   '<span class="accordion-icon"><i class="fas ' + escapeHtml(d.icon || 'fa-star') + '"></i></span>'
+            +   '<span class="accordion-title-wrap">'
+            +     '<span class="accordion-title">' + escapeHtml(d.title || '') + '</span>'
+            +     '<span class="accordion-sub">' + escapeHtml(d.subtitle || '') + '</span>'
+            +   '</span>'
+            +   '<i class="fas fa-chevron-down accordion-chevron"></i>'
+            + '</button>'
+            + '<div class="accordion-body"><div class="accordion-body-inner">' + escapeHtml(d.body || '') + '</div></div>'
             + '</div>';
     }
-    grid.innerHTML = html;
+    container.innerHTML = html;
 
-    grid.querySelectorAll('[data-modal]').forEach(function (el) {
-        var open = function () {
-            var num = el.dataset.modal.replace('community_', '');
-            var d = aboutContent['about_community_' + num];
-            if (!d) return;
-            var html = ''
-                + '<img class="modal-panel-image" src="' + (d.image || '') + '" alt="' + (d.title || '') + '" onerror="this.style.display=\'none\'">'
-                + '<h2>' + (d.title || '') + '</h2>'
-                + '<p class="modal-description">' + (d.detail || '') + '</p>';
-            openModal(html);
-        };
-        el.addEventListener('click', open);
-        el.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+    container.querySelectorAll('.accordion-item').forEach(function (item) {
+        var header = item.querySelector('.accordion-header');
+        var body = item.querySelector('.accordion-body');
+        header.addEventListener('click', function () {
+            var isOpen = item.classList.contains('open');
+            container.querySelectorAll('.accordion-item').forEach(function (other) {
+                other.classList.remove('open');
+                var ob = other.querySelector('.accordion-body');
+                if (ob) ob.style.maxHeight = null;
+            });
+            if (!isOpen) {
+                item.classList.add('open');
+                body.style.maxHeight = body.scrollHeight + 'px';
+            }
         });
     });
 }
 
 // ============================================
-// RENDER WELCOME
+// VISION CARD
 // ============================================
-function renderWelcome() {
-    var w = aboutContent.about_welcome || {};
-    setText('welcomeTitle', w.title);
-    setText('welcomeDesc', w.desc);
-    if (w.background_image) {
-        var bg = document.getElementById('welcomeBg');
-        if (bg) bg.style.backgroundImage = 'url("' + w.background_image + '")';
+function renderVisionCard() {
+    var v = aboutContent.about_vision_section || {};
+    setText('visionHeading', v.heading || 'OUR VISION');
+    setText('visionSub', v.subheading || '');
+    setText('visionBody', v.body || '');
+    setText('visionBtnLabel', v.button_label || 'Learn More');
+
+    // Set the image IMMEDIATELY
+    var img = v.image || v.background_image || v.main_image || secImg('about_vision_section');
+    if (img) {
+        setSrc('visionPhoto', img);
+        console.log('🖼️ Vision image set from:', img);
+    } else {
+        console.warn('⚠️ No vision image URL found in about_vision_section');
+    }
+
+    var card = document.getElementById('visionCard');
+    var btn = document.getElementById('visionBtn');
+    var open = function () {
+        openModal(
+            '<div class="modal-icon-wrapper"><i class="fas fa-eye"></i></div>'
+            + '<h2>' + escapeHtml(v.heading || 'Our Vision') + '</h2>'
+            + '<p class="modal-subtitle">' + escapeHtml(v.subheading || '') + '</p>'
+            + '<p class="modal-description">' + escapeHtml(v.body || '') + '</p>'
+        );
+    };
+    if (card) {
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    }
+    if (btn) btn.addEventListener('click', function (e) { e.stopPropagation(); open(); });
+}
+
+// ============================================
+// VALUES CARD
+// ============================================
+function renderValuesCard() {
+    var v = aboutContent.about_values_section || {};
+    setText('valuesHeading', v.heading || 'OUR VALUES');
+    setText('valuesSub', v.subheading || '');
+    setText('valuesBtnLabel', v.button_label || 'Discover Our Values');
+
+    var list = document.getElementById('valuesList');
+    if (list) {
+        var items = '';
+        for (var i = 1; i <= 5; i++) {
+            var item = aboutContent['about_values_item_' + i];
+            if (!item || !item.title) continue;
+            items += '<li><i class="fas fa-check"></i> ' + escapeHtml(item.title) + '</li>';
+        }
+        list.innerHTML = items;
+    }
+
+    // Set the image IMMEDIATELY
+    var img = v.image || v.background_image || v.main_image || secImg('about_values_section');
+    if (img) {
+        setSrc('valuesPhoto', img);
+        console.log('🖼️ Values image set from:', img);
+    } else {
+        console.warn('⚠️ No values image URL found in about_values_section');
+    }
+
+    var card = document.getElementById('valuesCard');
+    var btn = document.getElementById('valuesBtn');
+    var open = function () {
+        var valueItems = '';
+        for (var i = 1; i <= 5; i++) {
+            var it = aboutContent['about_values_item_' + i];
+            if (!it || !it.title) continue;
+            valueItems += '<li style="display:flex;gap:10px;align-items:center;font-size:14px;color:#5A6B85;margin-bottom:8px;"><i class="fas fa-check" style="color:#8B1A2F;"></i> ' + escapeHtml(it.title) + '</li>';
+        }
+        openModal(
+            '<div class="modal-icon-wrapper"><i class="fas fa-heart"></i></div>'
+            + '<h2>' + escapeHtml(v.heading || 'Our Values') + '</h2>'
+            + '<p class="modal-subtitle">' + escapeHtml(v.subheading || '') + '</p>'
+            + '<ul>' + valueItems + '</ul>'
+        );
+    };
+    if (card) {
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    }
+    if (btn) btn.addEventListener('click', function (e) { e.stopPropagation(); open(); });
+}
+
+// ============================================
+// LEADERS GRID
+// ============================================
+function renderLeaders() {
+    var l = aboutContent.about_leaders_section || {};
+    setText('leadersHeading', l.heading || 'OUR LEADERS');
+    setText('leadersSub', l.subheading || 'Committed to Serve');
+    setText('leadersBtnLabel', l.button_label || 'Meet Our Team');
+
+    var grid = document.getElementById('leadersGrid');
+    if (!grid) return;
+
+    if (!leadersCache.length) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#5A6B85;">No leaders have been added yet.</p>';
+        return;
+    }
+
+    grid.innerHTML = leadersCache.map(function (d, idx) {
+        var img = d.image_url || '';
+        var socials = '';
+        if (d.facebook_url)  socials += '<a href="' + escapeHtml(d.facebook_url)  + '" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>';
+        if (d.youtube_url)   socials += '<a href="' + escapeHtml(d.youtube_url)   + '" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>';
+        if (d.x_url)         socials += '<a href="' + escapeHtml(d.x_url)         + '" target="_blank" rel="noopener" aria-label="X"><i class="fab fa-x-twitter"></i></a>';
+        if (d.instagram_url) socials += '<a href="' + escapeHtml(d.instagram_url) + '" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>';
+        if (d.tiktok_url)    socials += '<a href="' + escapeHtml(d.tiktok_url)    + '" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>';
+
+        return '<article class="leader-card-lg" data-idx="' + idx + '" tabindex="0" role="button">'
+            + '<div class="leader-photo">' + (img ? '<img src="' + escapeHtml(img) + '" alt="' + escapeHtml(d.name || '') + '" loading="eager" onerror="this.style.display=\'none\'">' : '') + '</div>'
+            + '<div class="leader-card-body">'
+            +   '<h3>' + escapeHtml(d.name || '') + '</h3>'
+            +   '<p class="role">' + escapeHtml(d.role || '') + '</p>'
+            +   (socials ? '<div class="leader-socials">' + socials + '</div>' : '')
+            +   '<button class="btn-maroon" type="button"><span>View Profile</span> <i class="fas fa-arrow-right"></i></button>'
+            + '</div>'
+            + '</article>';
+    }).join('');
+
+    grid.querySelectorAll('.leader-card-lg').forEach(function (card) {
+        var idx = parseInt(card.dataset.idx, 10);
+        var open = function (e) {
+            if (e && e.target && e.target.closest('.leader-socials')) return;
+            openLeaderProfile(leadersCache[idx]);
+        };
+        card.addEventListener('click', open);
+        card.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLeaderProfile(leadersCache[idx]); } });
+    });
+
+    var headerBtn = document.getElementById('leadersBtn');
+    if (headerBtn) {
+        headerBtn.onclick = function () {
+            var section = document.getElementById('leaders');
+            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
     }
 }
 
 // ============================================
-// RENDER FOOTER
+// LEADER PROFILE PANEL
+// ============================================
+function openLeaderProfile(d) {
+    if (!d) return;
+    var img = d.image_url || '';
+    var html = ''
+        + (img ? '<img class="modal-panel-image" src="' + escapeHtml(img) + '" alt="" onerror="this.style.display=\'none\'">' : '')
+        + '<h2>' + escapeHtml(d.name || '') + '</h2>'
+        + (d.role ? '<p class="modal-subtitle">' + escapeHtml(d.role) + '</p>' : '')
+        + (d.full_bio || d.bio ? '<p class="modal-description">' + escapeHtml(d.full_bio || d.bio) + '</p>' : '');
+
+    if (d.ministry_background) {
+        html += '<p class="modal-section-title">Ministry Background</p>'
+              + '<p class="modal-description">' + escapeHtml(d.ministry_background) + '</p>';
+    }
+    if (d.vision) {
+        html += '<p class="modal-section-title">Vision</p>'
+              + '<p class="modal-description">' + escapeHtml(d.vision) + '</p>';
+    }
+    if (d.responsibilities) {
+        html += '<p class="modal-section-title">Responsibilities</p>'
+              + '<p class="modal-description">' + escapeHtml(d.responsibilities) + '</p>';
+    }
+
+    var contacts = [];
+    if (d.phone)    contacts.push('<a class="modal-contact-btn" href="tel:' + escapeHtml(String(d.phone).replace(/\s/g, '')) + '"><i class="fas fa-phone"></i> ' + escapeHtml(d.phone) + '</a>');
+    if (d.whatsapp) contacts.push('<a class="modal-contact-btn" href="https://wa.me/' + escapeHtml(d.whatsapp) + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>');
+    if (d.email)    contacts.push('<a class="modal-contact-btn" href="mailto:' + escapeHtml(d.email) + '"><i class="fas fa-envelope"></i> Email</a>');
+    if (contacts.length) html += '<div class="modal-contact-row">' + contacts.join('') + '</div>';
+
+    var socials = [];
+    if (d.facebook_url)  socials.push('<a href="' + escapeHtml(d.facebook_url)  + '" target="_blank" rel="noopener" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>');
+    if (d.youtube_url)   socials.push('<a href="' + escapeHtml(d.youtube_url)   + '" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>');
+    if (d.instagram_url) socials.push('<a href="' + escapeHtml(d.instagram_url) + '" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>');
+    if (d.tiktok_url)    socials.push('<a href="' + escapeHtml(d.tiktok_url)    + '" target="_blank" rel="noopener" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>');
+    if (d.x_url)         socials.push('<a href="' + escapeHtml(d.x_url)         + '" target="_blank" rel="noopener" aria-label="X"><i class="fab fa-x-twitter"></i></a>');
+    if (socials.length) {
+        html += '<div class="modal-leader-social"><span>Follow on:</span><div class="modal-leader-social-icons">' + socials.join('') + '</div></div>';
+    }
+
+    openModal(html);
+}
+
+// ============================================
+// FOOTER VERSE + CONTACT
 // ============================================
 function renderFooter() {
     var f = aboutContent.footer || {};
@@ -453,30 +410,11 @@ function renderFooter() {
     setText('footerEmail', f.email);
     setText('footerAddress', f.address);
     setText('footerCopyrightName', f.copyright_name);
+
+    var v = aboutContent.about_footer_verse || {};
+    setText('verseText', v.text ? '"' + v.text + '"' : '');
+    setText('verseRef', v.reference || '');
 }
-
-// ============================================
-// VIDEO MODAL
-// ============================================
-window.openVideo = function () {
-    var modal = document.getElementById('videoModal');
-    var video = document.getElementById('aboutVideo');
-    if (!modal || !video) return;
-    var url = (aboutContent.about_hero && aboutContent.about_hero.video_url) || 'assets/videos/welcome.mp4';
-    if (video.getAttribute('src') !== url) video.setAttribute('src', url);
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    try { video.play().catch(function () {}); } catch (e) {}
-};
-
-window.closeVideo = function () {
-    var modal = document.getElementById('videoModal');
-    var video = document.getElementById('aboutVideo');
-    if (!modal) return;
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-    if (video) { try { video.pause(); } catch (e) {} }
-};
 
 // ============================================
 // LOAD DATA
@@ -484,19 +422,22 @@ window.closeVideo = function () {
 async function loadAboutData() {
     console.log('📥 Loading About Us data...');
     try {
-        var content = await window.db.getSiteContent();
-        aboutContent = content || {};
+        var results = await Promise.all([
+            window.db.getSiteContent(),
+            window.db.getLeaders ? window.db.getLeaders() : Promise.resolve([])
+        ]);
+        aboutContent = results[0] || {};
+        leadersCache = results[1] || [];
+        console.log('✅ Leaders loaded:', leadersCache.length);
 
         renderHero();
-        renderValues();
-        renderHistory();
+        renderHistoryCard();
+        renderPastorCard();
         renderMission();
-        renderVision();
-        renderBeliefs();
-        renderCore();
-        renderLeadership();
-        renderCommunity();
-        renderWelcome();
+        renderAccordions();
+        renderVisionCard();
+        renderValuesCard();
+        renderLeaders();
         renderFooter();
 
         console.log('✅ About Us data loaded');
@@ -505,26 +446,18 @@ async function loadAboutData() {
     }
 }
 
-window.addEventListener('supabase-ready', loadAboutData);
-setTimeout(function () {
-    if (window.db && Object.keys(aboutContent).length === 0) loadAboutData();
-}, 2000);
+if (window.db) setTimeout(loadAboutData, 100);
+else window.addEventListener('supabase-ready', loadAboutData);
+setTimeout(function () { if (window.db && Object.keys(aboutContent).length === 0) loadAboutData(); }, 2000);
 
 // ============================================
 // DOM READY
 // ============================================
 document.addEventListener('DOMContentLoaded', function () {
     console.log('✅ about.js initialized');
-
-    // Navbar scroll
     var navbar = document.getElementById('navbar');
-    if (navbar) {
-        window.addEventListener('scroll', function () {
-            navbar.classList.toggle('scrolled', window.pageYOffset > 40);
-        }, { passive: true });
-    }
+    if (navbar) window.addEventListener('scroll', function () { navbar.classList.toggle('scrolled', window.pageYOffset > 40); }, { passive: true });
 
-    // Mobile menu
     var navToggle = document.getElementById('navToggle');
     var navMenu = document.getElementById('navMenu');
     if (navToggle && navMenu) {
@@ -537,27 +470,13 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Watch story button
-    var btnWatch = document.getElementById('btnWatchStory');
-    if (btnWatch) btnWatch.addEventListener('click', openVideo);
-
-    // Video close
-    document.querySelectorAll('[data-close-video]').forEach(function (el) {
-        el.addEventListener('click', closeVideo);
-    });
-
-    // Modal close
     var overlay = document.getElementById('modalOverlay');
     var closeBtn = document.getElementById('modalClose');
     if (overlay) overlay.addEventListener('click', closeModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
 
-    // Escape
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') { closeModal(); closeVideo(); }
-    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
 
-    // Newsletter form
     var news = document.getElementById('footerNewsletter');
     if (news) {
         news.addEventListener('submit', async function (e) {
@@ -569,23 +488,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 var r = await window.db.subscribeNewsletter(email);
                 alert(r.duplicate ? 'You are already subscribed!' : '✅ Thank you for subscribing!');
                 input.value = '';
-            } catch (err) {
-                console.error(err);
-                alert('❌ Something went wrong. Please try again.');
-            }
+            } catch (err) { console.error(err); alert('❌ Something went wrong.'); }
         });
     }
-
-    // Follow our journey
-    var btnFollow = document.getElementById('btnFollowJourney');
-    if (btnFollow) {
-        btnFollow.addEventListener('click', function (e) {
-            e.preventDefault();
-            alert('Follow us on social media using the icons below!');
-        });
-    }
-
-    // Year
-    var y = document.getElementById('currentYear');
-    if (y) y.textContent = new Date().getFullYear();
+    var y = document.getElementById('currentYear'); if (y) y.textContent = new Date().getFullYear();
 });

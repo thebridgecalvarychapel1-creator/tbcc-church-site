@@ -1,0 +1,444 @@
+/* ============================================
+   BRIDGE CALVARY CHAPEL — GLOBAL RESPONSIVE
+   File: css/responsive.css
+   Link this in every page's <head> AFTER the page's main CSS.
+   Fixes: overflow, card stacking, text sizes, modals,
+          navigation, footer, buttons — on ALL pages.
+   ============================================ */
+
+/* -------- GLOBAL: prevent horizontal overflow -------- */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+    width: 100%;
+}
+img, video, iframe, svg { max-width: 100%; height: auto; }
+* { min-width: 0; }
+.container { width: 100%; }
+
+/* Fix flex/grid children from breaking */
+.program-card, .event-card, .donation-card, .product-card,
+.ministry-card, .sermon-card, .value-card, .info-card,
+.glass-card, .visit-card, .leader-card, .community-card,
+.article, .card { min-width: 0; }
+
+/* Prevent long words from causing overflow */
+h1, h2, h3, h4, h5, p, a, span, li {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* ============================================
+   TABLET — max-width: 1024px
+   ============================================ */
+@media (max-width: 1024px) {
+    .container { padding: 0 20px; }
+
+    /* NAVBAR becomes hamburger */
+    .navbar .container { height: 60px; gap: 12px; }
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 60px; left: 0; right: 0;
+        background: #031B3D;
+        flex-direction: column;
+        padding: 20px;
+        gap: 4px;
+        border-top: 1px solid rgba(0,217,255,0.15);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 999;
+    }
+    .nav-menu.active { display: flex; }
+    .nav-link { width: 100%; padding: 14px 16px; text-align: left; border-radius: 8px; }
+    .nav-link.active { background: rgba(0,217,255,0.12); }
+    .nav-link.active::after { display: none; }
+    .nav-toggle { display: flex !important; }
+
+    /* HERO */
+    .hero-grid, .hero-content { grid-template-columns: 1fr !important; gap: 30px; }
+    .hero-card-wrapper { justify-content: center; }
+    .hero-title { font-size: 2.2rem !important; }
+    .hero-script { font-size: 2rem !important; }
+    .hero-buttons { justify-content: center; }
+
+    /* Multi-column grids → 2 columns */
+    .values-grid, .value-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .programs-grid, .events-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .ministries-grid, .ministry-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .sermons-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .products-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .categories-grid, .donation-grid { grid-template-columns: repeat(3, 1fr) !important; }
+    .categories-section .section-title { text-align: left; }
+
+    /* TWO-COLUMN LAYOUTS → 1 column */
+    .events-wrapper,
+    .ministries-layout,
+    .sermons-wrapper,
+    .devotion-inner,
+    .shop-promo-inner,
+    .mission-wrapper,
+    .history-grid,
+    .beliefs-grid,
+    .involved-layout,
+    .featured-layout,
+    .story-wrapper,
+    .contact-main-grid,
+    .visit-layout,
+    .two-column,
+    .giving-prayer .two-column,
+    .library-layout,
+    .leadership-layout,
+    .direct-grid,
+    .info-row-grid,
+    .join-form-layout,
+    .prayer-layout,
+    .donor-layout,
+    .events-layout,
+    .admin-layout {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+
+    /* Make two-column cards stack internally where they use flex */
+    .featured-section { grid-template-columns: 1fr !important; }
+
+    /* Footer → 2 columns */
+    .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 26px; }
+
+    /* Section headers stack */
+    .section-header { flex-wrap: wrap; gap: 12px; }
+    .section-header h2 { font-size: 1.6rem; }
+
+    /* Modals fit screen */
+    .modal-panel { max-width: 92%; }
+
+    /* Weekly grid */
+    .weekly-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px; }
+
+    /* Cart drawer */
+    .cart-drawer { max-width: 90%; }
+}
+
+/* ============================================
+   PHONE — max-width: 768px
+   ============================================ */
+@media (max-width: 768px) {
+    .container { padding: 0 16px; }
+
+    /* NAVBAR */
+    .navbar .container { height: 58px; gap: 8px; }
+    .logo-img, .logo { height: 38px !important; }
+    .church-name { font-size: 0.85rem !important; }
+    .logo-bridge { font-size: 13px; }
+    .logo-the { font-size: 7px; letter-spacing: 2px; }
+    .logo-calvary { font-size: 6px; letter-spacing: 1.5px; }
+    .brand-name { font-size: 14px; }
+    .brand-sub { font-size: 8px; letter-spacing: 1.5px; }
+    .nav-actions { gap: 6px; }
+    .nav-search-icon, .nav-icon { width: 34px; height: 34px; font-size: 14px; }
+    .btn-give { padding: 8px 14px; font-size: 12px; }
+    .btn-give span { display: none; }
+    .btn-give i { margin: 0; color: #FF9EB5; }
+    .nav-toggle { width: 36px; height: 36px; font-size: 17px; }
+
+    /* TYPOGRAPHY */
+    h1, .hero-title { font-size: 1.7rem !important; line-height: 1.15; }
+    h2, .section-title { font-size: 1.3rem !important; }
+    h3 { font-size: 1.05rem; }
+    h4 { font-size: 0.95rem; }
+    p, .hero-desc, .section-desc { font-size: 12.5px !important; line-height: 1.6; }
+
+    /* HERO */
+    .hero { min-height: auto !important; padding: 40px 0 60px; }
+    .hero-content { padding: 20px 0; }
+    .hero-eyebrow { font-size: 9px !important; letter-spacing: 2px; }
+    .hero-script { font-size: 1.6rem !important; }
+    .hero-verse, .hero-description { font-size: 11.5px !important; }
+    .hero-buttons { flex-direction: column; width: 100%; gap: 10px; }
+    .hero-buttons .btn,
+    .hero-buttons .btn-hero { width: 100%; justify-content: center; padding: 12px 20px; font-size: 13px; }
+    .hero-divider svg, .hero-wave svg { height: 28px; }
+    .service-card { max-width: 100% !important; padding: 22px 20px; }
+    .service-time { font-size: 34px !important; }
+    .service-invite { font-size: 24px !important; }
+    .hero-card-wrapper { justify-content: center; width: 100%; }
+
+    /* VALUES / FEATURE CARDS — 1 column */
+    .values-grid, .value-grid { grid-template-columns: 1fr !important; gap: 14px; }
+    .value-card { padding: 24px 20px; }
+    .value-card h3 { font-size: 1.05rem; }
+    .value-card p { font-size: 12.5px; }
+
+    /* PROGRAMS */
+    .programs-grid { grid-template-columns: 1fr !important; gap: 14px; }
+    .program-image { height: 160px !important; }
+    .program-body { padding: 14px !important; }
+    .program-title { font-size: 15px !important; }
+    .program-desc { font-size: 12px !important; }
+    .program-meta-item { font-size: 11.5px !important; }
+
+    /* EVENTS */
+    .events-grid, .event-grid { grid-template-columns: 1fr !important; gap: 14px; }
+    .event-image, .event-card-image { height: 180px !important; }
+    .event-body, .event-card-body { padding: 14px !important; }
+    .event-title, .event-card-body h4 { font-size: 15px !important; }
+    .event-meta, .event-card-body .event-meta { font-size: 11.5px !important; }
+    .event-desc, .event-card-body p { font-size: 12px !important; }
+    .event-actions { gap: 8px; }
+    .btn-event { padding: 10px 14px; font-size: 12px; }
+
+    /* MINISTRIES */
+    .ministries-grid, .ministry-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+    .ministry-card { height: 200px !important; }
+    .ministry-overlay h4 { font-size: 12.5px !important; }
+
+    /* SERMONS */
+    .sermons-grid { grid-template-columns: 1fr !important; gap: 14px; }
+    .sermon-thumbnail { height: 180px !important; }
+
+    /* PRODUCTS / STORE */
+    .products-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .product-image { height: 150px !important; }
+    .product-body { padding: 12px 12px 14px !important; }
+    .product-name { font-size: 12.5px !important; }
+    .product-desc { font-size: 11px !important; }
+    .product-price { font-size: 13px !important; }
+    .btn-add-cart { padding: 9px 12px !important; font-size: 11.5px !important; }
+
+    /* DONATION CATEGORIES */
+    .categories-grid, .donation-grid { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+    .donation-card-image { height: 110px !important; }
+    .donation-body { padding: 20px 12px 12px !important; }
+    .donation-title { font-size: 12.5px !important; }
+    .donation-desc { font-size: 11px !important; }
+    .donation-actions { grid-template-columns: 1fr 1fr; }
+    .btn-mini { font-size: 10.5px !important; padding: 6px 4px !important; }
+
+    /* DIRECT GIVING */
+    .direct-grid { grid-template-columns: 1fr !important; gap: 14px; }
+    .direct-card { padding: 16px; }
+    .direct-card h4 { font-size: 13px; }
+    .direct-detail { font-size: 11px; }
+
+    /* DEVOTION */
+    .devotion-banner { padding: 30px 0; }
+    .devotion-inner { grid-template-columns: 1fr !important; gap: 20px; }
+    .devotion-icon { width: 40px; height: 40px; font-size: 17px; }
+    .devotion-title { font-size: 18px !important; }
+    .devotion-verse { font-size: 12.5px !important; padding-left: 20px; }
+    .devotion-verse::before { font-size: 26px; }
+    .devotion-desc { font-size: 12px !important; }
+    .btn-devotion { width: 100%; justify-content: center; padding: 12px 20px; }
+    .devotion-script { display: none; }
+
+    /* WEEKLY */
+    .weekly-section { padding: 30px 0; }
+    .weekly-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+    .week-card { padding: 12px 10px; }
+    .week-day { font-size: 9.5px; }
+    .week-date { font-size: 20px; }
+    .week-event { font-size: 10px; }
+    .week-time { font-size: 9.5px; }
+    .weekly-timeline { grid-template-columns: repeat(2, 1fr) !important; }
+    .timeline-day { padding: 12px 8px; }
+
+    /* VERSE BANNER */
+    .verse-banner { grid-template-columns: 1fr !important; padding: 20px 22px; gap: 16px; }
+    .verse-banner-content { padding-left: 28px; }
+    .verse-banner-content::before { font-size: 40px; top: -8px; }
+    .verse-banner-text { font-size: 12.5px !important; }
+    .verse-banner-script { font-size: 20px !important; text-align: left !important; }
+    .verse-featured-card { padding: 24px 20px; }
+    .verse-featured-text { font-size: 1.2rem; }
+
+    /* ANNOUNCEMENTS */
+    .announcements-carousel { padding: 4px 2px 12px; }
+    .announcement-card { flex: 0 0 220px !important; }
+    .announcement-image { height: 100px; }
+    .announcement-title { font-size: 13px !important; }
+    .announcement-desc { font-size: 11.5px !important; }
+    .carousel-btn { width: 34px; height: 34px; font-size: 11px; }
+    .carousel-prev { left: -10px; }
+    .carousel-next { right: -10px; }
+
+    /* SHOP PROMO / BANNERS */
+    .shop-promo { padding: 30px 0; }
+    .shop-promo-inner { grid-template-columns: 1fr !important; gap: 20px; }
+    .shop-promo-title { font-size: 20px !important; }
+    .shop-promo-desc { font-size: 12px !important; }
+    .btn-shop-promo { width: 100%; justify-content: center; padding: 12px 20px; }
+    .shop-promo-image img { height: 160px !important; }
+    .youtube-banner { padding: 20px; }
+    .youtube-banner .inner { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .banner-title { font-size: 16px !important; }
+    .btn-banner { width: 100%; justify-content: center; }
+
+    /* INFO ROW / CONNECT CARDS */
+    .info-row-grid { grid-template-columns: 1fr !important; gap: 14px; }
+    .info-card { padding: 20px; }
+    .info-card h3 { font-size: 14px; }
+    .info-card p { font-size: 12px; }
+    .btn-info { width: 100%; justify-content: center; }
+    .connect-card { padding: 20px 18px; }
+    .stay-connected-grid { grid-template-columns: 1fr !important; gap: 14px; }
+
+    /* HISTORY / ABOUT */
+    .history-collage { height: 200px !important; }
+    .collage-main { height: 140px; }
+    .stat-row { gap: 10px; }
+    .stat-number { font-size: 18px !important; }
+
+    /* LEADERSHIP / COMMUNITY */
+    .leadership-grid { grid-template-columns: 1fr !important; gap: 14px; }
+    .community-grid { grid-template-columns: 1fr 1fr !important; gap: 12px; }
+
+    /* FOOTER */
+    .footer { padding: 32px 0 18px; }
+    .footer-grid { grid-template-columns: 1fr !important; gap: 24px; }
+    .footer-brand p { font-size: 12px; }
+    .footer-links h4, .footer-contact h4, .footer-col h4 { font-size: 13px; margin-bottom: 10px; }
+    .footer-links ul li { margin-bottom: 6px; }
+    .footer-links ul li a, .footer-col a { font-size: 12px; }
+    .footer-social { gap: 8px; }
+    .footer-social a { width: 36px; height: 36px; font-size: 13px; }
+    .footer-bottom { flex-direction: column; text-align: center; gap: 8px; }
+    .footer-bottom p { font-size: 11px; }
+    .footer-newsletter-form { max-width: 100%; }
+
+    /* MODALS — fit phone screen */
+    .modal-panel {
+        width: calc(100% - 20px) !important;
+        max-width: none !important;
+        max-height: 92vh !important;
+        border-radius: 16px !important;
+    }
+    .event-modal-content,
+    .ministry-modal-content,
+    .announcement-modal-content,
+    .donation-modal-content,
+    .prayer-modal-content,
+    .video-modal-content { max-width: calc(100% - 20px) !important; border-radius: 16px !important; }
+    .modal-hero-image, .event-modal-image { height: 160px !important; }
+    .modal-content, .event-modal-body, .ministry-modal-body, .announcement-modal-body { padding: 20px 18px !important; }
+    .modal-panel-body h2, .event-modal-body h2 { font-size: 17px !important; }
+    .modal-panel-body p, .event-modal-body p { font-size: 12.5px !important; }
+    .modal-icon-wrapper { width: 46px; height: 46px; font-size: 20px; margin-bottom: 12px; }
+    .modal-btn, .btn-modal { padding: 12px 16px !important; font-size: 12.5px !important; min-width: 0 !important; flex: 1 1 100%; }
+    .modal-actions { flex-direction: column !important; gap: 8px !important; }
+    .modal-form input, .modal-form select, .modal-form textarea,
+    .panel-form input, .panel-form textarea { font-size: 14px !important; padding: 12px 14px !important; }
+    .modal-form label, .panel-form label { font-size: 12.5px !important; }
+    .modal-meta-row { font-size: 11.5px; gap: 8px; }
+    .modal-section-label { font-size: 10.5px; }
+
+    /* FILTER / SEARCH BARS */
+    .filter-wrapper { padding: 16px 18px; }
+    .filter-controls { flex-direction: column; gap: 10px; }
+    .filter-group { width: 100%; }
+    .filter-search { width: 100%; }
+    .filter-tabs { overflow-x: auto; flex-wrap: nowrap; gap: 6px; padding-bottom: 8px; }
+    .filter-tab { font-size: 11.5px; padding: 8px 14px; white-space: nowrap; }
+    .btn-find { width: 100%; justify-content: center; }
+    .search-input-wrap { width: 100%; }
+
+    /* CART */
+    .cart-drawer { max-width: 100% !important; }
+    .cart-item { padding: 12px; }
+    .cart-item-image { width: 60px; height: 60px; }
+
+    /* SECTION SPACING */
+    .page-section, .section-wrap, .values-section, .ministries-section,
+    .sermons-section, .events-section, .featured-section, .cta-cards,
+    .testimonials-section, .giving-prayer, .highlights,
+    .categories-section, .direct-giving, .store-section, .info-row,
+    .visit-section, .reviews-section, .get-involved-section,
+    .stay-connected-section, .contact-section, .location-info,
+    .weekly-section, .testimonials { padding: 32px 0 !important; }
+}
+
+/* ============================================
+   SMALL PHONE — max-width: 480px
+   ============================================ */
+@media (max-width: 480px) {
+    .container { padding: 0 14px; }
+
+    /* Hero */
+    .hero-title { font-size: 1.45rem !important; }
+    .hero-script { font-size: 1.3rem !important; }
+    .hero-verse { font-size: 11px !important; }
+
+    /* Weekly */
+    .weekly-grid { grid-template-columns: repeat(2, 1fr) !important; }
+
+    /* Announcements — smaller */
+    .announcement-card { flex: 0 0 190px !important; }
+
+    /* Section titles */
+    .section-title, .section-header h2 { font-size: 1.15rem !important; }
+
+    /* Footer logo */
+    .footer-logo, .logo { height: 36px !important; }
+
+    /* Sermon cards */
+    .sermon-thumbnail { height: 160px !important; }
+
+    /* Event image */
+    .event-image, .event-card-image { height: 170px !important; }
+}
+
+/* ============================================
+   EXTRA SMALL — max-width: 380px
+   ============================================ */
+@media (max-width: 380px) {
+    .weekly-grid { grid-template-columns: 1fr !important; }
+    .ministries-grid, .ministry-grid { grid-template-columns: 1fr !important; }
+    .products-grid { grid-template-columns: 1fr !important; }
+    .categories-grid, .donation-grid { grid-template-columns: 1fr !important; }
+    .hero-title { font-size: 1.3rem !important; }
+    .section-title { font-size: 1.05rem !important; }
+    .program-title, .event-title, .product-name { font-size: 13px !important; }
+}
+
+/* ============================================
+   TOUCH-FRIENDLY SIZING
+   ============================================ */
+@media (hover: none) and (pointer: coarse) {
+    .nav-link, .btn, .btn-hero, .btn-primary, .btn-outline,
+    .btn-join, .btn-event, .btn-add-cart, .btn-donate,
+    .filter-tab, .shop-cat-chip, .modal-btn, .btn-modal {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .nav-menu a { min-height: 48px; }
+    .carousel-btn { min-width: 40px; min-height: 40px; }
+    /* Enable smooth touch scrolling for carousels */
+    .announcements-carousel,
+    .events-carousel,
+    .ministries-carousel,
+    .testimonials-carousel,
+    .filter-tabs,
+    .gallery-thumbs {
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+    }
+    .announcement-card,
+    .event-card,
+    .ministry-card,
+    .testimonial-card {
+        scroll-snap-align: start;
+    }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

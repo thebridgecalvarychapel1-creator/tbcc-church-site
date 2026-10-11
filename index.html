@@ -9,10 +9,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Great+Vibes&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
-<!-- ===== ANIMATED BACKGROUND LAYER ===== -->
+<!-- ===== ANNOUNCEMENT BAR ===== -->
+<div class="announce-bar">
+    <div class="container announce-inner">
+        <div class="announce-left">
+            <i class="fas fa-bullhorn"></i>
+            <span id="announceMessage">Join us this Sunday for a powerful time of worship and the Word!</span>
+        </div>
+        <div class="announce-right">
+            <i class="fas fa-clock"></i>
+            <span id="announceTimes">Sunday: 8:00 AM &amp; 10:30 AM  |  Wednesday: 7:00 PM</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ANIMATED BACKGROUND ===== -->
 <div class="page-bg">
     <div class="bg-orb bg-orb-1"></div>
     <div class="bg-orb bg-orb-2"></div>
@@ -31,18 +46,17 @@
                 <span class="logo-calvary">CALVARY CHAPEL</span>
             </div>
         </a>
-
         <ul class="nav-menu" id="navMenu">
             <li><a href="index.html" class="nav-link active">Home</a></li>
             <li><a href="about.html" class="nav-link">About Us</a></li>
             <li><a href="ministries.html" class="nav-link">Ministries</a></li>
             <li><a href="sermons.html" class="nav-link">Sermons</a></li>
             <li><a href="events-announcements.html" class="nav-link">Events</a></li>
-            <li><a href="donations.html" class="nav-link">Donations</a></li>
+            <li><a href="donations.html#shopSection" class="nav-link">Church Shop</a></li>
             <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
         </ul>
-
         <div class="nav-actions">
+            <button class="nav-search-icon" aria-label="Search"><i class="fas fa-search"></i></button>
             <a href="donations.html" class="btn-give">
                 <i class="fas fa-heart"></i> <span>Give</span>
             </a>
@@ -59,7 +73,6 @@
         <img id="heroImage" src="" alt="Bridge Calvary Chapel" loading="eager">
         <div class="hero-overlay"></div>
     </div>
-
     <div class="container">
         <div class="hero-grid">
             <div class="hero-content">
@@ -80,7 +93,6 @@
                     </a>
                 </div>
             </div>
-
             <div class="hero-card-wrapper">
                 <div class="service-card">
                     <div class="service-card-header">
@@ -97,7 +109,6 @@
             </div>
         </div>
     </div>
-
     <div class="hero-divider">
         <svg viewBox="0 0 1440 100" preserveAspectRatio="none">
             <path d="M0,100 L0,40 Q720,120 1440,30 L1440,100 Z" fill="#F5F8FC"/>
@@ -152,7 +163,7 @@
     </div>
 </section>
 
-<!-- ===== MINISTRIES ===== -->
+<!-- ===== OUR MINISTRIES ===== -->
 <section class="ministries-section">
     <div class="container">
         <div class="ministries-layout">
@@ -186,13 +197,33 @@
     </div>
 </section>
 
+<!-- ===== DAILY DEVOTION ===== -->
+<section class="devotion-banner" id="devotionBanner">
+    <div class="devotion-bg" id="devotionBg"></div>
+    <div class="container">
+        <div class="devotion-inner">
+            <div class="devotion-content">
+                <div class="devotion-icon"><i class="fas fa-book-bible"></i></div>
+                <span class="devotion-label">DAILY INSPIRATION &amp; DEVOTION</span>
+                <h2 class="devotion-title" id="devotionTitle">Trust in the Lord with All Your Heart</h2>
+                <p class="devotion-verse" id="devotionVerse">"Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to Him, and He will make your paths straight." — Proverbs 3:5-6</p>
+                <p class="devotion-desc" id="devotionDesc">Every day we face decisions, big and small. God invites us to trust Him completely.</p>
+                <button class="btn-devotion" id="btnReadDevotion" type="button">
+                    <i class="fas fa-book-open"></i> Read Today's Devotion
+                </button>
+            </div>
+            <div class="devotion-script" id="devotionScript">Grow<br>in His Word<br>Every Day</div>
+        </div>
+    </div>
+</section>
+
 <!-- ===== ENGAGEMENT CARDS ===== -->
 <section class="engagement-section">
     <div class="container">
         <div class="engagement-grid">
             <div class="engagement-card">
                 <div class="engagement-image">
-                    <img src="assets/images/engagement/small-group.jpg" alt="Small group" onerror="this.style.background='#071E42'">
+                    <img id="engSmallGroupImg" src="" alt="Small group" onerror="this.style.display='none'">
                 </div>
                 <div class="engagement-content">
                     <span class="engagement-label">JOIN A SMALL GROUP</span>
@@ -203,10 +234,9 @@
                     </button>
                 </div>
             </div>
-
             <div class="engagement-card">
                 <div class="engagement-image">
-                    <img src="assets/images/engagement/volunteer.jpg" alt="Volunteering" onerror="this.style.background='#071E42'">
+                    <img id="engVolunteerImg" src="" alt="Volunteering" onerror="this.style.display='none'">
                 </div>
                 <div class="engagement-content">
                     <span class="engagement-label">GET INVOLVED</span>
@@ -217,10 +247,9 @@
                     </button>
                 </div>
             </div>
-
             <div class="engagement-card">
                 <div class="engagement-image">
-                    <img src="assets/images/engagement/newsletter.jpg" alt="Newsletter" onerror="this.style.background='#071E42'">
+                    <img id="engNewsletterImg" src="" alt="Newsletter" onerror="this.style.display='none'">
                 </div>
                 <div class="engagement-content">
                     <span class="engagement-label">STAY CONNECTED</span>
@@ -240,11 +269,75 @@
 <!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo-link">
+                    <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
+                    <div class="footer-logo-text">
+                        <span class="footer-the">THE</span>
+                        <span class="footer-bridge">BRIDGE</span>
+                        <span class="footer-calvary">CALVARY CHAPEL</span>
+                    </div>
+                </a>
+                <p id="footerTagline" style="font-size:12.5px;color:rgba(255,255,255,0.65);margin:12px 0;">Helping people find the perfect place to call home. You're invited and welcome.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="sermons.html">Sermons</a></li>
+                    <li><a href="events-announcements.html">Events</a></li>
+                    <li><a href="donations.html">Donations</a></li>
+                    <li><a href="donations.html#shopSection">Church Shop</a></li>
+                    <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone"></i><span id="footerPhone">+256 700 123 456</span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span id="footerEmail">info@bridgecalvary.org</span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span id="footerAddress">Kampala, Uganda</span></div>
+            </div>
+            <div class="footer-col">
+                <h4>Join Our Newsletter</h4>
+                <p style="font-size:11.5px;color:rgba(255,255,255,0.6);margin-bottom:6px;">Get updates directly in your inbox.</p>
+                <form class="footer-newsletter-form" id="footerNewsletter">
+                    <input type="email" placeholder="Your email address" required aria-label="Email">
+                    <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                </form>
+                <h4 style="margin-top:16px;">Follow Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
         <div class="footer-bottom">
             <p>&copy; <span id="currentYear">2025</span> Bridge Calvary Chapel. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <span class="divider">|</span>
+                <a href="#">Terms of Service</a>
+            </div>
         </div>
     </div>
 </footer>
+
+<!-- ===== FLOATING GIVE ===== -->
+<a href="donations.html" class="floating-give" aria-label="Give">
+    <i class="fas fa-heart"></i>
+    <span>GIVE</span>
+</a>
 
 <!-- ===== VIDEO MODAL ===== -->
 <div class="video-modal" id="videoModal" role="dialog" aria-modal="true">
@@ -259,16 +352,41 @@
     </div>
 </div>
 
-<!-- ===== CENTERED MODAL PANEL ===== -->
+<!-- ===== CENTERED MODAL PANEL (with optional top image) ===== -->
 <div class="modal-panel-overlay" id="modalOverlay"></div>
 <div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" aria-hidden="true">
     <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
         <i class="fas fa-times"></i>
     </button>
+    <div class="modal-panel-image" id="modalPanelImage" hidden>
+        <img id="modalPanelImg" src="" alt="">
+    </div>
     <div class="modal-panel-body" id="modalBody"></div>
 </div>
 
-<!-- ===== SCRIPTS ===== -->
+<!-- ===== ROTATING SHOP / DONATION POPUP ===== -->
+<div class="shop-popup-overlay" id="shopPopupOverlay" aria-hidden="true">
+    <div class="shop-popup" id="shopPopup" role="dialog" aria-modal="true" aria-label="Church promotion">
+        <button class="shop-popup-close" id="shopPopupClose" aria-label="Close" type="button">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="shop-popup-media" id="shopPopupMedia">
+            <span class="shop-popup-badge" id="shopPopupBadge">CHURCH SHOP</span>
+            <img id="shopPopupImage" src="" alt="Church promotion image">
+            <div class="shop-popup-placeholder" id="shopPopupPlaceholder"><i class="fas fa-shopping-bag"></i></div>
+            <span class="shop-popup-price" id="shopPopupPrice" hidden></span>
+        </div>
+        <div class="shop-popup-body">
+            <h3 id="shopPopupTitle">Discover the Bridge Church Shop</h3>
+            <p id="shopPopupMessage">Faith-inspired gifts that support our church ministry.</p>
+            <a href="donations.html#shopSection" class="btn btn-primary shop-popup-btn" id="shopPopupBtn">
+                Explore the Shop <i class="fas fa-arrow-right"></i>
+            </a>
+            <p class="shop-popup-note">You can close this anytime</p>
+        </div>
+    </div>
+</div>
+
 <script src="js/supabase.js"></script>
 <script src="js/main.js"></script>
 </body>

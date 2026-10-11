@@ -413,7 +413,6 @@ ul { list-style: none; }
 }
 .modal-panel.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
 
-/* Glowing ring around modal */
 .modal-panel::before {
     content: ''; position: absolute; inset: -2px;
     border-radius: 26px;
@@ -428,7 +427,6 @@ ul { list-style: none; }
     50% { background-position: 100% 50%; }
 }
 
-/* ---- Per-theme coloring of the modal glow + icon ---- */
 .modal-panel.theme-blue::before   { background: linear-gradient(135deg, rgba(8, 123, 255, 0.7), rgba(24, 200, 255, 0.5), rgba(11, 94, 215, 0.4)); }
 .modal-panel.theme-maroon::before { background: linear-gradient(135deg, rgba(200, 30, 60, 0.7), rgba(128, 14, 36, 0.6), rgba(255, 158, 181, 0.4)); }
 .modal-panel.theme-gold::before   { background: linear-gradient(135deg, rgba(244, 196, 48, 0.7), rgba(184, 134, 11, 0.6), rgba(255, 220, 100, 0.4)); }
@@ -510,7 +508,6 @@ ul { list-style: none; }
 }
 .modal-panel-scripture p { font-size: 14px; font-style: italic; color: var(--cyan); line-height: 1.7; margin: 0; }
 
-/* Panel highlights list */
 .panel-highlights { margin: 20px 0; }
 .panel-highlights-title {
     font-size: 13px; font-weight: 700; letter-spacing: 1.2px;
@@ -634,7 +631,7 @@ ul { list-style: none; }
 .empty-state { padding: 40px; text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 14px; grid-column: 1 / -1; }
 
 /* ============================================
-   RESPONSIVE
+   RESPONSIVE (existing)
    ============================================ */
 @media (max-width: 1024px) {
     .nav-menu { display: none; position: absolute; top: 76px; left: 0; right: 0; background: rgba(6, 21, 47, 0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 20px 24px; gap: 4px; border-top: 1px solid rgba(255, 255, 255, 0.08); }
@@ -694,4 +691,526 @@ ul { list-style: none; }
 
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ============================================================
+   HOMEPAGE ADDITIONS — append-only. Nothing above is overridden.
+   Announcement bar, nav search icon, shop promo card, devotion
+   banner, floating GIVE, shop popup, rich footer.
+   ============================================================ */
+
+/* -------- ANNOUNCEMENT BAR -------- */
+.announce-bar {
+    background: linear-gradient(90deg, #06152F 0%, #0B2545 100%);
+    color: #fff;
+    font-size: 12.5px;
+    border-bottom: 1px solid rgba(24,200,255,0.15);
+    position: relative;
+    z-index: 1001;
+}
+.announce-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 24px;
+    min-height: 36px;
+}
+.announce-left, .announce-right {
+    display: inline-flex; align-items: center; gap: 8px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.announce-left i, .announce-right i { color: #18C8FF; }
+.announce-right i { opacity: 0.8; }
+
+/* -------- NAV SEARCH ICON -------- */
+.nav-search-icon {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px; transition: all 0.3s; cursor: pointer;
+}
+.nav-search-icon:hover { background: rgba(24,200,255,0.18); color: #18C8FF; }
+
+/* -------- SHOP PROMO CARD (centered) -------- */
+.shop-promo-section {
+    padding: 60px 0;
+    background: var(--bg-gray);
+    position: relative;
+    z-index: 2;
+}
+.shop-promo-section .container {
+    display: flex;
+    justify-content: center;
+}
+.shop-card-inline {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    background: linear-gradient(160deg, #071E42 0%, #06152F 100%);
+    border: 1px solid rgba(24,200,255,0.45);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(24,200,255,0.28), 0 22px 55px rgba(6,21,47,0.4);
+    color: #fff;
+}
+.shop-card-media { height: 220px; overflow: hidden; background: #06152F; }
+.shop-card-media img { width: 100%; height: 100%; object-fit: cover; }
+.shop-card-body { padding: 24px 26px 28px; text-align: center; }
+.shop-card-body h3 { font-size: 22px; font-weight: 800; margin-bottom: 10px; color: #fff; }
+.shop-card-body p { font-size: 14px; color: rgba(255,255,255,0.72); margin-bottom: 18px; line-height: 1.6; }
+.shop-card-body .btn { width: 100%; justify-content: center; }
+.shop-card-note { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 12px; margin-bottom: 0; }
+.shop-card-close {
+    position: absolute; top: 14px; right: 14px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(0,0,0,0.55); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; cursor: pointer; z-index: 3; transition: all 0.3s;
+}
+.shop-card-close:hover { background: #18C8FF; color: #06152F; transform: rotate(90deg); }
+
+/* -------- DEVOTION BANNER -------- */
+.devotion-banner {
+    position: relative; padding: 60px 0; overflow: hidden;
+    background: linear-gradient(120deg, #06152F 0%, #0B2545 100%);
+    color: #fff; z-index: 2;
+}
+.devotion-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    opacity: 0.35;
+}
+.devotion-inner {
+    position: relative;
+    display: grid; grid-template-columns: 1.6fr 1fr;
+    gap: 32px; align-items: center;
+}
+.devotion-icon {
+    width: 54px; height: 54px; border-radius: 50%;
+    background: linear-gradient(135deg, #0B5ED7, #18C8FF);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 14px;
+    box-shadow: 0 0 30px rgba(24,200,255,0.5);
+}
+.devotion-label {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    color: #18C8FF; text-transform: uppercase; margin-bottom: 10px;
+}
+.devotion-title { font-size: clamp(1.4rem, 2.4vw, 2rem); font-weight: 800; margin-bottom: 12px; color: #fff; }
+.devotion-verse {
+    font-size: 15px; line-height: 1.7;
+    color: rgba(255,255,255,0.85);
+    border-left: 3px solid #18C8FF; padding-left: 16px;
+    margin-bottom: 12px; font-style: italic;
+}
+.devotion-desc { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.72); margin-bottom: 20px; }
+.btn-devotion {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px; border-radius: 50px;
+    background: linear-gradient(135deg, #0B5ED7, #087BFF);
+    color: #fff; font-size: 14px; font-weight: 600;
+    box-shadow: 0 6px 20px rgba(11,94,215,0.5);
+    transition: all 0.3s; cursor: pointer; border: none;
+}
+.btn-devotion:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(24,200,255,0.55); }
+.devotion-script {
+    font-family: var(--script);
+    font-size: 44px; line-height: 1.05;
+    color: rgba(24,200,255,0.75);
+    text-align: right;
+    text-shadow: 0 0 40px rgba(24,200,255,0.4);
+}
+
+/* -------- FLOATING GIVE -------- */
+.floating-give {
+    position: fixed; right: 22px; bottom: 22px; z-index: 998;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 22px;
+    background: linear-gradient(135deg, #D32F2F, #E53935);
+    color: #fff; font-weight: 700; font-size: 14px;
+    border-radius: 50px;
+    box-shadow: 0 8px 28px rgba(211,47,47,0.5), 0 0 40px rgba(229,57,53,0.35);
+    animation: floatPulse 3s ease-in-out infinite;
+    transition: all 0.3s;
+}
+.floating-give:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(211,47,47,0.65), 0 0 60px rgba(229,57,53,0.5);
+}
+.floating-give i { color: #FFD27A; }
+@keyframes floatPulse {
+    0%, 100% { box-shadow: 0 8px 28px rgba(211,47,47,0.5), 0 0 40px rgba(229,57,53,0.35); }
+    50%      { box-shadow: 0 8px 28px rgba(211,47,47,0.7), 0 0 60px rgba(229,57,53,0.55); }
+}
+
+/* -------- SHOP POPUP (FLOATING MODAL AD) -------- */
+.shop-popup-overlay {
+    position: fixed; inset: 0;
+    background: rgba(6,21,47,0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10050;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.shop-popup-overlay.active { opacity: 1; visibility: visible; }
+.shop-popup {
+    position: relative;
+    width: 100%; max-width: 500px;
+    background: linear-gradient(160deg, #071E42 0%, #06152F 100%);
+    border: 1px solid rgba(24,200,255,0.5);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(24,200,255,0.3), 0 30px 80px rgba(0,0,0,0.55);
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #fff;
+}
+.shop-popup-overlay.active .shop-popup { transform: scale(1); }
+.shop-popup-media { height: 220px; overflow: hidden; background: #06152F; }
+.shop-popup-media img { width: 100%; height: 100%; object-fit: cover; }
+.shop-popup-body { padding: 26px 26px 30px; text-align: center; }
+.shop-popup-body h3 { font-size: 22px; font-weight: 800; margin-bottom: 10px; color: #fff; }
+.shop-popup-body p { font-size: 14px; color: rgba(255,255,255,0.72); margin-bottom: 20px; line-height: 1.6; }
+.shop-popup-btn { width: 100%; justify-content: center; }
+.shop-popup-note { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 12px; margin-bottom: 0; }
+.shop-popup-close {
+    position: absolute; top: 14px; right: 14px;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(0,0,0,0.55); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px; cursor: pointer; z-index: 3; transition: all 0.3s;
+}
+.shop-popup-close:hover { background: #18C8FF; color: #06152F; transform: rotate(90deg); }
+
+/* -------- RICH FOOTER SUPPORT -------- */
+.footer-logo-link { display: inline-flex; align-items: center; gap: 12px; }
+.footer-logo { height: 46px; width: auto; border-radius: 6px; background: #fff; padding: 4px; }
+.footer-logo-text { display: flex; flex-direction: column; line-height: 1; color: #fff; }
+.footer-the { font-size: 9px; letter-spacing: 3px; opacity: 0.7; }
+.footer-bridge { font-size: 16px; font-weight: 900; letter-spacing: 1px; }
+.footer-calvary { font-size: 8px; letter-spacing: 2px; color: #18C8FF; margin-top: 2px; }
+.footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.2fr; gap: 32px; padding: 20px 0 30px; }
+.footer-col h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #fff; }
+.footer-col ul li { margin-bottom: 6px; }
+.footer-col ul li a { font-size: 13px; color: rgba(255,255,255,0.7); }
+.footer-col ul li a:hover { color: #18C8FF; }
+.footer-contact-item { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 8px; }
+.footer-contact-item i { color: #18C8FF; width: 14px; margin-top: 3px; }
+.footer-newsletter-form {
+    display: flex; gap: 4px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 50px; padding: 3px 3px 3px 14px;
+    margin-bottom: 6px;
+}
+.footer-newsletter-form input { flex: 1; background: transparent; border: none; color: #fff; font-size: 12px; outline: none; min-width: 0; }
+.footer-newsletter-form button { padding: 8px 14px; background: linear-gradient(135deg, #0B5ED7, #087BFF); color: #fff; border-radius: 50px; font-size: 12px; }
+.footer-social { display: flex; gap: 8px; flex-wrap: wrap; }
+.footer-social a {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 13px; transition: all 0.3s;
+}
+.footer-social a:hover { background: #18C8FF; color: #06152F; }
+.footer-bottom {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 12px; color: rgba(255,255,255,0.5); flex-wrap: wrap;
+}
+.footer-bottom-links a { color: rgba(255,255,255,0.6); margin: 0 4px; }
+.footer-bottom-links a:hover { color: #18C8FF; }
+.footer-bottom-links .divider { opacity: 0.3; }
+
+/* -------- RESPONSIVE FOR NEW SECTIONS ONLY -------- */
+@media (max-width: 1024px) {
+    .devotion-inner { grid-template-columns: 1fr; }
+    .devotion-script { text-align: center; font-size: 34px; }
+    .announce-inner { flex-direction: column; align-items: flex-start; gap: 4px; font-size: 11.5px; }
+    .announce-right { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 26px; }
+}
+@media (max-width: 768px) {
+    .floating-give { padding: 12px 18px; font-size: 13px; right: 16px; bottom: 16px; }
+    .shop-popup-body { padding: 22px 20px 26px; }
+    .shop-popup-media { height: 170px; }
+    .shop-card-media { height: 180px; }
+    .devotion-script { display: none; }
+    .footer-grid { grid-template-columns: 1fr !important; gap: 22px !important; }
+}
+@media (max-width: 480px) {
+    .floating-give span { display: none; }
+    .floating-give { padding: 14px; border-radius: 50%; }
+}
+/* Placeholder behind popup / card images so something always shows */
+.shop-popup-media,
+.shop-card-media { position: relative; }
+
+.shop-popup-media img,
+.shop-card-media img {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.shop-popup-placeholder,
+.shop-card-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #071E42 0%, #0B2545 100%);
+    color: #18C8FF;
+    font-size: 72px;
+    z-index: 1;
+}
+/* ============================================================
+   ROTATING POPUP — badge + price tag additions
+   ============================================================ */
+
+.shop-popup-media {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #071E42 0%, #0B2545 100%);
+}
+.shop-popup-media img {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.shop-popup-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 4;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #0B5ED7, #18C8FF);
+    box-shadow: 0 4px 14px rgba(24,200,255,0.5);
+}
+.shop-popup-badge.is-donation {
+    background: linear-gradient(135deg, #D32F2F, #E53935);
+    box-shadow: 0 4px 14px rgba(211,47,47,0.5);
+}
+.shop-popup-price {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    z-index: 4;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #06152F;
+    background: linear-gradient(135deg, #F4C430, #FFDC64);
+    box-shadow: 0 6px 20px rgba(244,196,48,0.55);
+}
+.shop-popup-price[hidden] { display: none; }
+
+/* Popup button color swap for donation cards */
+.shop-popup-btn.is-donation {
+    background: linear-gradient(135deg, #D32F2F, #E53935) !important;
+    box-shadow: 0 8px 28px rgba(211,47,47,0.5) !important;
+}
+.shop-popup-btn.is-donation:hover {
+    box-shadow: 0 12px 40px rgba(229,57,53,0.6) !important;
+}
+/* ============================================================
+   ROTATING POPUP — image + placeholder + badge + price
+   ============================================================ */
+
+.shop-popup-overlay {
+    position: fixed; inset: 0;
+    background: rgba(6,21,47,0.78);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10050;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.shop-popup-overlay.active { opacity: 1; visibility: visible; }
+
+.shop-popup {
+    position: relative;
+    width: 100%; max-width: 500px;
+    background: linear-gradient(160deg, #071E42 0%, #06152F 100%);
+    border: 1px solid rgba(24,200,255,0.5);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(24,200,255,0.3), 0 30px 80px rgba(0,0,0,0.55);
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    color: #fff;
+}
+.shop-popup-overlay.active .shop-popup { transform: scale(1); }
+
+.shop-popup-close {
+    position: absolute; top: 14px; right: 14px;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(0,0,0,0.55); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px; cursor: pointer; z-index: 5;
+    transition: all 0.3s; border: none;
+}
+.shop-popup-close:hover { background: #18C8FF; color: #06152F; transform: rotate(90deg); }
+
+/* ---- Media area: image with placeholder behind it ---- */
+.shop-popup-media {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #071E42 0%, #0B2545 100%);
+}
+
+.shop-popup-placeholder {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #18C8FF;
+    font-size: 88px;
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.shop-popup-media img {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    background: transparent;
+}
+
+/* ---- Badge over image (top-left) ---- */
+.shop-popup-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 4;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, #0B5ED7, #18C8FF);
+    box-shadow: 0 4px 14px rgba(24,200,255,0.5);
+}
+.shop-popup-badge.is-donation {
+    background: linear-gradient(135deg, #D32F2F, #E53935);
+    box-shadow: 0 4px 14px rgba(211,47,47,0.5);
+}
+
+/* ---- Price tag over image (bottom-right) ---- */
+.shop-popup-price {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    z-index: 4;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #06152F;
+    background: linear-gradient(135deg, #F4C430, #FFDC64);
+    box-shadow: 0 6px 20px rgba(244,196,48,0.55);
+}
+.shop-popup-price[hidden] { display: none; }
+
+/* ---- Body ---- */
+.shop-popup-body { padding: 26px 26px 30px; text-align: center; }
+.shop-popup-body h3 { font-size: 22px; font-weight: 800; margin-bottom: 10px; color: #fff; }
+.shop-popup-body p { font-size: 14px; color: rgba(255,255,255,0.72); margin-bottom: 20px; line-height: 1.6; }
+.shop-popup-btn { width: 100%; justify-content: center; }
+.shop-popup-btn.is-donation {
+    background: linear-gradient(135deg, #D32F2F, #E53935) !important;
+    box-shadow: 0 8px 28px rgba(211,47,47,0.5) !important;
+}
+.shop-popup-btn.is-donation:hover {
+    box-shadow: 0 12px 40px rgba(229,57,53,0.6) !important;
+}
+.shop-popup-note { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 12px; margin-bottom: 0; }
+
+@media (max-width: 768px) {
+    .shop-popup-media { height: 190px; }
+    .shop-popup-body { padding: 22px 20px 26px; }
+}
+/* ============================================================
+   MODAL PANEL — top image banner (full width, scrollable body)
+   ============================================================ */
+
+/* The panel itself must not clip — we want the body to scroll */
+.modal-panel {
+    display: flex;
+    flex-direction: column;
+    max-height: 88vh;
+}
+
+/* Full-width image banner at the top of the modal */
+.modal-panel-image {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    flex-shrink: 0;                    /* do not shrink — image stays at the top */
+    overflow: hidden;
+    background: linear-gradient(135deg, #0B2545 0%, #06152F 100%);
+    border-top-left-radius: 22px;      /* match the panel's rounded corners */
+    border-top-right-radius: 22px;
+}
+.modal-panel-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* The scrolling body below the image */
+.modal-panel-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    max-height: none;                  /* the panel now controls the max height */
+    padding: 32px 32px 32px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(24, 200, 255, 0.4) transparent;
+}
+.modal-panel-body::-webkit-scrollbar { width: 6px; }
+.modal-panel-body::-webkit-scrollbar-thumb {
+    background: rgba(24, 200, 255, 0.4);
+    border-radius: 6px;
+}
+
+/* When there is NO image banner, keep the original body padding */
+.modal-panel:not(:has(.modal-panel-image:not([hidden]))):not(.has-image) .modal-panel-body {
+    padding: 40px 36px 36px;
+}
+
+@media (max-width: 640px) {
+    .modal-panel-image { height: 160px; }
+    .modal-panel-body { padding: 24px 22px 24px; }
 }
