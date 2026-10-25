@@ -132,30 +132,49 @@
     </div>
 </section>
 
-<!-- ===== WHAT YOUR GIFT SUPPORTS ===== -->
+<!-- ===== TWO DONATION CARDS WITH IMAGES ===== -->
 <section class="categories-section" id="categoriesSection">
     <div class="container">
         <div class="section-header">
             <div class="section-header-left">
                 <div class="section-icon icon-blue"><i class="fas fa-gifts"></i></div>
                 <div>
-                    <span class="section-label" id="catLabel">WHAT YOUR GIFT SUPPORTS</span>
-                    <h2 class="section-title" id="catTitle">12 Categories</h2>
-                    <p class="section-desc" id="catDesc">Choose a ministry or area to support. Every gift makes a difference.</p>
+                    <span class="section-label">SUPPORT THE MINISTRY</span>
+                    <h2 class="section-title">How Would You Like to Give?</h2>
+                    <p class="section-desc">Give money or donate materials. Every gift makes a difference.</p>
                 </div>
-            </div>
-            <div class="header-controls">
-                <div class="search-input-wrap">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="catSearch" placeholder="Search donation categories...">
-                </div>
-                <span class="pill-count" id="catCount">12 Categories</span>
-                <button class="btn-donation-cart" id="donationCartBtn" type="button">
-                    <i class="fas fa-hand-holding-heart"></i> Donation Cart <span id="donationCartCount" class="dcc">0</span>
-                </button>
             </div>
         </div>
-        <div class="categories-grid" id="categoriesGrid"></div>
+
+        <div class="two-card-grid">
+            <!-- Card 1: Donate Money -->
+            <div class="main-donation-card card-monetary" onclick="openMonetaryDonation()" tabindex="0" role="button">
+                <div class="mdc-image">
+                    <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=800" alt="Monetary giving" onerror="this.style.display='none'">
+                    <div class="mdc-overlay"></div>
+                    <div class="mdc-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                </div>
+                <div class="mdc-body">
+                    <h3>Donate Money</h3>
+                    <p>Support our ministries, missions, and community outreach.</p>
+                    <button class="mdc-btn">Give Money <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Card 2: Donate Materials -->
+            <div class="main-donation-card card-material" onclick="openMaterialDonation()" tabindex="0" role="button">
+                <div class="mdc-image">
+                    <img src="https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?q=80&w=800" alt="Material donations" onerror="this.style.display='none'">
+                    <div class="mdc-overlay"></div>
+                    <div class="mdc-icon"><i class="fas fa-box-open"></i></div>
+                </div>
+                <div class="mdc-body">
+                    <h3>Donate Materials</h3>
+                    <p>Give Bibles, clothing, food, school supplies, or household goods.</p>
+                    <button class="mdc-btn">Donate Items <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -192,8 +211,9 @@
         </div>
 
         <div id="shopCategoryStrip"></div>
-
         <div class="products-grid" id="productsGrid"></div>
+        <!-- Hidden proxy — no visible effect, used only for safe share event delegation -->
+        <div id="shareProxy" style="display:none;" aria-hidden="true"></div>
     </div>
 </section>
 
@@ -293,7 +313,7 @@
 
 <!-- ===== MODAL ===== -->
 <div class="modal-overlay" id="modalOverlay"></div>
-<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" aria-hidden="true">
+<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" inert>
     <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
         <i class="fas fa-times"></i>
     </button>
@@ -302,7 +322,7 @@
 
 <!-- ===== CART DRAWER (PRODUCTS) ===== -->
 <div class="modal-overlay" id="cartOverlay"></div>
-<aside class="cart-drawer" id="cartDrawer" aria-hidden="true">
+<aside class="cart-drawer" id="cartDrawer" inert>
     <div class="cart-header">
         <h3><i class="fas fa-shopping-cart"></i> Your Cart <span id="cartCount" style="color:#49658A;font-size:12px;font-weight:600;margin-left:4px;"></span></h3>
         <button class="cart-close" id="cartClose" aria-label="Close cart" type="button"><i class="fas fa-times"></i></button>

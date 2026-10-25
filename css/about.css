@@ -885,3 +885,67 @@ ul { list-style: none; }
         transition-duration: 0.01ms !important;
     }
 }
+/* ============================================================
+   NAVBAR OVERRIDE — match dark navy navbar used on other pages
+   ============================================================ */
+.navbar {
+    background: rgba(6, 21, 47, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(24, 200, 255, 0.1);
+}
+.navbar .container { height: 76px; }
+.logo-img { height: 48px; background: #fff; padding: 4px; border-radius: 6px; }
+.logo-text { color: #fff; }
+.logo-the { color: #fff; }
+.logo-bridge { color: #fff; }
+.logo-calvary { color: #19D9FF; }
+
+.nav-link { color: rgba(255, 255, 255, 0.75); }
+.nav-link:hover { color: #fff; }
+.nav-link.active { color: #fff; font-weight: 600; }
+.nav-link.active::after {
+    background: #19D9FF;
+    box-shadow: 0 0 12px #19D9FF;
+}
+
+.nav-search-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+.nav-search-icon:hover { background: rgba(24, 200, 255, 0.18); color: #19D9FF; }
+
+.btn-give {
+    background: linear-gradient(135deg, #0B5ED7, #087BFF);
+    box-shadow: 0 4px 20px rgba(11, 94, 215, 0.4);
+}
+.btn-give:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(24, 200, 255, 0.5);
+}
+.btn-give i { color: #FF6B9D; }
+
+.nav-toggle { color: #fff; }
+
+@media (max-width: 1024px) {
+    .nav-menu {
+        background: rgba(6, 21, 47, 0.98);
+        top: 76px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav-link { color: rgba(255, 255, 255, 0.75); }
+    .nav-link.active {
+        background: rgba(8, 123, 255, 0.15);
+        color: #fff;
+    }
+}

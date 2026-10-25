@@ -889,3 +889,14 @@ ul { list-style: none; }
         transition-duration: 0.01ms !important;
     }
 }
+.sidebar-card-glow-blue {
+    background: linear-gradient(160deg, #F1F8FF 0%, #E3F1FF 100%) !important;
+    border-color: rgba(7, 139, 255, 0.35) !important;
+    animation: sidebarGlowBlue 4s ease-in-out infinite !important;
+}
+.sidebar-card-glow-purple {
+    background: linear-gradient(160deg, #F3F7FF 0%, #EDF2FF 100%) !important;
+    border-color: rgba(123, 47, 247, 0.30) !important;
+    animation: sidebarGlowPurple 4s ease-in-out infinite !important;
+    animation-delay: 2s !important;
+}

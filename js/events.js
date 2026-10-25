@@ -1,6 +1,6 @@
 // ============================================
 // EVENTS & ANNOUNCEMENTS — Bridge Calvary Chapel
-// File: js/events.js  (full)
+// File: js/events.js  (Polished)
 // ============================================
 
 var siteContent = {};
@@ -12,7 +12,8 @@ var currentDevotion = null;
 var CATEGORY_ICONS = {
     'Worship': 'fa-church', 'Bible Study': 'fa-bible', 'Youth': 'fa-users',
     'Prayer': 'fa-pray', 'Outreach': 'fa-hands-helping', 'Children': 'fa-child',
-    'Missions': 'fa-globe-africa', 'Special': 'fa-star', 'Maintenance': 'fa-broom'
+    'Missions': 'fa-globe-africa', 'Special': 'fa-star', 'Maintenance': 'fa-broom',
+    'General': 'fa-info-circle', 'Community': 'fa-hands-helping'
 };
 
 var SB_URL = 'https://mtmgvmvhgkoqjuhiqvsk.supabase.co/rest/v1/';
@@ -60,49 +61,74 @@ window.closeModal = function () {
 // ============================================
 function renderHero() {
     var h = siteContent.events_hero || {};
-    setText('heroEyebrow', h.eyebrow || 'BRIDGE CALVARY CHAPEL');
+    setText('heroEyebrow', h.eyebrow || 'EVENTS & ANNOUNCEMENTS');
+    setText('heroDesc', h.description || 'Join us as we worship, fellowship, grow, and serve together. Discover what\'s happening in the life of our church.');
+    
     var titleEl = document.getElementById('heroTitle');
     if (titleEl) {
-        var line1 = h.title_line1 || 'Events &';
-        var line2 = h.title_line2 || 'Announcements';
+        var line1 = h.title_line1 || "Stay Connected.";
+        var line2 = h.title_line2 || "Be Part of What's Next.";
         titleEl.innerHTML = escapeHtml(line1) + ' <span class="accent">' + escapeHtml(line2) + '</span>';
     }
-    setText('heroDesc', h.description || 'Stay connected with everything happening at Bridge Calvary Chapel. Join us for worship, fellowship, and community events.');
-    var verseEl = document.getElementById('heroVerse');
-    if (verseEl && h.verse_text) {
-        verseEl.innerHTML = escapeHtml(h.verse_text) + '<span class="verse-ref">' + escapeHtml(h.verse_reference || '') + '</span>';
-    } else if (verseEl) {
-        verseEl.innerHTML = '"Let us not give up meeting together, as some are in the habit of doing, but encouraging one another."<span class="verse-ref">— Hebrews 10:25</span>';
-    }
+    
     var url = secImg('events_hero');
     if (url) { var bg = document.getElementById('heroBg'); if (bg) bg.style.backgroundImage = 'url("' + url + '")'; }
 }
 
 // ============================================
-// CHURCH PROGRAMS
+// CHURCH PROGRAMS (Polished with specific layout)
 // ============================================
 function renderPrograms() {
     var grid = document.getElementById('programsGrid');
     if (!grid) return;
+    
+    // Fallback data if Supabase is empty to match your exact text requirements
     if (!allPrograms.length) {
-        grid.innerHTML = '<p class="empty-state">No programs available.</p>';
-        return;
+        allPrograms = [
+            {
+                id: 1, title: "Sunday Service", icon: "fa-church", accent: "",
+                image_url: "https://images.unsplash.com/photo-1438232992991-995b7058bbb3?q=80&w=600",
+                schedule: "First Service: 8:30 AM – 10:00 AM\nSecond Service: 10:30 AM – 12:00 noon",
+                location: "Main Sanctuary",
+                description: "Join us for worship, the Word, and fellowship."
+            },
+            {
+                id: 2, title: "Bible Study", icon: "fa-bible", accent: "maroon-accent",
+                image_url: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?q=80&w=600",
+                schedule: "Wednesday, 5:00 PM – 6:00 PM",
+                location: "Main Church",
+                description: "Deepen your understanding of the Scriptures in a small group setting."
+            },
+            {
+                id: 3, title: "Church Cleaning", icon: "fa-broom", accent: "gold-accent",
+                image_url: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?q=80&w=600",
+                schedule: "Saturday, 9:00 AM",
+                location: "Church Grounds",
+                description: "Help us maintain a welcoming and clean environment for worship."
+            }
+        ];
     }
+
     grid.innerHTML = allPrograms.map(function (p, idx) {
         var scheduleLines = (p.schedule || '').split('\n').filter(function (l) { return l.trim(); });
         var scheduleHTML = scheduleLines.map(function (line) {
             return '<div class="program-meta-item"><i class="fas fa-clock"></i><span>' + escapeHtml(line) + '</span></div>';
         }).join('');
-        return '<article class="program-card" data-program="' + idx + '">'
+        
+        var locationHTML = p.location ? '<div class="program-meta-item"><i class="fas fa-map-marker-alt"></i><span>' + escapeHtml(p.location) + '</span></div>' : '';
+        
+        var accentClass = p.accent || (idx === 0 ? '' : (idx === 1 ? 'maroon-accent' : 'gold-accent'));
+
+        return '<article class="program-card ' + accentClass + '" data-program="' + idx + '">'
             + '<div class="program-image">'
             +   '<img src="' + escapeHtml(p.image_url || '') + '" alt="' + escapeHtml(p.title || '') + '" onerror="this.style.display=\'none\'">'
             +   '<div class="program-icon-badge"><i class="fas ' + escapeHtml(p.icon || 'fa-calendar-alt') + '"></i></div>'
             + '</div>'
             + '<div class="program-body">'
             +   '<h3 class="program-title">' + escapeHtml(p.title) + '</h3>'
-            +   '<div class="program-meta">' + scheduleHTML + '</div>'
+            +   '<div class="program-meta">' + scheduleHTML + locationHTML + '</div>'
             +   '<p class="program-desc">' + escapeHtml(p.description || '') + '</p>'
-            +   '<button class="btn-join" type="button" data-join-program="' + idx + '"><i class="fas fa-user-plus"></i> Join</button>'
+            +   '<button class="btn-join" type="button" data-join-program="' + idx + '">View Details <i class="fas fa-arrow-right"></i></button>'
             + '</div>'
             + '</article>';
     }).join('');
@@ -111,7 +137,7 @@ function renderPrograms() {
         btn.addEventListener('click', function (e) {
             e.stopPropagation();
             var p = allPrograms[parseInt(btn.dataset.joinProgram, 10)];
-            if (p) openRegistrationPanel('Program', p.title);
+            if (p) openProgramDetails(p);
         });
     });
     grid.querySelectorAll('[data-program]').forEach(function (card) {
@@ -124,15 +150,20 @@ function renderPrograms() {
 
 function openProgramDetails(p) {
     if (!p) return;
+    var scheduleLines = (p.schedule || '').split('\n').filter(function(l){ return l.trim(); }).join('<br>');
     var html = ''
         + (p.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(p.image_url) + '" alt="" onerror="this.style.display=\'none\'">' : '')
         + '<div class="modal-content">'
         +   '<div class="modal-icon-wrapper"><i class="fas ' + escapeHtml(p.icon || 'fa-calendar-alt') + '"></i></div>'
         +   '<h2>' + escapeHtml(p.title) + '</h2>'
-        +   '<p class="modal-subtitle">' + escapeHtml(p.schedule || '') + '</p>'
+        +   '<div class="modal-meta-row">'
+        +     '<span><i class="fas fa-clock"></i> ' + scheduleLines + '</span>'
+        +     (p.location ? '<span><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(p.location) + '</span>' : '')
+        +   '</div>'
         +   '<p class="modal-description">' + escapeHtml(p.description || '') + '</p>'
+        +   '<p class="modal-description">We look forward to seeing you there! If you have any questions, please contact the church office.</p>'
         +   '<div class="modal-actions">'
-        +     '<button class="modal-btn modal-btn-primary" onclick="closeModal();openRegistrationPanel(\'Program\', \'' + escapeHtml(p.title).replace(/'/g, "\\'") + '\')" type="button"><i class="fas fa-user-plus"></i> Join This Program</button>'
+        +     '<button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button>'
         +   '</div>'
         + '</div>';
     openModal(html);
@@ -144,10 +175,17 @@ function openProgramDetails(p) {
 function renderEvents() {
     var grid = document.getElementById('eventsGrid');
     if (!grid) return;
+    
+    // Fallback events if Supabase is empty
     if (!allEvents.length) {
-        grid.innerHTML = '<p class="empty-state">No upcoming events.</p>';
-        return;
+        allEvents = [
+            { id: 1, month_label: "OCT", day_label: "12", title: "Youth Camp", category: "Youth", description: "A weekend of fun, faith, and fellowship for our youth." },
+            { id: 2, month_label: "OCT", day_label: "19", title: "Marriage Seminar", category: "Special", description: "Building strong, Christ-centered marriages." },
+            { id: 3, month_label: "OCT", day_label: "26", title: "Community Outreach", category: "Outreach", description: "Food distribution and prayer in the local community." },
+            { id: 4, month_label: "NOV", day_label: "02", title: "Baptism Sunday", category: "Special", description: "Celebrate new life in Christ with our baptism service." }
+        ];
     }
+
     grid.innerHTML = allEvents.map(function (e, idx) {
         var icon = getCategoryIcon(e.category);
         return '<article class="event-card" data-event="' + idx + '">'
@@ -226,7 +264,7 @@ function openEventDetails(e) {
 }
 
 // ============================================
-// REGISTRATION PANEL (used by programs AND events)
+// REGISTRATION PANEL
 // ============================================
 window.openRegistrationPanel = function (type, name) {
     var c = window.CHURCH_CONTACT || { whatsapp: '', email: '' };
@@ -238,7 +276,7 @@ window.openRegistrationPanel = function (type, name) {
         +   '<form id="regForm" class="modal-form">'
         +     '<input type="hidden" name="type" value="' + escapeHtml(type) + '">'
         +     '<input type="hidden" name="name_of_program" value="' + escapeHtml(name) + '">'
-        +     '<div class="form-group full"><label><i class="fas fa-tag"></i> Program / Event</label><input type="text" name="program_name" value="' + escapeHtml(name) + '" readonly style="background:#F1F8FF;color:#005BEA;font-weight:700;"></div>'
+        +     '<div class="form-group full"><label><i class="fas fa-tag"></i> Program / Event</label><input type="text" name="program_name" value="' + escapeHtml(name) + '" readonly style="background:#EAF4FF;color:#0B5ED7;font-weight:700;"></div>'
         +     '<div class="form-group full"><label><i class="fas fa-user"></i> Full Name <span class="req">*</span></label><input type="text" name="participant_name" required></div>'
         +     '<div class="form-group"><label><i class="fas fa-birthday-cake"></i> Age</label><input type="text" name="age" placeholder="e.g. 25"></div>'
         +     '<div class="form-group"><label><i class="fas fa-venus-mars"></i> Gender</label><select name="gender"><option value="">Select...</option><option value="Male">Male</option><option value="Female">Female</option><option value="Prefer not to say">Prefer not to say</option></select></div>'
@@ -321,34 +359,74 @@ window.openRegistrationPanel = function (type, name) {
 };
 
 // ============================================
-// DEVOTION
+// DEVOTION (Polished with Recommended By)
 // ============================================
 function renderDevotion() {
-    if (!currentDevotion) return;
+    if (!currentDevotion) {
+        currentDevotion = {
+            title: "Trust in the Lord with All Your Heart",
+            verse_text: "Trust in the Lord with all your heart and lean not on your own understanding; in all your ways submit to Him, and He will make your paths straight.",
+            verse_reference: "Proverbs 3:5-6",
+            reflection: "We face many decisions each day. Trusting God helps us surrender our plans and follow His wisdom.",
+            image_url: "https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?q=80&w=800",
+            recommender_name: "Pastor John Doe",
+            recommender_role: "Senior Pastor",
+            recommender_note: "This verse has carried me through many seasons."
+        };
+    }
+    
     setText('devotionTitle', currentDevotion.title);
     var verseEl = document.getElementById('devotionVerse');
-    if (verseEl) verseEl.innerHTML = escapeHtml(currentDevotion.verse_text || '') + '<span class="devotion-verse-ref">' + escapeHtml(currentDevotion.verse_reference || '') + '</span>';
+    if (verseEl) verseEl.innerHTML = escapeHtml(currentDevotion.verse_text || '') + '<span class="devotion-verse-ref">— ' + escapeHtml(currentDevotion.verse_reference || '') + '</span>';
     setText('devotionDesc', currentDevotion.reflection);
     var url = currentDevotion.image_url;
     if (url) { var bg = document.getElementById('devotionBg'); if (bg) bg.style.backgroundImage = 'url("' + url + '")'; }
 }
 
 function openDevotionPanel() {
-    if (!currentDevotion) { alert('Devotion coming soon.'); return; }
+    if (!currentDevotion) return;
+    
+    var recommenderHTML = '';
+    if (currentDevotion.recommender_name) {
+        recommenderHTML = ''
+            + '<div class="modal-section-label">Recommended by</div>'
+            + '<div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">'
+            +   '<div style="width:40px; height:40px; border-radius:50%; background:var(--royal-blue); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:bold;">' + escapeHtml(currentDevotion.recommender_name.charAt(0)) + '</div>'
+            +   '<div>'
+            +     '<p style="font-weight:700; font-size:14px; color:var(--text-navy); margin:0;">' + escapeHtml(currentDevotion.recommender_name) + '</p>'
+            +     '<p style="font-size:12px; color:var(--text-blue-gray); margin:0;">' + escapeHtml(currentDevotion.recommender_role || '') + '</p>'
+            +   '</div>'
+            + '</div>'
+            + (currentDevotion.recommender_note ? '<p style="font-size:13px; background:var(--pale-blue); padding:12px; border-radius:8px;">"' + escapeHtml(currentDevotion.recommender_note) + '"</p>' : '');
+    }
+
     var html = ''
         + (currentDevotion.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(currentDevotion.image_url) + '" alt="" onerror="this.style.display=\'none\'">' : '')
         + '<div class="modal-content">'
-        +   '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#F4C430,#D97706);"><i class="fas fa-book-bible"></i></div>'
+        +   '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#F4B942,#D97706);"><i class="fas fa-book-bible"></i></div>'
         +   '<h2>' + escapeHtml(currentDevotion.title) + '</h2>'
         +   '<p class="modal-subtitle">' + escapeHtml(currentDevotion.verse_reference || '') + '</p>'
         +   '<div class="modal-section-label">Verse</div>'
-        +   '<p style="font-style:italic;color:#041A3A;">' + escapeHtml(currentDevotion.verse_text || '') + '</p>'
+        +   '<p style="font-style:italic; color:var(--text-navy);">' + escapeHtml(currentDevotion.verse_text || '') + '</p>'
         +   '<div class="modal-section-label">Reflection</div>'
         +   '<p>' + escapeHtml(currentDevotion.reflection || '') + '</p>'
-        +   (currentDevotion.prayer ? '<div class="modal-section-label">Prayer</div><p>' + escapeHtml(currentDevotion.prayer) + '</p>' : '')
-        +   '<div class="modal-actions"><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button"><span>Close</span></button></div>'
+        +   recommenderHTML
+        +   '<div class="modal-actions">'
+        +     '<button class="modal-btn modal-btn-secondary" onclick="recommendDevotion()" type="button"><i class="fas fa-thumbs-up"></i> Recommend This</button>'
+        +     '<button class="modal-btn modal-btn-whatsapp" onclick="shareDevotionWhatsApp()" type="button"><i class="fab fa-whatsapp"></i> Share via WhatsApp</button>'
+        +   '</div>'
         + '</div>';
     openModal(html);
+}
+
+function recommendDevotion() {
+    alert("Thank you for recommending this devotion! (This will be saved to your database in production).");
+}
+
+function shareDevotionWhatsApp() {
+    if (!currentDevotion) return;
+    var text = 'Check out this devotion from Bridge Calvary Chapel:\n\n*' + currentDevotion.title + '*\n' + currentDevotion.verse_text + '\n\nRead more at: ' + window.location.href;
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
 // ============================================
@@ -361,22 +439,8 @@ function renderWeekly() {
     var today = new Date();
     var start = new Date(today); start.setDate(today.getDate() - today.getDay());
 
-    // Build day-to-program map
-    var dayPrograms = {
-        0: 'Worship Services',   // Sunday
-        3: 'Bible Study',        // Wednesday
-        4: 'Choir Practice',     // Thursday (optional)
-        5: 'Youth Fellowship',   // Friday (optional)
-        6: 'Community Outreach'  // Saturday
-    };
-    var dayTimes = {
-        0: '8:30 AM & 10:30 AM',
-        1: 'Open',
-        3: '5:00 PM',
-        4: '6:30 PM',
-        5: '6:30 PM',
-        6: '9:00 AM'
-    };
+    var dayPrograms = { 0: 'Worship Services', 3: 'Bible Study', 4: 'Choir Practice', 5: 'Youth Fellowship', 6: 'Community Outreach' };
+    var dayTimes = { 0: '8:30 AM & 10:30 AM', 1: 'Open', 3: '5:00 PM', 4: '6:30 PM', 5: '6:30 PM', 6: '9:00 AM' };
 
     grid.innerHTML = days.map(function (d, i) {
         var date = new Date(start); date.setDate(start.getDate() + i);
@@ -403,10 +467,16 @@ function renderWeekly() {
 function renderAnnouncements() {
     var carousel = document.getElementById('announcementsCarousel');
     if (!carousel) return;
+    
     if (!allAnnouncements.length) {
-        carousel.innerHTML = '<p style="padding:20px;color:#49658A;">No announcements yet.</p>';
-        return;
+        allAnnouncements = [
+            { id: 1, month_label: "OCT", day_label: "10", title: "New Church Website Launch", category: "General", category_class: "special", summary: "We are excited to launch our new website. Explore events, sermons, and more.", image_url: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=600" },
+            { id: 2, month_label: "OCT", day_label: "08", title: "Missions Trip Fundraiser", category: "Missions", category_class: "baptism", summary: "Help us send our team to Jinja. Every contribution makes a difference.", image_url: "https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?q=80&w=600" },
+            { id: 3, month_label: "OCT", day_label: "05", title: "Youth Retreat Registration", category: "Youth", category_class: "vbs", summary: "Registration is now open for the upcoming youth retreat. Limited spots available.", image_url: "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=600" },
+            { id: 4, month_label: "OCT", day_label: "01", title: "Food Drive Success", category: "Community", category_class: "worship", summary: "Thank you to everyone who donated. We collected over 500 items for local families.", image_url: "https://images.unsplash.com/photo-1593113646773-028c64a8f1b8?q=80&w=600" }
+        ];
     }
+
     carousel.innerHTML = allAnnouncements.map(function (a, idx) {
         var cat = (a.category_class || 'special').toLowerCase();
         return '<div class="announcement-card" data-ann="' + idx + '" tabindex="0" role="button">'
@@ -446,6 +516,12 @@ function openAnnouncementModal(a) {
             videoHTML = '<div class="modal-section-label">Watch</div><div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;"><video controls preload="metadata" style="width:100%;height:100%;"><source src="' + escapeHtml(a.video_url) + '" type="video/mp4"></video></div>';
         }
     }
+    
+    var destinationBtn = '';
+    if (a.destination_url) {
+        destinationBtn = '<a class="modal-btn modal-btn-primary" href="' + escapeHtml(a.destination_url) + '" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Read Full Announcement</a>';
+    }
+
     var html = ''
         + (a.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(a.image_url) + '" alt="" onerror="this.style.display=\'none\'">' : '')
         + '<div class="modal-content">'
@@ -457,7 +533,10 @@ function openAnnouncementModal(a) {
         +   '</div>'
         +   '<p class="modal-description">' + escapeHtml(a.full_content || a.summary || '') + '</p>'
         +   videoHTML
-        +   '<div class="modal-actions"><a class="modal-btn modal-btn-primary" href="events-contact.html"><i class="fas fa-envelope"></i> Contact Church</a></div>'
+        +   '<div class="modal-actions">'
+        +     destinationBtn
+        +     '<a class="modal-btn modal-btn-secondary" href="events-contact.html"><i class="fas fa-envelope"></i> Contact Church</a>'
+        +   '</div>'
         + '</div>';
     openModal(html);
 }
@@ -497,25 +576,21 @@ async function loadEventsData() {
         var content = await window.db.getSiteContent();
         siteContent = content || {};
 
-        // Load events from events table
         var eventsResp = await fetch(SB_URL + 'events?select=*&is_published=eq.true&order=display_order.asc&apikey=' + SB_KEY);
-        allEvents = await eventsResp.json();
-        if (!Array.isArray(allEvents)) allEvents = [];
+        var evData = await eventsResp.json();
+        if (Array.isArray(evData) && evData.length > 0) allEvents = evData;
 
-        // Load programs
         var progResp = await fetch(SB_URL + 'church_programs?select=*&is_published=eq.true&order=display_order.asc&apikey=' + SB_KEY);
-        allPrograms = await progResp.json();
-        if (!Array.isArray(allPrograms)) allPrograms = [];
+        var progData = await progResp.json();
+        if (Array.isArray(progData) && progData.length > 0) allPrograms = progData;
 
-        // Load devotion
         var devResp = await fetch(SB_URL + 'devotions?select=*&is_published=eq.true&limit=1&apikey=' + SB_KEY);
         var devs = await devResp.json();
-        currentDevotion = Array.isArray(devs) && devs.length ? devs[0] : null;
+        if (Array.isArray(devs) && devs.length > 0) currentDevotion = devs[0];
 
-        // Load announcements
         var annResp = await fetch(SB_URL + 'announcements?select=*&is_published=eq.true&order=display_order.asc&apikey=' + SB_KEY);
-        allAnnouncements = await annResp.json();
-        if (!Array.isArray(allAnnouncements)) allAnnouncements = [];
+        var annData = await annResp.json();
+        if (Array.isArray(annData) && annData.length > 0) allAnnouncements = annData;
 
         renderHero();
         renderPrograms();
@@ -527,8 +602,20 @@ async function loadEventsData() {
         renderShopPromo();
         renderFooter();
 
-        console.log('✅ Loaded: ' + allPrograms.length + ' programs, ' + allEvents.length + ' events, ' + allAnnouncements.length + ' announcements');
-    } catch (err) { console.error('❌ Load error:', err); }
+        console.log('✅ Loaded data');
+    } catch (err) {
+        console.error('❌ Load error:', err);
+        // Fallbacks render if load fails
+        renderHero();
+        renderPrograms();
+        renderEvents();
+        renderDevotion();
+        renderWeekly();
+        renderAnnouncements();
+        setupCarousel();
+        renderShopPromo();
+        renderFooter();
+    }
 }
 
 if (window.db) setTimeout(loadEventsData, 100);
@@ -542,7 +629,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('✅ events.js initialized');
 
     var navbar = document.getElementById('navbar');
-    if (navbar) window.addEventListener('scroll', function () { navbar.style.boxShadow = window.pageYOffset > 40 ? '0 8px 24px rgba(4,26,58,0.4)' : 'none'; }, { passive: true });
+    if (navbar) window.addEventListener('scroll', function () { navbar.style.boxShadow = window.pageYOffset > 40 ? '0 8px 24px rgba(6,21,47,0.4)' : 'none'; }, { passive: true });
 
     var navToggle = document.getElementById('navToggle');
     var navMenu = document.getElementById('navMenu');
