@@ -1,6 +1,6 @@
 // ============================================
 // DONATIONS + CHURCH SHOP — Bridge Calvary Chapel
-// File: js/donations.js  (full file, event delegation)
+// File: js/donations.js
 // ============================================
 
 var siteContent = {};
@@ -36,52 +36,276 @@ function parseGallery(raw) {
 }
 
 // ============================================
-// SHARE PRODUCT
+// LOGO & RECEIPT CANVAS
 // ============================================
-function getProductUrl(p) {
-    return SHOP_URL_BASE + '?product=' + encodeURIComponent(p.id);
+var LOGO_SVG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">' +
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#005BEA"/><stop offset="1" stop-color="#12D8F5"/></linearGradient></defs>' +
+    '<circle cx="60" cy="60" r="58" fill="url(#g)"/>' +
+    '<circle cx="60" cy="60" r="50" fill="#031B43"/>' +
+    '<text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="56" font-weight="900" fill="#ffffff">✝</text>' +
+    '</svg>'
+);
+
+function loadImage(src) {
+    return new Promise(function (resolve) {
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function () { resolve(img); };
+        img.onerror = function () { resolve(null); };
+        img.src = src;
+    });
 }
 
-async function shareProduct(p, useNative) {
-    var url = getProductUrl(p);
-    var text = p.name + ' — ' + money(p.price) + ' · Bridge Calvary Chapel Store';
-    if (useNative && navigator.share) {
-        try {
-            await navigator.share({ title: p.name, text: text, url: url });
-            return;
-        } catch (e) { /* user cancelled */ }
+async function drawReceiptToCanvas(receipt, items, total, customerName, status) {
+    var isConfirmed = status === 'confirmed';
+    var W = 760;
+    var pad = 44;
+    var rowH = 90;
+    var extra = isConfirmed ? 100 : 60;
+    var H = pad + 170 + 40 + (items.length * rowH) + 110 + extra + pad;
+
+    var canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    var ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#031B43'; ctx.fillRect(0, 0, W, 130);
+
+    var logo = await loadImage(LOGO_SVG);
+    if (logo) { ctx.drawImage(logo, pad, 26, 76, 76); }
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = 'bold 24px Arial, sans-serif';
+    ctx.fillText('THE BRIDGE', pad + 92, 58);
+    ctx.font = 'bold 15px Arial, sans-serif';
+    ctx.fillText('CALVARY CHAPEL', pad + 92, 80);
+    ctx.font = '11px Arial, sans-serif';
+    ctx.fillStyle = '#12D8F5';
+    ctx.fillText(isConfirmed ? 'OFFICIAL CONFIRMED RECEIPT' : 'ORDER RECEIPT — PENDING', pad + 92, 100);
+
+    var badgeColor = isConfirmed ? '#16A34A' : '#F4C430';
+    var badgeText = isConfirmed ? 'CONFIRMED' : 'PENDING';
+    var badgeW = 140, badgeH = 42;
+    var bx = W - pad - badgeW, by = 44;
+    ctx.fillStyle = badgeColor;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(bx, by, badgeW, badgeH, 21);
+    else ctx.rect(bx, by, badgeW, badgeH);
+    ctx.fill();
+    ctx.fillStyle = isConfirmed ? '#FFFFFF' : '#3B1F00';
+    ctx.font = 'bold 16px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(badgeText, bx + badgeW / 2, by + 27);
+    ctx.textAlign = 'left';
+
+    var y = 160;
+    ctx.fillStyle = '#031B43'; ctx.font = 'bold 14px Arial, sans-serif'; ctx.fillText('Receipt No:', pad, y);
+    ctx.font = 'bold 15px Arial, sans-serif'; ctx.fillStyle = '#005BEA'; ctx.fillText(receipt.receiptNo, pad + 100, y);
+
+    ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#49658A'; ctx.textAlign = 'right';
+    ctx.fillText('Date: ' + receipt.date, W - pad, y); ctx.textAlign = 'left';
+
+    y += 24;
+    ctx.font = 'bold 12px Arial, sans-serif'; ctx.fillStyle = '#031B43'; ctx.fillText('CUSTOMER', pad, y);
+    y += 20;
+    ctx.font = '14px Arial, sans-serif'; ctx.fillStyle = '#041A3A'; ctx.fillText(customerName || 'Walk-in Customer', pad, y);
+
+    ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#49658A'; ctx.textAlign = 'right';
+    ctx.fillText('Order Ref: ' + receipt.orderRef, W - pad, y); ctx.textAlign = 'left';
+
+    y += 22;
+    ctx.strokeStyle = '#CBE8FF'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
+
+    y += 26;
+    ctx.fillStyle = '#005BEA'; ctx.font = 'bold 12px Arial, sans-serif';
+    ctx.fillText('ITEMS', pad, y); ctx.textAlign = 'right'; ctx.fillText('AMOUNT', W - pad, y); ctx.textAlign = 'left';
+
+    var thumbs = await Promise.all(items.map(function (it) { return it.image_url ? loadImage(it.image_url) : Promise.resolve(null); }));
+
+    items.forEach(function (it, i) {
+        var thumb = thumbs[i];
+        var thumbX = pad;
+        var thumbY = y + 6;
+        var thumbSize = 52;
+
+        if (thumb) {
+            ctx.save();
+            ctx.beginPath();
+            if (ctx.roundRect) ctx.roundRect(thumbX, thumbY, thumbSize, thumbSize, 6);
+            else ctx.rect(thumbX, thumbY, thumbSize, thumbSize);
+            ctx.clip();
+            ctx.drawImage(thumb, thumbX, thumbY, thumbSize, thumbSize);
+            ctx.restore();
+            ctx.strokeStyle = '#CBE8FF'; ctx.lineWidth = 1;
+            ctx.strokeRect(thumbX, thumbY, thumbSize, thumbSize);
+        }
+
+        var textX = pad + (thumb ? thumbSize + 12 : 0);
+
+        y += 32;
+        ctx.fillStyle = '#041A3A'; ctx.font = 'bold 14px Arial, sans-serif';
+        ctx.fillText(it.name, textX, y);
+        ctx.textAlign = 'right'; ctx.fillText(money(it.price * it.qty), W - pad, y); ctx.textAlign = 'left';
+        y += 18;
+        ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#49658A';
+        var v = (it.size ? 'Size ' + it.size + ' ' : '') + (it.color ? '· ' + it.color + ' ' : '') + '· Qty ' + it.qty;
+        ctx.fillText(v, textX, y);
+
+        y += thumb ? 20 : 0;
+    });
+
+    y += 32;
+    ctx.strokeStyle = '#031B43'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
+    y += 30;
+    ctx.fillStyle = '#031B43'; ctx.font = 'bold 18px Arial, sans-serif'; ctx.fillText('TOTAL', pad, y);
+    ctx.fillStyle = '#005BEA'; ctx.font = 'bold 22px Arial, sans-serif';
+    ctx.textAlign = 'right'; ctx.fillText(money(total), W - pad, y); ctx.textAlign = 'left';
+
+    y += 42;
+    if (isConfirmed) {
+        ctx.strokeStyle = '#CBE8FF'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
+        y += 26;
+        ctx.fillStyle = '#031B43'; ctx.font = 'bold 12px Arial, sans-serif'; ctx.fillText('CONFIRMED BY (Church Office)', pad, y);
+        y += 34;
+        ctx.strokeStyle = '#041A3A';
+        ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad + 280, y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(W - pad - 200, y); ctx.lineTo(W - pad, y); ctx.stroke();
+        ctx.font = '10px Arial, sans-serif'; ctx.fillStyle = '#49658A';
+        ctx.fillText('Signature', pad, y + 14); ctx.fillText('Date / Stamp', W - pad - 200, y + 14);
+    } else {
+        ctx.fillStyle = '#92600A'; ctx.font = 'italic 11px Arial, sans-serif';
+        ctx.fillText('Pending confirmation — this is not yet a final receipt.', pad, y);
+        ctx.fillStyle = '#49658A'; y += 20; ctx.font = '10.5px Arial, sans-serif';
+        ctx.fillText('Bring this receipt to the church to collect your items.', pad, y);
     }
-    showShareMenu(p, url);
+
+    y += 30;
+    ctx.fillStyle = '#49658A'; ctx.font = '11px Arial, sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('The Bridge Calvary Chapel — Jinja, Uganda', W / 2, y);
+    y += 16; ctx.fillText('Thank you for your order. God bless you.', W / 2, y); ctx.textAlign = 'left';
+
+    return canvas;
 }
 
-function showShareMenu(p, url) {
+function downloadReceiptImage(canvas, filename) {
+    var link = document.createElement('a');
+    link.download = filename;
+    link.href = canvas.toDataURL('image/png');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+async function shareReceiptImage(canvas, filename) {
+    if (!navigator.share || !navigator.canShare) {
+        downloadReceiptImage(canvas, filename);
+        showToast('Receipt downloaded — attach it in WhatsApp.');
+        return;
+    }
+    try {
+        var blob = await new Promise(function (resolve) { canvas.toBlob(resolve, 'image/png'); });
+        var file = new File([blob], filename, { type: 'image/png' });
+        if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: 'Receipt', text: 'My order from Bridge Calvary Chapel' });
+        } else {
+            downloadReceiptImage(canvas, filename);
+            showToast('Receipt downloaded.');
+        }
+    } catch (e) { downloadReceiptImage(canvas, filename); }
+}
+
+// ============================================
+// PRODUCT SHARING — WhatsApp / Facebook / Instagram / TikTok
+// ============================================
+function getProductUrl(p) { return SHOP_URL_BASE + '?product=' + encodeURIComponent(p.id); }
+
+// Download image helper for Instagram/TikTok manual posting
+async function downloadProductImage(p) {
+    if (!p.image_url) { showToast('No image to download'); return; }
+    try {
+        var img = await loadImage(p.image_url);
+        if (!img) throw new Error('Could not load');
+        var canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        downloadReceiptImage(canvas, (p.name || 'product').replace(/[^\w]+/g, '_') + '.jpg');
+        showToast('Image saved! Now post it on Instagram or TikTok.');
+    } catch (e) {
+        window.open(p.image_url, '_blank');
+    }
+}
+
+// Show the full share menu with all platforms
+function shareProductMenu(p) {
     var html = '<div class="modal-content">'
         + '<div class="modal-icon-wrapper"><i class="fas fa-share-alt"></i></div>'
         + '<h2>Share This Product</h2>'
-        + '<p style="font-size:12.5px;">Send to a friend so they can view and buy it too.</p>'
+        + '<p style="font-size:12.5px;color:#49658A;margin-bottom:16px;">Choose a platform. WhatsApp and Facebook show the image preview. Instagram and TikTok require posting the image manually from your phone.</p>'
+
+        // WhatsApp row
         + '<div class="share-row">'
-        +   '<button class="share-btn whatsapp" id="shWhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button>'
-        +   '<button class="share-btn" id="shFacebook"><i class="fab fa-facebook-f"></i> Facebook</button>'
+        +   '<button class="share-btn whatsapp" id="shWa"><i class="fab fa-whatsapp"></i> WhatsApp</button>'
+        +   '<button class="share-btn" id="shFb"><i class="fab fa-facebook-f"></i> Facebook</button>'
         + '</div>'
+
+        // Instagram + TikTok row — download image then open app
         + '<div class="share-row">'
-        +   '<button class="share-btn" id="shEmail"><i class="fas fa-envelope"></i> Email</button>'
+        +   '<button class="share-btn" id="shIg"><i class="fab fa-instagram"></i> Instagram</button>'
+        +   '<button class="share-btn" id="shTt"><i class="fab fa-tiktok"></i> TikTok</button>'
+        + '</div>'
+
+        // Email + copy row
+        + '<div class="share-row">'
+        +   '<button class="share-btn" id="shEmail"><i class="fas fa-envelope"></i> Gmail</button>'
         +   '<button class="share-btn primary" id="shCopy"><i class="fas fa-link"></i> Copy Link</button>'
         + '</div>'
-        + '<div class="modal-actions">'
-        +   '<button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button>'
-        + '</div>'
+
+        + '<p style="font-size:10.5px;color:#49658A;text-align:center;margin-top:12px;">For Instagram/TikTok, the image is downloaded first — then open the app and create your post with it.</p>'
+        + '<div class="modal-actions"><button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button></div>'
         + '</div>';
     openModal(html);
-    document.getElementById('shWhatsApp').addEventListener('click', function () {
-        var t = p.name + ' — ' + money(p.price) + '\n\n' + url;
-        window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank');
+
+    var url = getProductUrl(p);
+    var text = p.name + ' — ' + money(p.price) + '\n\n' + url;
+
+    // WhatsApp — open with text + link (image preview appears via OG tags)
+    document.getElementById('shWa').addEventListener('click', function () {
+        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
     });
-    document.getElementById('shFacebook').addEventListener('click', function () {
+
+    // Facebook — open share dialog (image preview via OG tags)
+    document.getElementById('shFb').addEventListener('click', function () {
         window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank');
     });
-    document.getElementById('shEmail').addEventListener('click', function () {
-        window.location.href = 'mailto:?subject=' + encodeURIComponent(p.name) + '&body=' + encodeURIComponent(url);
+
+    // Instagram — download image, then open Instagram app/website
+    document.getElementById('shIg').addEventListener('click', async function () {
+        await downloadProductImage(p);
+        setTimeout(function () {
+            window.open('https://www.instagram.com/', '_blank');
+        }, 600);
     });
+
+    // TikTok — download image, then open TikTok
+    document.getElementById('shTt').addEventListener('click', async function () {
+        await downloadProductImage(p);
+        setTimeout(function () {
+            window.open('https://www.tiktok.com/', '_blank');
+        }, 600);
+    });
+
+    // Gmail
+    document.getElementById('shEmail').addEventListener('click', function () {
+        window.open('https://mail.google.com/mail/?view=cm&fs=1&su=' + encodeURIComponent(p.name) + '&body=' + encodeURIComponent(text), '_blank');
+    });
+
+    // Copy link
     document.getElementById('shCopy').addEventListener('click', function () {
         copyProductLink(encodeURIComponent(url));
     });
@@ -90,16 +314,12 @@ function showShareMenu(p, url) {
 function copyProductLink(encodedUrl) {
     var url = decodeURIComponent(encodedUrl);
     if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(function () {
-            showToast('Link copied!');
-            closeModal();
-        });
+        navigator.clipboard.writeText(url).then(function () { showToast('Link copied!'); closeModal(); });
     } else {
         var inp = document.createElement('input');
         inp.value = url; document.body.appendChild(inp); inp.select();
         document.execCommand('copy'); inp.remove();
-        showToast('Link copied!');
-        closeModal();
+        showToast('Link copied!'); closeModal();
     }
 }
 
@@ -126,17 +346,13 @@ window.closeModal = function () {
     var overlay = document.getElementById('modalOverlay');
     var panel = document.getElementById('modalPanel');
     if (!panel) return;
-    if (document.activeElement && panel.contains(document.activeElement)) {
-        document.activeElement.blur();
-    }
+    if (document.activeElement && panel.contains(document.activeElement)) document.activeElement.blur();
     overlay.classList.remove('active');
     panel.classList.remove('active');
     panel.setAttribute('inert', '');
     var cartEl = document.getElementById('cartDrawer');
     if (!cartEl || !cartEl.classList.contains('active')) document.body.style.overflow = '';
-    if (modalLastFocused && typeof modalLastFocused.focus === 'function') {
-        try { modalLastFocused.focus(); } catch (e) {}
-    }
+    if (modalLastFocused && typeof modalLastFocused.focus === 'function') { try { modalLastFocused.focus(); } catch (e) {} }
     modalLastFocused = null;
 };
 
@@ -175,14 +391,13 @@ function renderHero() {
     } else if (titleEl) {
         titleEl.innerHTML = 'Give &amp; Support the <span class="accent">Ministry</span>';
     }
-    setText('heroVerse', h.verse || '"Each of you should give what you have decided in your heart to give... for God loves a cheerful giver." — 2 Corinthians 9:7');
+    setText('heroVerse', h.verse || '"Each of you should give what you have decided in your heart to give..." — 2 Corinthians 9:7');
     setText('heroDesc', h.description || 'Your generous gifts help us serve people, spread the Gospel, and meet real community needs.');
     var url = secImg('donations_hero');
     if (url) { var bg = document.getElementById('heroBg'); if (bg) bg.style.backgroundImage = 'url("' + url + '")'; }
     var statsHTML = '';
     for (var i = 1; i <= 3; i++) {
-        var num = h['stat' + i + '_number'];
-        var lbl = h['stat' + i + '_label'];
+        var num = h['stat' + i + '_number']; var lbl = h['stat' + i + '_label'];
         if (!num) continue;
         var icon = i === 1 ? 'fa-users' : (i === 2 ? 'fa-people-group' : 'fa-church');
         statsHTML += '<div class="hero-stat-row"><div class="hero-stat-icon"><i class="fas ' + icon + '"></i></div><div class="hero-stat-content"><span class="hero-stat-num">' + escapeHtml(num) + '</span><span class="hero-stat-lbl">' + escapeHtml(lbl || '') + '</span></div></div>';
@@ -191,7 +406,7 @@ function renderHero() {
 }
 
 // ============================================
-// DIRECT GIVING (with safe defaults)
+// DIRECT GIVING
 // ============================================
 function renderDirectGiving() {
     var d = siteContent.donations_bank || {};
@@ -203,7 +418,7 @@ function renderDirectGiving() {
     var bankName = d.bank_name || 'Stanbic Bank Uganda';
     var accountName = d.account_name || 'Bridge Calvary Chapel';
     var accountNum = d.account_number || '903001234567';
-    var branch = d.branch || 'Kampala Main Branch';
+    var branch = d.branch || 'Jinja Main Branch';
     var swift = d.swift || 'SBICUGKA';
     var bankNote = d.note || 'Use "Donation - [Your Name]" as the reference.';
     var mobileNum = d.mobile_number || '+256 785 228 381';
@@ -267,7 +482,7 @@ function filterProducts() {
 }
 
 // ============================================
-// PRODUCTS — event delegation
+// PRODUCTS
 // ============================================
 function renderProducts() {
     var grid = document.getElementById('productsGrid');
@@ -309,19 +524,17 @@ function renderProducts() {
 function handleProductGridClick(e) {
     var shareBtn = e.target.closest('.product-share-btn');
     if (shareBtn) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         var pid = shareBtn.getAttribute('data-share-id');
         var p = allProducts.find(function (x) { return String(x.id) === String(pid); });
-        if (p) shareProduct(p, true);
+        if (p) shareProductMenu(p);
         return;
     }
     var favBtn = e.target.closest('.product-fav');
     if (favBtn) { e.preventDefault(); e.stopPropagation(); return; }
     var addBtn = e.target.closest('.btn-add-cart');
     if (addBtn) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault(); e.stopPropagation();
         var card = addBtn.closest('.product-card');
         if (card) openCardProduct(card);
         return;
@@ -358,8 +571,13 @@ function openProductPanel(p) {
     }
     var sizesHTML = sizes.length ? '<div class="modal-section-label">Size</div><div class="modal-option-row" id="sizeRow">'
         + sizes.map(function (s) { return '<button class="modal-option-btn" type="button" data-size="' + escapeHtml(s) + '">' + escapeHtml(s) + '</button>'; }).join('') + '</div>' : '';
+
     var colorsHTML = colors.length ? '<div class="modal-section-label">Color</div><div class="modal-option-row" id="colorRow">'
-        + colors.map(function (c) { return '<button class="modal-option-btn" type="button" data-color="' + escapeHtml(c) + '">' + escapeHtml(c) + '</button>'; }).join('') + '</div>' : '';
+        + colors.map(function (c) { 
+            var colorCode = c.toLowerCase() === 'red' ? '#FF0000' : c.toLowerCase() === 'blue' ? '#0000FF' : c.toLowerCase() === 'green' ? '#008000' : c.toLowerCase() === 'black' ? '#000000' : c.toLowerCase() === 'white' ? '#FFFFFF' : c;
+            return '<button class="modal-option-btn color-swatch" style="background-color: ' + colorCode + ';" type="button" data-color="' + escapeHtml(c) + '" title="' + escapeHtml(c) + '"></button>'; 
+        }).join('') + '</div>' : '';
+
     var galleryHTML;
     if (gallery.length > 1) {
         galleryHTML = '<div class="product-gallery"><div class="gallery-thumbs">' + thumbsHTML + '</div><div class="gallery-main"><img id="galleryMainImg" src="' + escapeHtml(gallery[0]) + '" alt="" onerror="this.style.display=\'none\'"></div></div>';
@@ -391,7 +609,6 @@ function openProductPanel(p) {
             if (mainImg) mainImg.src = gallery[idx];
         });
     });
-
     if (sizes.length) {
         var sizeBtns = document.querySelectorAll('#sizeRow .modal-option-btn');
         sizeBtns.forEach(function (b) {
@@ -414,10 +631,8 @@ function openProductPanel(p) {
             });
         });
     }
-
     document.getElementById('qtyMinus').addEventListener('click', function () { if (qty > 1) { qty--; setText('qtyValue', qty); } });
     document.getElementById('qtyPlus').addEventListener('click', function () { qty++; setText('qtyValue', qty); });
-
     document.getElementById('btnAddProduct').addEventListener('click', function () {
         if (sizes.length && !selectedSize) { alert('Please choose a size.'); return; }
         if (colors.length && !selectedColor) { alert('Please choose a color.'); return; }
@@ -425,13 +640,8 @@ function openProductPanel(p) {
         closeModal();
         setTimeout(openCart, 300);
     });
-
-    document.getElementById('sharePanelBtn').addEventListener('click', function () {
-        shareProduct(p, true);
-    });
-    document.getElementById('copyLinkBtn').addEventListener('click', function () {
-        copyProductLink(encodeURIComponent(getProductUrl(p)));
-    });
+    document.getElementById('sharePanelBtn').addEventListener('click', function () { shareProductMenu(p); });
+    document.getElementById('copyLinkBtn').addEventListener('click', function () { copyProductLink(encodeURIComponent(getProductUrl(p))); });
 }
 
 // ============================================
@@ -495,7 +705,7 @@ window.closeCart = function () {
 };
 
 // ============================================
-// ORDER REFERENCE
+// ORDER REFERENCE + RECEIPT NUMBERS
 // ============================================
 function generateOrderRef() {
     var d = new Date();
@@ -503,118 +713,16 @@ function generateOrderRef() {
     var rand = Math.random().toString(36).substring(2, 6).toUpperCase();
     return 'TBCC-' + ymd + '-' + rand;
 }
-
-// ============================================
-// RECEIPT IMAGE
-// ============================================
-function drawReceiptToCanvas(orderRef, orderDate, items, total, customerName) {
-    var W = 720;
-    var pad = 40;
-    var H = pad + 120 + 40 + (items.length * 60) + 100 + 80 + 80 + pad;
-    var canvas = document.createElement('canvas');
-    canvas.width = W;
-    canvas.height = H;
-    var ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = '#031B43';
-    ctx.fillRect(0, 0, W, 100);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 26px Arial, sans-serif';
-    ctx.fillText('THE BRIDGE CALVARY CHAPEL', pad, 45);
-    ctx.font = '13px Arial, sans-serif';
-    ctx.fillStyle = '#12D8F5';
-    ctx.fillText('OFFICIAL ORDER RECEIPT', pad, 70);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 16px Arial, sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(orderRef, W - pad, 45);
-    ctx.font = '11px Arial, sans-serif';
-    ctx.fillStyle = '#B9E2FF';
-    ctx.fillText(orderDate, W - pad, 70);
-    ctx.textAlign = 'left';
-    var y = 130;
-    ctx.fillStyle = '#031B43';
-    ctx.font = 'bold 14px Arial, sans-serif';
-    ctx.fillText('CUSTOMER', pad, y);
-    y += 22;
-    ctx.font = '13px Arial, sans-serif';
-    ctx.fillStyle = '#49658A';
-    ctx.fillText(customerName || '—', pad, y);
-    y += 24;
-    ctx.strokeStyle = '#CBE8FF';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
-    y += 26;
-    ctx.fillStyle = '#005BEA';
-    ctx.font = 'bold 12px Arial, sans-serif';
-    ctx.fillText('ITEMS', pad, y);
-    ctx.textAlign = 'right';
-    ctx.fillText('AMOUNT', W - pad, y);
-    ctx.textAlign = 'left';
-    items.forEach(function (it) {
-        y += 32;
-        ctx.fillStyle = '#041A3A';
-        ctx.font = 'bold 14px Arial, sans-serif';
-        ctx.fillText(it.name, pad, y);
-        ctx.textAlign = 'right';
-        ctx.fillText(money(it.price * it.qty), W - pad, y);
-        ctx.textAlign = 'left';
-        y += 18;
-        ctx.font = '11px Arial, sans-serif';
-        ctx.fillStyle = '#49658A';
-        var v = (it.size ? 'Size ' + it.size + ' ' : '') + (it.color ? '· ' + it.color + ' ' : '') + '· Qty ' + it.qty;
-        ctx.fillText(v, pad, y);
-    });
-    y += 32;
-    ctx.strokeStyle = '#031B43';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
-    y += 30;
-    ctx.fillStyle = '#031B43';
-    ctx.font = 'bold 18px Arial, sans-serif';
-    ctx.fillText('TOTAL', pad, y);
-    ctx.fillStyle = '#005BEA';
-    ctx.font = 'bold 22px Arial, sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(money(total), W - pad, y);
-    ctx.textAlign = 'center';
-    y += 40;
-    ctx.fillStyle = '#49658A';
-    ctx.font = '11px Arial, sans-serif';
-    ctx.fillText('Thank you for supporting Bridge Calvary Chapel', W / 2, y);
-    y += 18;
-    ctx.fillText('Status: PENDING — Please complete payment to confirm.', W / 2, y);
-    return canvas;
-}
-function downloadReceiptImage(canvas, filename) {
-    var link = document.createElement('a');
-    link.download = filename;
-    link.href = canvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-async function shareReceiptImage(canvas, orderRef) {
-    if (!navigator.share || !navigator.canShare) {
-        downloadReceiptImage(canvas, orderRef + '.png');
-        showToast('Receipt downloaded.');
-        return;
-    }
-    try {
-        var blob = await new Promise(function (resolve) { canvas.toBlob(resolve, 'image/png'); });
-        var file = new File([blob], orderRef + '.png', { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: 'Receipt ' + orderRef, text: 'My order from Bridge Calvary Chapel' });
-        } else {
-            downloadReceiptImage(canvas, orderRef + '.png');
-            showToast('Receipt downloaded.');
-        }
-    } catch (e) { downloadReceiptImage(canvas, orderRef + '.png'); }
+function generateReceiptNumber(orderRef, status) {
+    var prefix = status === 'confirmed' ? 'RCPT-CONF-' : 'RCPT-PEND-';
+    var d = new Date();
+    var ymd = d.getFullYear().toString() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+    var tail = orderRef.split('-').pop();
+    return prefix + ymd + '-' + tail;
 }
 
 // ============================================
-// ORDER SUMMARY — receipt preview + download + share
+// ORDER FLOW — Receipt FIRST, then submit to WhatsApp/Email
 // ============================================
 window.openOrderSummary = function () {
     if (!cart.length) { alert('Your cart is empty.'); return; }
@@ -627,8 +735,7 @@ window.openOrderSummary = function () {
             + (variant ? '<div class="order-summary-item-variant">' + escapeHtml(variant) + ' · Qty ' + (i.qty || 1) + '</div>' : '<div class="order-summary-item-variant">Qty ' + (i.qty || 1) + '</div>')
             + '</div><div class="order-summary-item-price">' + money(line) + '</div></div>';
     }).join('');
-    var orderRef = generateOrderRef();
-    var orderDate = new Date().toLocaleString('en-UG', { dateStyle: 'medium', timeStyle: 'short' });
+
     var html = '<div class="modal-content">'
         + '<div class="modal-icon-wrapper"><i class="fas fa-clipboard-list"></i></div>'
         + '<h2>Complete Your Order</h2>'
@@ -640,70 +747,143 @@ window.openOrderSummary = function () {
         + '<div class="form-group full"><label>Your Name <span class="req">*</span></label><input type="text" name="name" required></div>'
         + '<div class="form-group full"><label>WhatsApp / Phone <span class="req">*</span></label><input type="tel" name="phone" required></div>'
         + '<div class="form-group full"><label>Email (optional)</label><input type="email" name="email"></div>'
-        + '<div class="form-group full"><label>Delivery Preference</label><select name="delivery_method"><option>Collection at church</option><option>Delivery within Kampala</option></select></div>'
-        + '<div class="form-group full"><label>Delivery Location (if delivery)</label><input type="text" name="delivery_location"></div>'
+        + '<div class="form-group full"><label>Delivery Preference</label><select name="delivery_method"><option>Collection at church</option><option>Delivery within Uganda</option></select></div>'
+        + '<div class="form-group full"><label>District (if delivery)</label><input type="text" name="delivery_location" placeholder="e.g. Jinja, Mbale, Gulu..."></div>'
         + '<div class="form-group full"><label>Additional Notes</label><textarea name="notes" rows="2"></textarea></div>'
         + '</form>'
-        + '<div class="modal-section-label">Order Reference</div>'
-        + '<div class="receipt-card">'
-        +   '<div class="rc-header">'
-        +     '<div class="rc-shop">THE BRIDGE CALVARY CHAPEL<small>OFFICIAL ORDER RECEIPT</small></div>'
-        +     '<div class="rc-ref"><strong>' + orderRef + '</strong>' + orderDate + '</div>'
-        +   '</div>'
-        +   cart.map(function (i) {
-        var line = i.price * i.qty;
-        var variant = (i.size ? 'Size ' + i.size + ' ' : '') + (i.color ? '· ' + i.color + ' ' : '') + '· Qty ' + i.qty;
-        return '<div class="rc-item"><span>' + escapeHtml(i.name) + ' <small style="color:#49658A;">(' + variant + ')</small></span><span>' + money(line) + '</span></div>';
-    }).join('')
-        +   '<div class="rc-total"><span>TOTAL</span><span>' + money(total) + '</span></div>'
-        +   '<div class="rc-footer">Status: PENDING — Please complete payment to confirm.<br>Thank you for supporting Bridge Calvary Chapel</div>'
-        + '</div>'
         + '<div class="modal-actions">'
-        + '<button class="modal-btn modal-btn-whatsapp" id="btnSendWhatsApp"><i class="fab fa-whatsapp"></i><span>Send on WhatsApp</span></button>'
-        + '<button class="modal-btn modal-btn-email" id="btnSendEmail"><i class="fas fa-envelope"></i><span>Send by Email</span></button>'
-        + '</div>'
-        + '<div class="share-row">'
-        +   '<button class="share-btn" id="btnDownloadReceipt"><i class="fas fa-download"></i> Download Receipt</button>'
-        +   '<button class="share-btn primary" id="btnShareReceipt"><i class="fas fa-share-alt"></i> Share Receipt</button>'
+        +   '<button class="modal-btn modal-btn-primary" id="btnGenerateReceipt"><i class="fas fa-file-invoice"></i> Generate Receipt &amp; Send</button>'
         + '</div>'
         + '</div>';
     openModal(html);
-    function build(p) {
-        var lines = ['Hello Bridge Calvary Chapel, I would like to place an order.', '', '🧾 Ref: ' + orderRef, '📅 ' + orderDate, '', '👤 Name: ' + (p.name || ''), '📱 Phone: ' + (p.phone || '')];
+
+    document.getElementById('btnGenerateReceipt').addEventListener('click', function () {
+        var p = {};
+        new FormData(document.getElementById('orderForm')).forEach(function (v, k) { p[k] = v; });
+        if (!p.name || !p.phone) { alert('Please enter name and phone.'); return; }
+        var orderRef = generateOrderRef();
+        var orderDate = new Date().toLocaleString('en-UG', { dateStyle: 'medium', timeStyle: 'short' });
+        openReceiptScreen(p, orderRef, orderDate, total);
+    });
+};
+
+function openReceiptScreen(p, orderRef, orderDate, total) {
+    var pendingReceiptNo = generateReceiptNumber(orderRef, 'pending');
+
+    var itemsHTML = cart.map(function (i) {
+        var line = i.price * i.qty;
+        var variant = (i.size ? 'Size ' + i.size + ' ' : '') + (i.color ? '· ' + i.color + ' ' : '') + '· Qty ' + i.qty;
+        return '<div class="rc-item">'
+            + '<span style="display:flex;align-items:center;gap:8px;">'
+            +   '<img src="' + escapeHtml(i.image_url) + '" style="width:38px;height:38px;border-radius:6px;object-fit:cover;" onerror="this.style.display=\'none\'">'
+            +   '<span>' + escapeHtml(i.name) + '<br><small style="color:#49658A;">(' + variant + ')</small></span>'
+            + '</span>'
+            + '<span>' + money(line) + '</span></div>';
+    }).join('');
+
+    var html = '<div class="modal-content">'
+        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#005BEA,#12D8F5);"><i class="fas fa-file-invoice"></i></div>'
+        + '<h2>Your Pending Receipt</h2>'
+        + '<p style="text-align:center;font-size:12.5px;color:#49658A;">Review your receipt, then send it to the church below.</p>'
+        + '<div class="receipt-card">'
+        +   '<div class="rc-header">'
+        +     '<div class="rc-shop">THE BRIDGE CALVARY CHAPEL<small>ORDER RECEIPT — PENDING</small></div>'
+        +     '<div class="rc-ref"><strong>' + orderRef + '</strong>' + orderDate + '</div>'
+        +   '</div>'
+        +   itemsHTML
+        +   '<div class="rc-total"><span>TOTAL</span><span>' + money(total) + '</span></div>'
+        +   '<div class="rc-footer">Receipt No: ' + pendingReceiptNo + '<br>Bring this receipt to the church. Official receipt will be issued on collection.</div>'
+        + '</div>'
+        + '<div class="share-row">'
+        +   '<button class="share-btn" id="btnDownloadPendingReceipt"><i class="fas fa-download"></i> Download Receipt</button>'
+        +   '<button class="share-btn primary" id="btnSharePendingReceipt"><i class="fas fa-share-alt"></i> Share Receipt</button>'
+        + '</div>'
+        + '<div class="modal-section-label">Send Order to Church</div>'
+        + '<div class="modal-actions">'
+        +   '<button class="modal-btn modal-btn-whatsapp" id="btnSendWhatsApp"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>'
+        +   '<button class="modal-btn modal-btn-email" id="btnSendEmail"><i class="fas fa-envelope"></i> Send Gmail</button>'
+        + '</div>'
+        + '<p style="font-size:10.5px;color:#49658A;text-align:center;margin-top:10px;">The church will confirm your order by phone. Keep the receipt number.</p>'
+        + '</div>';
+    openModal(html);
+
+    function buildMessage() {
+        var lines = ['Hello Bridge Calvary Chapel, I would like to place an order.', '', '🧾 Order Ref: ' + orderRef, '🧾 Pending Receipt No: ' + pendingReceiptNo, '📅 ' + orderDate, '', '👤 Name: ' + (p.name || ''), '📱 Phone: ' + (p.phone || '')];
         if (p.email) lines.push('📧 Email: ' + p.email);
-        lines.push('', '🛒 ITEMS:', '──────────────────────');
-        cart.forEach(function (i) { lines.push('• ' + i.name + (i.size ? ' (' + i.size + (i.color ? '/' + i.color : '') + ')' : '') + ' — Qty ' + i.qty + ' — ' + money(i.price * i.qty)); });
-        lines.push('──────────────────────', '💰 TOTAL: ' + money(total));
-        if (p.delivery_location) lines.push('📍 Location: ' + p.delivery_location);
+        lines.push('', '🛒 ITEMS:');
+        cart.forEach(function (i) {
+            lines.push('• ' + i.name + (i.size ? ' (' + i.size + (i.color ? '/' + i.color : '') + ')' : '') + ' — Qty ' + i.qty + ' — ' + money(i.price * i.qty));
+        });
+        lines.push('', '💰 TOTAL: ' + money(total));
+        if (p.delivery_method) lines.push('🚚 Delivery: ' + p.delivery_method);
+        if (p.delivery_location) lines.push('📍 District: ' + p.delivery_location);
         if (p.notes) lines.push('💬 Notes: ' + p.notes);
+        lines.push('', 'Status: PENDING — awaiting confirmation.');
         return lines.join('\n');
     }
-    function collect() { var p = {}; new FormData(document.getElementById('orderForm')).forEach(function (v, k) { p[k] = v; }); return p; }
+
     document.getElementById('btnSendWhatsApp').addEventListener('click', function () {
-        var p = collect(); if (!p.name || !p.phone) { alert('Please enter name and phone.'); return; }
         var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
-        window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(build(p)), '_blank');
+        window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage()), '_blank');
     });
     document.getElementById('btnSendEmail').addEventListener('click', function () {
-        var p = collect(); if (!p.name || !p.phone) { alert('Please enter name and phone.'); return; }
-        var c = window.CHURCH_CONTACT || { email: 'thebridgecalvarychapel@gmail.com' };
-        window.location.href = 'mailto:' + c.email + '?subject=' + encodeURIComponent('Order ' + orderRef) + '&body=' + encodeURIComponent(build(p));
+        var c = window.CHURCH_CONTACT || { email: 'thebridgecalvarychapel1@gmail.com' };
+        window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Order ' + orderRef) + '&body=' + encodeURIComponent(buildMessage()), '_blank');
     });
-    document.getElementById('btnDownloadReceipt').addEventListener('click', function () {
-        var p = collect();
-        var canvas = drawReceiptToCanvas(orderRef, orderDate, cart, total, p.name || '');
-        downloadReceiptImage(canvas, orderRef + '.png');
+
+    document.getElementById('btnDownloadPendingReceipt').addEventListener('click', async function () {
+        var receipt = { receiptNo: pendingReceiptNo, orderRef: orderRef, date: orderDate };
+        var canvas = await drawReceiptToCanvas(receipt, cart, total, p.name || 'Walk-in Customer', 'pending');
+        downloadReceiptImage(canvas, pendingReceiptNo + '.png');
         showToast('Receipt downloaded');
     });
-    document.getElementById('btnShareReceipt').addEventListener('click', async function () {
-        var p = collect();
-        var canvas = drawReceiptToCanvas(orderRef, orderDate, cart, total, p.name || '');
-        await shareReceiptImage(canvas, orderRef);
+    document.getElementById('btnSharePendingReceipt').addEventListener('click', async function () {
+        var receipt = { receiptNo: pendingReceiptNo, orderRef: orderRef, date: orderDate };
+        var canvas = await drawReceiptToCanvas(receipt, cart, total, p.name || 'Walk-in Customer', 'pending');
+        await shareReceiptImage(canvas, pendingReceiptNo + '.png');
+    });
+}
+
+// ============================================
+// CONFIRMED RECEIPT (staff)
+// ============================================
+window.openConfirmedReceipt = function () {
+    var html = '<div class="modal-content">'
+        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#16A34A,#059669);"><i class="fas fa-check"></i></div>'
+        + '<h2>Issue Confirmed Receipt</h2>'
+        + '<p style="font-size:12.5px;">For staff use only. Enter the customer\'s pending receipt number after the items have been handed over.</p>'
+        + '<form id="confirmForm" class="order-form-grid">'
+        +   '<div class="form-group full"><label>Pending Receipt No. <span class="req">*</span></label><input type="text" name="pending_receipt" placeholder="RCPT-PEND-YYYYMMDD-XXXX" required></div>'
+        +   '<div class="form-group full"><label>Order Reference <span class="req">*</span></label><input type="text" name="order_ref" placeholder="TBCC-YYYYMMDD-XXXX" required></div>'
+        +   '<div class="form-group full"><label>Customer Name <span class="req">*</span></label><input type="text" name="customer_name" required></div>'
+        +   '<div class="form-group full"><label>Items (one per line: Name | Qty | Price) <span class="req">*</span></label><textarea name="items_raw" rows="4" placeholder="T-Shirt | 2 | 35000&#10;Cap | 1 | 25000" required></textarea></div>'
+        + '</form>'
+        + '<div class="modal-actions">'
+        +   '<button class="modal-btn modal-btn-primary" id="genConfirmed"><i class="fas fa-file-signature"></i> Generate Confirmed Receipt</button>'
+        + '</div>'
+        + '</div>';
+    openModal(html);
+    document.getElementById('genConfirmed').addEventListener('click', async function () {
+        var p = {};
+        new FormData(document.getElementById('confirmForm')).forEach(function (v, k) { p[k] = v; });
+        if (!p.pending_receipt || !p.order_ref || !p.customer_name || !p.items_raw) { alert('Please fill all fields.'); return; }
+        var items = p.items_raw.split('\n').map(function (line) {
+            var parts = line.split('|').map(function (s) { return s.trim(); });
+            if (parts.length < 3) return null;
+            return { name: parts[0], qty: parseInt(parts[1]) || 1, price: parseFloat(parts[2]) || 0 };
+        }).filter(Boolean);
+        if (!items.length) { alert('Please provide at least one valid item.'); return; }
+        var total = items.reduce(function (s, i) { return s + i.price * i.qty; }, 0);
+        var confirmedNo = p.pending_receipt.replace('RCPT-PEND-', 'RCPT-CONF-');
+        var receipt = { receiptNo: confirmedNo, orderRef: p.order_ref, date: new Date().toLocaleString('en-UG', { dateStyle: 'medium', timeStyle: 'short' }) };
+        var canvas = await drawReceiptToCanvas(receipt, items, total, p.customer_name, 'confirmed');
+        downloadReceiptImage(canvas, confirmedNo + '.png');
+        showToast('Confirmed receipt downloaded');
     });
 };
 
 // ============================================
-// DONATION WIZARDS
+// DONATION WIZARDS (UNCHANGED)
 // ============================================
 var monetaryWizard = { step: 1, fund: 'general', amount: 0, donor: { name: '', email: '', phone: '' }, notes: '' };
 var materialWizard = { step: 1, category: null, items: '', qty: '', condition: 'New', donor: { name: '', email: '', phone: '', address: '' }, deliveryMethod: 'dropoff', notes: '' };
@@ -788,11 +968,11 @@ function advanceMonetary() {
 }
 function submitMonetary(method) {
     var fundName = { general: 'General Fund', missions: 'Missions', building: 'Building Fund', benevolence: 'Benevolence' }[monetaryWizard.fund];
-    var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel@gmail.com' };
+    var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
     var msg = '🙏 MONETARY DONATION PLEDGE\n━━━━━━━━━━━━━━\nFund: ' + fundName + '\nAmount: ' + money(monetaryWizard.amount) + '\nStatus: PLEDGE\n━━━━━━━━━━━━━━\nDonor: ' + monetaryWizard.donor.name + '\nEmail: ' + monetaryWizard.donor.email + (monetaryWizard.donor.phone ? '\nPhone: ' + monetaryWizard.donor.phone : '') + (monetaryWizard.notes ? '\nNote: ' + monetaryWizard.notes : '') + '\n━━━━━━━━━━━━━━\nPlease send verified payment instructions.';
     saveDonationToSupabase({ type: 'monetary', fund: monetaryWizard.fund, amount: monetaryWizard.amount, donor_name: monetaryWizard.donor.name, donor_email: monetaryWizard.donor.email, donor_phone: monetaryWizard.donor.phone, notes: monetaryWizard.notes, status: 'pledge' });
     if (method === 'whatsapp') window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
-    else window.location.href = 'mailto:' + c.email + '?subject=Donation Pledge&body=' + encodeURIComponent(msg);
+    else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Donation Pledge') + '&body=' + encodeURIComponent(msg), '_blank');
     showThankYouDonation('monetary', monetaryWizard.amount);
 }
 
@@ -887,7 +1067,7 @@ function advanceMaterial() {
 }
 function submitMaterial(method) {
     var catNames = { bibles: 'Bibles & Books', clothing: 'Clothing & Shoes', food: 'Food & Essentials', school: 'School Supplies', medical: 'Medical Items', household: 'Household Items' };
-    var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel@gmail.com' };
+    var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
     var msg = '🙏 MATERIAL DONATION REQUEST\n━━━━━━━━━━━━━━\nCategory: ' + (catNames[materialWizard.category] || '')
         + '\nItems: ' + materialWizard.items + '\nQuantity: ' + (materialWizard.qty || '—')
         + '\nCondition: ' + materialWizard.condition + '\nMethod: ' + (materialWizard.deliveryMethod === 'dropoff' ? 'Drop Off' : 'Collection')
@@ -897,7 +1077,7 @@ function submitMaterial(method) {
         + '\n━━━━━━━━━━━━━━\nPlease contact me to arrange drop-off or collection.';
     saveDonationToSupabase({ type: 'material', category: materialWizard.category, items: materialWizard.items, quantity: materialWizard.qty, condition: materialWizard.condition, donor_name: materialWizard.donor.name, donor_email: materialWizard.donor.email, donor_phone: materialWizard.donor.phone, donor_address: materialWizard.donor.address, delivery_method: materialWizard.deliveryMethod, notes: materialWizard.notes, status: 'request' });
     if (method === 'whatsapp') window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
-    else window.location.href = 'mailto:' + c.email + '?subject=Material Donation&body=' + encodeURIComponent(msg);
+    else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Material Donation') + '&body=' + encodeURIComponent(msg), '_blank');
     showThankYouDonation('material', 0);
 }
 async function saveDonationToSupabase(payload) {

@@ -8,8 +8,27 @@ var allMinistries = [];
 
 function setText(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.textContent = val; }
 function setHTML(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.innerHTML = val; }
-function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 function secImg(name) { var s = siteContent[name] || {}; return s.image || s.hero_image || s.background_image || ''; }
+
+function parseGallery(g) {
+    if (!g) return [];
+    if (Array.isArray(g)) return g.filter(Boolean);
+    return String(g).split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+}
+
+function videoEmbedUrl(url) {
+    if (!url) return '';
+    var u = String(url).trim();
+    var yt = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{6,})/);
+    if (yt) return 'https://www.youtube.com/embed/' + yt[1];
+    var vm = u.match(/vimeo\.com\/(\d+)/);
+    if (vm) return 'https://player.vimeo.com/video/' + vm[1];
+    return u;
+}
 
 var MINISTRY_EXTRAS = {
     1: { accent: '#12D8F5', accentDark: '#0EA5E9', leader: 'Pastor Grace Mukiibi', activities: ['Bible stories and lessons','Worship songs','Crafts and games','Memory verse challenges'], schedule: 'Sunday 9:15 AM & 11:45 AM', location: "Children's Wing, 2nd Floor", audience: 'Ages 3-12' },
@@ -115,9 +134,16 @@ function renderMinistries() {
     });
 }
 
+// ============================================
+// MINISTRY DETAILS PANEL (with gallery)
+// ============================================
 function openMinistryModal(m) {
     if (!m) return;
     var extras = MINISTRY_EXTRAS[m.display_order] || { accent: '#005BEA', accentDark: '#078BFF', leader: '', activities: [], schedule: '', location: '', audience: '' };
+
+    var gallery = parseGallery(m.gallery_images);
+    var embedUrl = videoEmbedUrl(m.video_url);
+
     var activitiesHTML = '';
     if (extras.activities && extras.activities.length) {
         activitiesHTML = '<div class="modal-section-title">What We Do</div><div class="modal-activities">'
@@ -134,6 +160,28 @@ function openMinistryModal(m) {
             + '</div>';
     }
 
+    var galleryHTML = '';
+    if (gallery.length) {
+        galleryHTML = '<div class="modal-section-title">Gallery</div><div class="modal-gallery">'
+            + gallery.map(function (url, i) {
+                return '<a class="gallery-thumb" href="' + escapeHtml(url) + '" target="_blank" rel="noopener" data-full="' + i + '">'
+                    + '<img src="' + escapeHtml(url) + '" alt="" onerror="this.parentNode.style.display=\'none\'">'
+                    + '<span class="gallery-download" data-download="' + escapeHtml(url) + '" title="Download image"><i class="fas fa-download"></i></span>'
+                    + '</a>';
+            }).join('')
+            + '</div>';
+    }
+
+    var videoHTML = '';
+    if (embedUrl) {
+        videoHTML = '<div class="modal-section-title">Video' + (m.video_title ? ': ' + escapeHtml(m.video_title) : '') + '</div>'
+            + '<div class="modal-video">'
+            + (embedUrl.match(/\.(mp4|webm|ogg)$/i)
+                ? '<video controls preload="metadata" src="' + escapeHtml(embedUrl) + '"></video>'
+                : '<div class="video-thumb" data-embed="' + escapeHtml(embedUrl) + '"><img src="https://img.youtube.com/vi/' + (embedUrl.split('/embed/')[1] || '') + '/hqdefault.jpg" alt="" onerror="this.parentNode.classList.add(\'no-thumb\')"><span class="video-play"><i class="fas fa-play"></i> Play Video</span></div>')
+            + '</div>';
+    }
+
     var html = ''
         + '<img class="modal-hero-image" src="' + escapeHtml(m.image_url || '') + '" alt="" onerror="this.style.display=\'none\'">'
         + '<div class="modal-content">'
@@ -141,14 +189,61 @@ function openMinistryModal(m) {
         + '<h2>' + escapeHtml(m.name || '') + '</h2>'
         + (extras.leader ? '<p class="modal-subtitle">Led by ' + escapeHtml(extras.leader) + '</p>' : '')
         + '<p class="modal-description">' + escapeHtml(m.description || '') + '</p>'
-        + activitiesHTML + detailsHTML
+        + galleryHTML
+        + videoHTML
+        + activitiesHTML
+        + detailsHTML
         + '<div class="modal-actions">'
-        +   '<button class="modal-btn modal-btn-primary" onclick="openJoinForm(\'' + escapeHtml(m.name).replace(/\'/g, "\\'") + '\')" type="button"><i class="fas fa-user-plus"></i> Join This Ministry</button>'
-        +   '<button class="modal-btn modal-btn-secondary" onclick="openSupportInfo(\'' + escapeHtml(m.name).replace(/\'/g, "\\'") + '\')" type="button"><i class="fas fa-heart"></i> Support</button>'
+        +   '<button class="modal-btn modal-btn-primary" onclick="openJoinForm(\'' + escapeHtml(m.name).replace(/'/g, "\\'") + '\')" type="button"><i class="fas fa-user-plus"></i> Join This Ministry</button>'
+        +   '<button class="modal-btn modal-btn-secondary" onclick="openSupportForm(' + allMinistries.indexOf(m) + ')" type="button"><i class="fas fa-heart"></i> Support</button>'
         + '</div></div>';
     openModal(html);
+    wireGalleryAndVideo();
 }
 
+function wireGalleryAndVideo() {
+    document.querySelectorAll('.gallery-thumb').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            var dl = e.target.closest('.gallery-download');
+            if (dl) {
+                e.preventDefault();
+                e.stopPropagation();
+                var url = dl.getAttribute('data-download');
+                downloadImage(url);
+                return;
+            }
+        });
+    });
+    document.querySelectorAll('.video-thumb').forEach(function (t) {
+        t.addEventListener('click', function () {
+            var embed = t.getAttribute('data-embed');
+            if (!embed) return;
+            t.outerHTML = '<div class="video-frame"><iframe src="' + embed + '?autoplay=1" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe></div>';
+        });
+    });
+}
+
+async function downloadImage(url) {
+    if (!url) return;
+    try {
+        var res = await fetch(url, { mode: 'cors' });
+        var blob = await res.blob();
+        var tmp = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = tmp;
+        a.download = url.split('/').pop().split('?')[0] || 'image.jpg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(tmp);
+    } catch (err) {
+        window.open(url, '_blank');
+    }
+}
+
+// ============================================
+// JOIN MINISTRY FORM (unchanged)
+// ============================================
 window.openJoinForm = function (ministryName) {
     var html = '<div class="modal-content"><h2>Join ' + escapeHtml(ministryName) + '</h2><p class="modal-subtitle">Fill in your details.</p>'
         + '<form id="joinMinForm" class="modal-form">'
@@ -173,17 +268,100 @@ window.openJoinForm = function (ministryName) {
     });
 };
 
-window.openSupportInfo = function (ministryName) {
-    var c = window.CHURCH_CONTACT || { whatsapp: '', email: '' };
-    var html = '<div class="modal-content"><h2>Support ' + escapeHtml(ministryName) + '</h2><p class="modal-subtitle">Thank you for wanting to support this ministry.</p>'
-        + '<p class="modal-description">To give toward <strong>' + escapeHtml(ministryName) + '</strong>, please contact our church office.</p>'
-        + '<div class="modal-details">'
-        + '<div class="modal-detail-row"><i class="fas fa-phone"></i><span class="detail-label">WhatsApp</span><span class="detail-value">+' + c.whatsapp + '</span></div>'
-        + '<div class="modal-detail-row"><i class="fas fa-envelope"></i><span class="detail-label">Email</span><span class="detail-value">' + c.email + '</span></div>'
-        + '</div>'
-        + '<div class="modal-actions"><a class="modal-btn modal-btn-primary" href="https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent('I would like to support the ' + ministryName) + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Contact on WhatsApp</a></div></div>';
+// ============================================
+// SUPPORT FORM — Step 1 fill, Step 2 summary
+// SEND: WhatsApp  OR  Gmail Web Compose
+// ============================================
+window.openSupportForm = function (ministryIdx) {
+    var m = allMinistries[ministryIdx];
+    if (!m) return;
+    var name = m.name || '';
+
+    var html = '<div class="modal-content">'
+        + '<h2>Support ' + escapeHtml(name) + '</h2>'
+        + '<p class="modal-subtitle">Step 1 of 2 — Fill in your information</p>'
+        + '<form id="supportForm" class="modal-form">'
+        + '<input type="hidden" name="ministry" value="' + escapeHtml(name) + '">'
+        + '<input type="hidden" name="ministryIdx" value="' + ministryIdx + '">'
+        + '<label>Your Name *<input type="text" name="name" required></label>'
+        + '<label>Email *<input type="email" name="email" required></label>'
+        + '<label>Phone / WhatsApp<input type="tel" name="phone"></label>'
+        + '<label>Support Type'
+        +   '<select name="supportType" required>'
+        +     '<option value="">— Select —</option>'
+        +     '<option>Financial gift</option>'
+        +     '<option>Material donation</option>'
+        +     '<option>Volunteer time</option>'
+        +     '<option>Prayer support</option>'
+        +   '</select></label>'
+        + '<label>Amount or Item <input type="text" name="amountOrItem" placeholder="e.g. UGX 50,000 or 3 blankets"></label>'
+        + '<label>Message<textarea name="message" rows="3" placeholder="Any extra details..."></textarea></label>'
+        + '<button type="submit" class="modal-btn modal-btn-primary"><i class="fas fa-arrow-right"></i> Review &amp; Send</button>'
+        + '<p class="form-status"></p></form></div>';
     openModal(html);
+
+    document.getElementById('supportForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var p = {}; new FormData(e.target).forEach(function (v, k) { p[k] = v; });
+        openSupportSummary(p, m);
+    });
 };
+
+function openSupportSummary(p, m) {
+    var church = window.CHURCH_CONTACT || {};
+    var churchEmail = church.email || 'thebridgecalvarychapel1@gmail.com';
+    var churchPhone = (church.whatsapp || '256785228381').replace(/[^\d]/g, '');
+
+    var lines = [
+        'Support Request',
+        '',
+        'Ministry: ' + p.ministry,
+        'Name: ' + p.name,
+        'Email: ' + p.email,
+        'Phone: ' + (p.phone || '—'),
+        'Support Type: ' + p.supportType,
+        'Amount/Item: ' + (p.amountOrItem || '—'),
+        'Message: ' + (p.message || '—')
+    ];
+    var summaryText = lines.join('\n');
+    var subject = 'Support Request — ' + p.ministry;
+
+    // WhatsApp URL
+    var waUrl = 'https://wa.me/' + churchPhone + '?text=' + encodeURIComponent(summaryText);
+    // Gmail Web Compose URL (opens in a new tab, prefilled)
+    var gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1'
+        + '&to=' + encodeURIComponent(churchEmail)
+        + '&su=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(summaryText);
+    // Fallback mailto (used only if Gmail button doesn't work for visitor)
+    var mailtoUrl = 'mailto:' + encodeURIComponent(churchEmail)
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(summaryText);
+
+    var html = '<div class="modal-content">'
+        + '<h2>Review &amp; Send</h2>'
+        + '<p class="modal-subtitle">Step 2 of 2 — Confirm your information</p>'
+        + '<div class="summary-box">'
+        +   '<div class="summary-row"><span>Ministry</span><strong>' + escapeHtml(p.ministry) + '</strong></div>'
+        +   '<div class="summary-row"><span>Name</span><strong>' + escapeHtml(p.name) + '</strong></div>'
+        +   '<div class="summary-row"><span>Email</span><strong>' + escapeHtml(p.email) + '</strong></div>'
+        +   '<div class="summary-row"><span>Phone</span><strong>' + escapeHtml(p.phone || '—') + '</strong></div>'
+        +   '<div class="summary-row"><span>Support Type</span><strong>' + escapeHtml(p.supportType) + '</strong></div>'
+        +   '<div class="summary-row"><span>Amount/Item</span><strong>' + escapeHtml(p.amountOrItem || '—') + '</strong></div>'
+        +   '<div class="summary-row summary-message"><span>Message</span><strong>' + escapeHtml(p.message || '—') + '</strong></div>'
+        + '</div>'
+        + '<div class="modal-actions">'
+        +   '<a class="modal-btn modal-btn-whatsapp" href="' + waUrl + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Send via WhatsApp</a>'
+        +   '<a class="modal-btn modal-btn-email" href="' + gmailUrl + '" target="_blank" rel="noopener"><i class="fas fa-envelope"></i> Send via Gmail</a>'
+        + '</div>'
+        + '<p class="modal-note">Gmail opens in a new tab with your message ready — just click Send. If you use a different email app, <a href="' + mailtoUrl + '" class="modal-link">click here</a>.</p>'
+        + '<div class="modal-actions">'
+        +   '<button class="modal-btn modal-btn-secondary" onclick="openSupportForm(' + allMinistries.indexOf(m) + ')" type="button"><i class="fas fa-arrow-left"></i> Back to Edit</button>'
+        +   '<button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Cancel</button>'
+        + '</div>'
+        + '</div>';
+    openModal(html);
+}
 
 // ============================================
 // VERSE BANNER

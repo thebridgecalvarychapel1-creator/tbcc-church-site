@@ -681,3 +681,320 @@ ul { list-style: none; }
     flex: 1;
     min-width: 140px;
 }
+/* ============================================
+   BIG CATEGORIES CARD CONTAINER
+   ============================================ */
+.big-categories-card {
+    background: var(--white);
+    border: 1.5px solid var(--border-blue);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(4,26,58,0.08);
+    margin-top: 8px;
+}
+
+.categories-inner-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+/* Category Cards inside the big card */
+.donation-category-card {
+    background: var(--white);
+    border: 1.5px solid var(--border-blue);
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(4,26,58,0.04);
+    display: flex;
+    flex-direction: column;
+}
+
+.donation-category-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--electric-blue);
+    box-shadow: 0 12px 30px rgba(4,26,58,0.12);
+}
+
+.dcc-image {
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+    background: var(--navy-deep);
+}
+.dcc-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+}
+.donation-category-card:hover .dcc-image img {
+    transform: scale(1.06);
+}
+.dcc-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(4,26,58,0.1) 0%, rgba(4,26,58,0.6) 100%);
+}
+
+.dcc-body {
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+}
+.dcc-icon {
+    position: absolute;
+    top: -20px;
+    left: 18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--royal-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 2px solid var(--border-blue);
+}
+.dcc-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-top: 12px;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+.dcc-desc {
+    font-size: 11.5px;
+    color: var(--text-blue-gray);
+    line-height: 1.5;
+    flex: 1;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.dcc-amounts {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+.category-amount-badge {
+    padding: 3px 8px;
+    background: var(--pale-blue);
+    color: var(--royal-blue);
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid var(--border-blue);
+}
+.dcc-btn {
+    width: 100%;
+    padding: 9px;
+    border-radius: 8px;
+    background: var(--royal-blue);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.dcc-btn:hover {
+    background: var(--electric-blue);
+}
+
+/* ============================================
+   WIZARD AMOUNT PRESETS
+   ============================================ */
+.amount-preset-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.amount-preset {
+    padding: 10px 18px;
+    background: var(--pale-blue);
+    border: 1.5px solid var(--border-blue);
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--royal-blue);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.amount-preset:hover {
+    border-color: var(--electric-blue);
+    background: var(--white);
+}
+
+@media (max-width: 768px) {
+    .big-categories-card {
+        padding: 20px;
+        border-radius: 18px;
+    }
+    .categories-inner-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+}
+@media (max-width: 480px) {
+    .categories-inner-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ============================================
+   COLOR RING SELECTION
+   ============================================ */
+.color-swatch {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    border: 3px solid transparent !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transition: all 0.2s;
+    flex: 0 0 auto;
+}
+.color-swatch:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.color-swatch.active {
+    border-color: var(--royal-blue) !important;
+    box-shadow: 0 0 0 3px rgba(0,91,234,0.3), 0 4px 12px rgba(0,0,0,0.2) !important;
+}
+
+/* ============================================
+   RECEIPT PREVIEW
+   ============================================ */
+.receipt-card {
+    background: #FAFBFF;
+    border: 2px dashed var(--border-blue);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    font-family: var(--font);
+    max-width: 100%;
+    overflow-x: auto;
+}
+.receipt-card .rc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 12px;
+    border-bottom: 2px dashed var(--border-blue);
+    margin-bottom: 12px;
+}
+.receipt-card .rc-shop {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy-deep);
+    line-height: 1.2;
+}
+.receipt-card .rc-shop small {
+    display: block;
+    font-size: 10px;
+    color: var(--text-blue-gray);
+    font-weight: 500;
+    margin-top: 2px;
+}
+.receipt-card .rc-ref {
+    text-align: right;
+    font-size: 10px;
+    color: var(--text-blue-gray);
+    line-height: 1.4;
+}
+.receipt-card .rc-ref strong {
+    display: block;
+    font-size: 12px;
+    color: var(--royal-blue);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+.receipt-card .rc-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 5px 0;
+    color: var(--text-navy);
+    border-bottom: 1px dotted var(--border-blue-2);
+}
+.receipt-card .rc-item:last-child { border-bottom: none; }
+.receipt-card .rc-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy-deep);
+    padding-top: 10px;
+    margin-top: 10px;
+    border-top: 2px solid var(--navy-deep);
+}
+.receipt-card .rc-total span:last-child { color: var(--royal-blue); }
+.receipt-card .rc-footer {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border-blue);
+    font-size: 10.5px;
+    color: var(--text-blue-gray);
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* ============================================
+   SHARE ROW
+   ============================================ */
+.share-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+.share-btn {
+    flex: 1;
+    min-width: 130px;
+    padding: 10px 14px;
+    border-radius: 50px;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 2px solid var(--border-blue);
+    background: var(--white);
+    color: var(--royal-blue);
+}
+.share-btn:hover {
+    border-color: var(--electric-blue);
+    background: var(--pale-blue);
+    transform: translateY(-1px);
+}
+.share-btn.whatsapp {
+    border-color: #25D366;
+    color: #128C7E;
+}
+.share-btn.whatsapp:hover { background: #DCF8C6; }
+.share-btn.primary {
+    background: linear-gradient(135deg, var(--royal-blue), var(--electric-blue));
+    color: var(--white);
+    border-color: transparent;
+}
+.share-btn.primary:hover { box-shadow: 0 4px 14px rgba(0,91,234,0.4); }

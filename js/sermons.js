@@ -23,8 +23,8 @@ var CATEGORIES = [
 
 function setText(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.textContent = val; }
 function setHTML(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.innerHTML = val; }
-function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-function secImg(name) { var s = siteContent[name] || {}; return s.image || s.hero_image || s.background_image || ''; }
+function escapeHtml(str) { if (str === null || str === undefined) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function secImg(name) { var s = siteContent[name] || {}; return s.image || s.image_url || s.hero_image || s.background_image || ''; }
 
 window.openModal = function (html) {
     var overlay = document.getElementById('modalOverlay');
@@ -61,9 +61,7 @@ function getCategoryFromTitle(title) {
 }
 function getCategoryLabel(key) { var c = CATEGORIES.find(function (x) { return x.key === key; }); return c ? c.label : key; }
 
-// ============================================
 // HERO
-// ============================================
 function renderHero() {
     var h = siteContent.sermons_hero || {};
     setText('heroEyebrow', h.eyebrow);
@@ -86,12 +84,11 @@ function renderHero() {
     if (btnHeroYT) btnHeroYT.href = yt;
 }
 
-// ============================================
-// SUBSCRIBE CARD
-// ============================================
+// SUBSCRIBE CARD — only the sidebar one now
 function renderSubscribeCard() {
     var s = siteContent.sermons_sidebar_sub || {};
-    setText('subTitle', s.title || 'Watch. Learn. Grow.');
+    // The hero subscribe card was removed from HTML — these calls are safe no-ops.
+    setText('subTitle', s.title);
     setText('subDesc', s.description);
     setText('subNote', s.note);
     var statsHTML = '';
@@ -102,14 +99,11 @@ function renderSubscribeCard() {
         statsHTML += '<div class="subscribe-stat"><span class="subscribe-stat-number">' + escapeHtml(n) + '</span><span class="subscribe-stat-label">' + escapeHtml(l || '') + '</span></div>';
     }
     setHTML('subStats', statsHTML);
-    var yt = s.youtube_url || '#';
     var btn = document.getElementById('btnSubscribeHero');
-    if (btn) btn.href = yt;
+    if (btn) btn.href = s.youtube_url || '#';
 }
 
-// ============================================
 // SIDEBAR
-// ============================================
 function renderSidebar() {
     var s = siteContent.sermons_sidebar_sub || {};
     setText('sideSubTitle', s.title);
@@ -127,9 +121,7 @@ function renderSidebar() {
     if (btn) btn.href = s.youtube_url || '#';
 }
 
-// ============================================
 // VERSES
-// ============================================
 function renderVerses() {
     var vs = siteContent.sermons_verses || {};
     setText('versesTitle', vs.title);
@@ -151,9 +143,7 @@ function renderVerses() {
     });
 }
 
-// ============================================
 // BANNER
-// ============================================
 function renderBanner() {
     var b = siteContent.sermons_banner || {};
     setText('bannerLabel', b.label);
@@ -165,9 +155,7 @@ function renderBanner() {
     if (btn) btn.href = b.youtube_url || '#';
 }
 
-// ============================================
 // FEATURED HEADER
-// ============================================
 function renderFeaturedHeader() {
     var f = siteContent.sermons_featured || {};
     setText('featuredLabel', f.label);
@@ -175,9 +163,7 @@ function renderFeaturedHeader() {
     setText('featuredTagline', f.tagline);
 }
 
-// ============================================
 // FILTER TABS
-// ============================================
 function renderFilterTabs() {
     var tabs = document.getElementById('filterTabs');
     if (!tabs) return;
@@ -221,12 +207,16 @@ function renderSermonGrid() {
     grid.innerHTML = visible.map(function (s, idx) {
         var cat = getCategoryFromTitle(s.title);
         return '<article class="sermon-card" data-idx="' + idx + '" tabindex="0" role="button">'
-            + '<div class="sermon-thumb"><img src="' + escapeHtml(s.thumbnail_url || '') + '" alt="" onerror="this.style.display=\'none\'"><span class="sermon-badge-cat ' + cat + '">' + getCategoryLabel(cat) + '</span><span class="sermon-badge-dur">' + escapeHtml(s.duration || '') + '</span></div>'
-            + '<div class="sermon-body"><h3 class="sermon-title">' + escapeHtml(s.title || '') + '</h3>'
-            + '<div class="sermon-meta"><i class="fas fa-user"></i><span>' + escapeHtml(s.speaker || '') + '</span></div>'
-            + '<div class="sermon-meta"><i class="fas fa-calendar"></i><span>' + escapeHtml(s.date_label || '') + '</span></div>'
-            + '<p class="sermon-desc">' + escapeHtml(s.description || 'Click to watch this sermon.') + '</p>'
-            + '<button class="btn-watch" type="button"><i class="fas fa-play"></i> Watch Video <i class="fas fa-arrow-right"></i></button></div></article>';
+            + '<div class="sermon-thumb">'
+            +   '<img src="' + escapeHtml(s.thumbnail_url || '') + '" alt="" onerror="this.style.display=\'none\'">'
+            +   '<span class="sermon-badge-cat ' + cat + '">' + getCategoryLabel(cat) + '</span>'
+            +   '<span class="sermon-badge-dur">' + escapeHtml(s.duration || '') + '</span>'
+            + '</div>'
+            + '<div class="sermon-body">'
+            +   '<h3 class="sermon-title">' + escapeHtml(s.title || '') + '</h3>'
+            +   '<div class="sermon-meta"><i class="fas fa-user"></i><span>' + escapeHtml(s.speaker || '') + '</span></div>'
+            +   '<button class="btn-watch" type="button"><i class="fas fa-play"></i> Watch <i class="fas fa-arrow-right"></i></button>'
+            + '</div></article>';
     }).join('');
     setText('libraryCount', 'Showing ' + visible.length + ' of ' + filteredSermons.length + ' sermons');
     var lm = document.getElementById('btnLoadMore');
@@ -260,9 +250,7 @@ function openSermonModal(s) {
 }
 function openVideo(s) { if (s && s.video_url) window.open(s.video_url, '_blank', 'noopener'); }
 
-// ============================================
 // FEATURED CARDS
-// ============================================
 function renderFeaturedCards() {
     var grid = document.getElementById('featuredCards');
     if (!grid) return;
@@ -277,9 +265,7 @@ function renderFeaturedCards() {
     });
 }
 
-// ============================================
 // FOOTER
-// ============================================
 function renderFooter() {
     var f = siteContent.footer || {};
     setText('footerTagline', f.tagline);
@@ -289,9 +275,7 @@ function renderFooter() {
     setText('footerCopyrightName', f.copyright_name);
 }
 
-// ============================================
 // LOAD
-// ============================================
 async function loadSermonsData() {
     console.log('📥 Loading sermons data...');
     try {
@@ -299,7 +283,16 @@ async function loadSermonsData() {
         siteContent = results[0] || {};
         allSermons = results[1] || [];
         filteredSermons = allSermons.slice();
-        renderHero(); renderSubscribeCard(); renderSidebar(); renderVerses(); renderBanner(); renderFeaturedHeader(); renderFilterTabs(); applyFilters(); renderFeaturedCards(); renderFooter();
+        renderHero();
+        renderSubscribeCard();
+        renderSidebar();
+        renderVerses();
+        renderBanner();
+        renderFeaturedHeader();
+        renderFilterTabs();
+        applyFilters();
+        renderFeaturedCards();
+        renderFooter();
         console.log('✅ Sermons loaded: ' + allSermons.length);
     } catch (err) { console.error('❌ Sermons load error:', err); }
 }
@@ -308,9 +301,7 @@ if (window.db) setTimeout(loadSermonsData, 100);
 else window.addEventListener('supabase-ready', loadSermonsData);
 setTimeout(function () { if (window.db && allSermons.length === 0) loadSermonsData(); }, 2000);
 
-// ============================================
 // DOM READY
-// ============================================
 document.addEventListener('DOMContentLoaded', function () {
     console.log('✅ sermons.js initialized');
     var navbar = document.getElementById('navbar');

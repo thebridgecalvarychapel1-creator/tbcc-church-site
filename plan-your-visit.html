@@ -49,23 +49,19 @@
     <div class="hero-overlay"></div>
     <div class="container">
         <div class="hero-content">
-            <span class="hero-eyebrow" id="heroEyebrow"></span>
+            <span class="hero-eyebrow" id="heroEyebrow">PLAN YOUR VISIT</span>
             <h1 class="hero-title">
-                <span class="line1" id="heroLine1"></span>
-                <span class="line2" id="heroLine2"></span>
+                <span class="line1" id="heroLine1">We Can't Wait to</span>
+                <span class="line2" id="heroLine2">Welcome You</span>
             </h1>
-            <p class="hero-desc" id="heroDesc"></p>
+            <p class="hero-desc" id="heroDesc">Find our location, service times, and get everything you need for your visit.</p>
             <div class="hero-buttons">
-                <button class="btn-hero btn-hero-primary" onclick="document.getElementById('visitForm').scrollIntoView({behavior:'smooth'})" type="button">
-                    <i class="fas fa-calendar-check"></i> Plan My Visit <i class="fas fa-arrow-right"></i>
-                </button>
-                <a class="btn-hero btn-hero-outline" id="btnDirections" href="#" target="_blank" rel="noopener">
-                    <i class="fas fa-map-marker-alt"></i> Get Directions
+                <a class="btn-hero btn-hero-primary" id="btnDirections" href="https://maps.app.goo.gl/Rw7zyaQJJapp8GJE7" target="_blank" rel="noopener">
+                    <i class="fas fa-map-marker-alt"></i> Get Directions <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
         </div>
     </div>
-    <div class="hero-script" id="heroScript"><i class="fas fa-cross"></i></div>
     <div class="hero-wave">
         <svg viewBox="0 0 1440 50" preserveAspectRatio="none">
             <path d="M0,50 L0,25 Q360,0 720,25 Q1080,50 1440,15 L1440,50 Z" fill="#F1F8FF"/>
@@ -80,129 +76,145 @@
     </div>
 </section>
 
-<!-- ===== VISIT FORM + FIND US ===== -->
+<!-- ===== MAIN GRID ===== -->
 <section class="visit-main">
     <div class="container">
         <div class="visit-layout">
-            <!-- Form -->
-            <div class="visit-card">
-                <div class="visit-card-header">
-                    <div class="visit-card-icon"><i class="fas fa-user-check"></i></div>
-                    <h2 id="formTitle"></h2>
-                </div>
-                <p class="visit-card-sub" id="formSubtitle"></p>
-                <form class="visit-form" id="visitForm">
-                    <div class="form-group">
-                        <label>Full Name <span class="req">*</span></label>
-                        <input type="text" name="full_name" placeholder="Enter your full name" required>
+            <!-- LEFT COLUMN -->
+            <div class="left-col">
+                <!-- Location Card -->
+                <div class="visit-card location-card">
+                    <div class="visit-card-header">
+                        <div class="visit-card-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <h2 id="locationTitle">Our Location</h2>
                     </div>
-                    <div class="form-group">
-                        <label>Email Address <span class="req">*</span></label>
-                        <input type="email" name="email" placeholder="Enter your email address" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" name="phone" placeholder="Enter your phone number">
-                    </div>
-                    <div class="form-group">
-                        <label>Preferred Visit Date</label>
-                        <input type="date" name="preferred_date">
-                    </div>
-                    <div class="form-group">
-                        <label>Number of People</label>
-                        <select name="number_of_people">
-                            <option value="">Select...</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3-5">3-5</option>
-                            <option value="6-10">6-10</option>
-                            <option value="10+">10+</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Is this your first visit?</label>
-                        <select name="first_time">
-                            <option value="">Select...</option>
-                            <option value="Yes">Yes, first time</option>
-                            <option value="No">No, I've been before</option>
-                            <option value="Returning">Returning after a while</option>
-                        </select>
-                    </div>
-                    <div class="form-group full">
-                        <label>Which ministry are you interested in?</label>
-                        <select name="ministry" id="ministrySelect">
-                            <option value="">Select a ministry...</option>
-                        </select>
-                    </div>
-                    <div class="form-group full">
-                        <label>Questions or Special Requests</label>
-                        <textarea name="message" placeholder="Tell us anything else you'd like us to share..."></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit" id="btnSubmitVisit">
-                        <i class="fas fa-paper-plane"></i> <span id="submitLabel">Submit My Visit</span>
-                    </button>
-                    <p class="form-status" id="formStatus"></p>
-                </form>
-            </div>
-
-            <!-- Find Us -->
-            <div class="visit-card">
-                <div class="visit-card-header">
-                    <div class="visit-card-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <h2 id="findusTitle"></h2>
-                </div>
-                <div class="findus-grid">
-                    <div class="findus-info">
-                        <div class="findus-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div><strong>Address</strong><span id="findusAddress"></span></div>
-                        </div>
-                        <div class="findus-item">
-                            <i class="fas fa-phone"></i>
-                            <div><strong>Phone</strong><span id="findusPhone"></span></div>
-                        </div>
-                        <div class="findus-item">
-                            <i class="fas fa-envelope"></i>
-                            <div><strong>Email</strong><span id="findusEmail"></span></div>
-                        </div>
-                        <div class="findus-item">
-                            <i class="fas fa-clock"></i>
-                            <div>
-                                <strong>Service Times</strong>
-                                <span id="findusService1"></span><br>
-                                <span id="findusService2"></span><br>
-                                <span id="findusService3"></span>
+                    <div class="location-content">
+                        <div class="location-info">
+                            <p class="location-address" id="findusAddress">Jinja Bell Avenue, opposite Ntake Bakery, Jinja</p>
+                            <div class="location-features">
+                                <div class="feature-item"><i class="fas fa-car"></i> <span id="findusParking">Free Parking Available</span></div>
+                                <div class="feature-item"><i class="fas fa-clock"></i> <span>Open: Tue &amp; Sun services</span></div>
+                                <div class="feature-item"><i class="fas fa-map-marker-alt"></i> <span>Jinja, Uganda</span></div>
                             </div>
                         </div>
-                        <div class="findus-item">
-                            <i class="fas fa-car"></i>
-                            <div><strong>Parking</strong><span id="findusParking"></span></div>
+                        <div class="location-map">
+                            <iframe id="mapFrame" src="https://www.google.com/maps?q=Jinja+Bell+Avenue,+Jinja,+Uganda&output=embed" title="Church location map" loading="lazy" allowfullscreen></iframe>
                         </div>
                     </div>
-                    <div class="findus-map">
-                        <iframe id="mapFrame" src="" title="Church location map" loading="lazy" allowfullscreen></iframe>
-                        <a class="map-btn" id="mapBtn" href="#" target="_blank" rel="noopener">
-                            <i class="fas fa-directions"></i> Get Directions
-                        </a>
+                    <a class="btn-map" id="mapBtn" href="https://maps.app.goo.gl/Rw7zyaQJJapp8GJE7" target="_blank" rel="noopener">
+                        <i class="fas fa-directions"></i> Get Directions on Google Maps <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Visit Form Card -->
+                <div class="visit-card form-card">
+                    <div class="visit-card-header">
+                        <div class="visit-card-icon"><i class="fas fa-calendar-check"></i></div>
+                        <h2 id="formTitle">Plan Your Visit</h2>
                     </div>
+                    <p class="visit-card-sub" id="formSubtitle">Let us know you're coming! Fill in the form below and we'll be ready to welcome you.</p>
+                    
+                    <form class="visit-form" id="visitForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Full Name <span class="req">*</span></label>
+                                <input type="text" name="full_name" placeholder="Your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email Address <span class="req">*</span></label>
+                                <input type="email" name="email" placeholder="you@example.com" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Phone Number <span class="req">*</span></label>
+                                <input type="tel" name="phone" placeholder="+256 7XX XXX XXX" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Visit Date <span class="req">*</span></label>
+                                <input type="date" name="preferred_date" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Which Ministry Are You Interested In?</label>
+                                <select name="ministry" id="ministrySelect">
+                                    <option value="">Select a ministry</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Number of People</label>
+                                <input type="text" name="number_of_people" placeholder="e.g. 1, 2, 3...">
+                            </div>
+                        </div>
+                        <div class="form-group full">
+                            <label>Any Special Requests or Questions?</label>
+                            <textarea name="message" placeholder="Tell us how we can help..." rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit" id="btnSubmitVisit">
+                            <i class="fas fa-paper-plane"></i> Send My Visit Details <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <p class="form-status" id="formStatus"></p>
+                    </form>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
 
-<!-- ===== MINISTRIES STRIP ===== -->
-<section class="ministries-strip">
-    <div class="ministries-strip-bg" id="ministriesBg"></div>
-    <div class="container">
-        <div class="ministries-layout">
-            <div class="ministries-info">
-                <span class="ministries-label" id="minLabel"></span>
-                <h2 class="ministries-title" id="minTitle"></h2>
-                <p class="ministries-desc" id="minDesc"></p>
-                <a href="ministries.html" class="btn-ministries" id="minBtn"></a>
+            <!-- RIGHT COLUMN -->
+            <div class="right-col">
+                <!-- Help Card -->
+                <div class="help-card-dark">
+                    <h3>Need Help Before You Come?</h3>
+                    <p>We're here to make your visit easy and stress-free. Reach out to us anytime!</p>
+                    <div class="help-contact-grid">
+                        <a href="tel:+256785228381" id="helpCall" class="contact-box">
+                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                            <div class="contact-text"><strong>Call Us</strong><span id="helpCallNumber">+256 785 228381</span></div>
+                        </a>
+                        <a href="https://wa.me/256785228381" id="helpWhatsApp" class="contact-box" target="_blank" rel="noopener">
+                            <div class="contact-icon wa"><i class="fab fa-whatsapp"></i></div>
+                            <div class="contact-text"><strong>WhatsApp</strong><span>Chat Now</span></div>
+                        </a>
+                        <a href="mailto:thebridgecalvarychapel1@gmail.com" id="helpEmail" class="contact-box full-width">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="contact-text"><strong>Email Us</strong><span id="helpEmailAddress">thebridgecalvarychapel1@gmail.com</span></div>
+                        </a>
+                        <button id="helpPrayer" class="contact-box action-box" type="button">
+                            <div class="contact-icon"><i class="fas fa-pray"></i></div>
+                            <div class="contact-text"><strong>Prayer Request</strong><span>Submit Prayer</span></div>
+                        </button>
+                        <button id="helpQuestion" class="contact-box action-box" type="button">
+                            <div class="contact-icon"><i class="fas fa-question-circle"></i></div>
+                            <div class="contact-text"><strong>Ask a Question</strong><span>Ask Now</span></div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Welcome Card -->
+                <div class="welcome-card-dark" id="welcomeBg">
+                    <div class="welcome-script" id="welcomeScript">You Are Welcome Here</div>
+                    <div class="welcome-verse" id="welcomeVerse">
+                        "Come to me, all you who are weary and burdened, and I will give you rest."
+                        <span class="ref">— Matthew 11:28</span>
+                    </div>
+                    <p class="welcome-message" id="welcomeMessage">No matter where you are on your spiritual journey, you are welcome at Bridge Calvary Chapel. Come as you are and discover a community that will love you, encourage you, and help you grow in your faith.</p>
+                    <div class="welcome-actions-row">
+                        <button class="btn-welcome-sm" onclick="document.getElementById('visitForm').scrollIntoView({behavior:'smooth'})" type="button">Plan My Visit</button>
+                        <a href="events-contact.html" class="btn-welcome-sm outline">Contact the Church</a>
+                        <a href="donations.html" class="btn-welcome-sm rose">Give</a>
+                    </div>
+                </div>
+
+                <!-- Ministries Card -->
+                <div class="visit-card ministries-card">
+                    <div class="visit-card-header">
+                        <div class="visit-card-icon"><i class="fas fa-church"></i></div>
+                        <h2 id="minTitle">Our Ministries</h2>
+                    </div>
+                    <p class="visit-card-sub" id="minDesc">Explore the many ways to grow, serve and connect at TBCC.</p>
+                    <div class="mini-ministry-grid" id="miniMinistriesGrid"></div>
+                    <a href="ministries.html" class="btn-view-all-ministries">View All Ministries <i class="fas fa-arrow-right"></i></a>
+                </div>
             </div>
-            <div class="ministries-grid" id="miniMinistriesGrid"></div>
         </div>
     </div>
 </section>
@@ -210,138 +222,49 @@
 <!-- ===== REVIEWS ===== -->
 <section class="reviews-section">
     <div class="container">
-        <div class="reviews-layout">
-            <div class="reviews-info">
-                <span class="reviews-label" id="revLabel"></span>
-                <h2 class="reviews-title" id="revTitle"></h2>
-                <p class="reviews-desc" id="revDesc"></p>
-                <button class="btn-review" id="btnWriteReview" type="button">
-                    <i class="fas fa-pen"></i> <span id="revBtnLabel"></span>
-                </button>
-            </div>
-            <div class="reviews-grid" id="reviewsGrid"></div>
-        </div>
-    </div>
-</section>
-
-<!-- ===== HELP BANNER ===== -->
-<section class="help-banner">
-    <div class="help-banner-bg" id="helpBg"></div>
-    <div class="container">
-        <div class="help-inner">
-            <div class="help-header">
-                <div class="help-icon"><i class="fas fa-headset"></i></div>
-                <div>
-                    <div class="help-title" id="helpTitle"></div>
-                    <p class="help-desc" id="helpDesc"></p>
+        <div class="reviews-banner">
+            <div class="reviews-left">
+                <div class="reviews-header">
+                    <div class="visit-card-icon" style="background:#005BEA;"><i class="fas fa-star"></i></div>
+                    <div>
+                        <h2>Share Your Experience</h2>
+                        <p>Your feedback helps us grow and serve better.</p>
+                    </div>
                 </div>
-            </div>
-            <div class="help-actions">
-                <a class="help-btn" id="helpCall" href="#">
-                    <i class="fas fa-phone"></i>
-                    <div class="help-btn-content"><span>Call Us</span><span class="label-sub" id="helpCallNumber"></span></div>
-                </a>
-                <a class="help-btn" id="helpWhatsApp" href="#" target="_blank" rel="noopener">
-                    <i class="fab fa-whatsapp"></i>
-                    <div class="help-btn-content"><span>WhatsApp</span><span class="label-sub">Chat Now</span></div>
-                </a>
-                <a class="help-btn" id="helpEmail" href="#">
-                    <i class="fas fa-envelope"></i>
-                    <div class="help-btn-content"><span>Email Us</span><span class="label-sub" id="helpEmailAddress"></span></div>
-                </a>
-                <button class="help-btn" id="helpPrayer" type="button">
-                    <i class="fas fa-pray"></i>
-                    <div class="help-btn-content"><span>Prayer Request</span><span class="label-sub">Submit Prayer</span></div>
-                </button>
-                <button class="help-btn" id="helpQuestion" type="button">
-                    <i class="fas fa-question-circle"></i>
-                    <div class="help-btn-content"><span>Ask a Question</span><span class="label-sub">Ask Now</span></div>
+                <p style="font-size:12.5px;color:#49658A;margin:12px 0 18px;">If you have visited Bridge Calvary Chapel, we would love to hear how God is working in your life.</p>
+                <button class="btn-submit-review" id="btnWriteReview" type="button">
+                    <i class="fas fa-pen"></i> Write a Review
                 </button>
             </div>
+            <div class="reviews-right-img"></div>
         </div>
-    </div>
-</section>
-
-<!-- ===== WELCOME BANNER ===== -->
-<section class="welcome-banner">
-    <div class="welcome-banner-bg" id="welcomeBg"></div>
-    <div class="container">
-        <div class="welcome-layout">
-            <div class="welcome-script" id="welcomeScript"></div>
-            <div class="welcome-verse" id="welcomeVerse"></div>
-            <div class="welcome-actions">
-                <div class="welcome-actions-title" id="welcomeMessage"></div>
-                <div class="welcome-buttons">
-                    <button class="btn-welcome" onclick="document.getElementById('visitForm').scrollIntoView({behavior:'smooth'})" type="button"><i class="fas fa-calendar-check"></i> Plan My Visit</button>
-                    <a class="btn-welcome" href="events-contact.html"><i class="fas fa-envelope"></i> Contact the Church</a>
-                    <a class="btn-welcome rose" href="donations.html"><i class="fas fa-heart"></i> Give</a>
-                </div>
-            </div>
-        </div>
+        <div class="reviews-display-grid" id="reviewsGrid"></div>
     </div>
 </section>
 
 <!-- ===== FOOTER ===== -->
 <footer class="footer">
     <div class="container">
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <a href="index.html" class="footer-logo-link">
-                    <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
-                    <div class="footer-logo-text">
-                        <span class="footer-the">THE</span>
-                        <span class="footer-bridge">BRIDGE</span>
-                        <span class="footer-calvary">CALVARY CHAPEL</span>
-                    </div>
-                </a>
-                <p id="footerTagline"></p>
-                <div class="footer-social">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        <div class="footer-top-row">
+            <div class="footer-logo">
+                <img src="assets/images/logo.jpg" alt="Logo" onerror="this.style.display='none'">
+                <div class="logo-text">
+                    <span class="logo-the">THE</span>
+                    <span class="logo-bridge">BRIDGE</span>
+                    <span class="logo-calvary">CALVARY CHAPEL</span>
                 </div>
             </div>
-            <div class="footer-col">
-                <h4>Quick Links</h4>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="about.html">About Us</a></li>
-                    <li><a href="ministries.html">Ministries</a></li>
-                    <li><a href="sermons.html">Sermons</a></li>
-                    <li><a href="events-announcements.html">Events</a></li>
-                    <li><a href="donations.html">Donations</a></li>
-                    <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
-                </ul>
+            <div class="footer-social-row">
+                <span>Follow Us</span>
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-x-twitter"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
             </div>
-            <div class="footer-col">
-                <h4>Contact Us</h4>
-                <div class="footer-contact-item"><i class="fas fa-phone"></i><span id="footerPhone"></span></div>
-                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span id="footerEmail"></span></div>
-                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span id="footerAddress"></span></div>
-            </div>
-            <div class="footer-col">
-                <h4>Join Our Newsletter</h4>
-                <p style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px;">Get updates directly in your inbox.</p>
-                <form class="footer-newsletter-form" id="footerNewsletter">
-                    <input type="email" placeholder="Your email address" required aria-label="Email">
-                    <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
-                </form>
-                <h4 style="margin-top:14px;">Follow Us</h4>
-                <div class="footer-social">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; <span id="currentYear">2025</span> <span id="footerCopyrightName">Bridge Calvary Chapel</span>. All rights reserved.</p>
-            <div class="footer-bottom-links">
-                <a href="#">Privacy Policy</a>
-                <span class="divider">|</span>
-                <a href="#">Terms of Service</a>
+            <div class="footer-tag">
+                <span>Together in Christ</span>
+                <strong>Bringing People Closer to Jesus</strong>
             </div>
         </div>
     </div>
