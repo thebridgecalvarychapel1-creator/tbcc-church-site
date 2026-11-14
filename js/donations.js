@@ -1,23 +1,17 @@
 // ============================================
-// DONATIONS + CHURCH SHOP — Bridge Calvary Chapel
-// File: js/donations.js
+// DONATIONS PAGE — Bridge Calvary Chapel
+// File: js/donations.js (Donation-only; shop separated)
 // ============================================
 
 var siteContent = {};
-var allProducts = [];
-var filteredProducts = [];
-var currentShopCategory = 'all';
-var cart = JSON.parse(localStorage.getItem('bcc_cart') || '[]');
-var SHOP_URL_BASE = window.location.origin + window.location.pathname;
 
 // ============================================
 // HELPERS
 // ============================================
 function setText(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.textContent = val; }
 function setHTML(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.innerHTML = val; }
-function escapeHtml(str) { if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function escapeHtml(str) { if (str === null || str === undefined) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function money(n) { return 'UGX ' + Number(n || 0).toLocaleString(); }
-function saveCart() { localStorage.setItem('bcc_cart', JSON.stringify(cart)); updateCartBadge(); }
 function secImg(name) { var s = siteContent[name] || {}; return s.image || s.hero_image || s.background_image || ''; }
 function showToast(msg) {
     var t = document.createElement('div'); t.className = 'bcc-toast';
@@ -25,302 +19,6 @@ function showToast(msg) {
     document.body.appendChild(t);
     setTimeout(function () { t.classList.add('show'); }, 20);
     setTimeout(function () { t.classList.remove('show'); setTimeout(function () { t.remove(); }, 400); }, 2200);
-}
-function parseGallery(raw) {
-    if (Array.isArray(raw)) return raw.slice();
-    if (typeof raw === 'string' && raw.length > 2) {
-        try { var p = JSON.parse(raw); if (Array.isArray(p)) return p; }
-        catch (e) { return raw.split(',').map(function (s) { return s.trim().replace(/^["'{]|["'}]$/g, ''); }).filter(function (s) { return s; }); }
-    }
-    return [];
-}
-
-// ============================================
-// LOGO & RECEIPT CANVAS
-// ============================================
-var LOGO_SVG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">' +
-    '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#005BEA"/><stop offset="1" stop-color="#12D8F5"/></linearGradient></defs>' +
-    '<circle cx="60" cy="60" r="58" fill="url(#g)"/>' +
-    '<circle cx="60" cy="60" r="50" fill="#031B43"/>' +
-    '<text x="60" y="78" text-anchor="middle" font-family="Arial, sans-serif" font-size="56" font-weight="900" fill="#ffffff">✝</text>' +
-    '</svg>'
-);
-
-function loadImage(src) {
-    return new Promise(function (resolve) {
-        var img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = function () { resolve(img); };
-        img.onerror = function () { resolve(null); };
-        img.src = src;
-    });
-}
-
-async function drawReceiptToCanvas(receipt, items, total, customerName, status) {
-    var isConfirmed = status === 'confirmed';
-    var W = 760;
-    var pad = 44;
-    var rowH = 90;
-    var extra = isConfirmed ? 100 : 60;
-    var H = pad + 170 + 40 + (items.length * rowH) + 110 + extra + pad;
-
-    var canvas = document.createElement('canvas');
-    canvas.width = W;
-    canvas.height = H;
-    var ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = '#031B43'; ctx.fillRect(0, 0, W, 130);
-
-    var logo = await loadImage(LOGO_SVG);
-    if (logo) { ctx.drawImage(logo, pad, 26, 76, 76); }
-
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = 'bold 24px Arial, sans-serif';
-    ctx.fillText('THE BRIDGE', pad + 92, 58);
-    ctx.font = 'bold 15px Arial, sans-serif';
-    ctx.fillText('CALVARY CHAPEL', pad + 92, 80);
-    ctx.font = '11px Arial, sans-serif';
-    ctx.fillStyle = '#12D8F5';
-    ctx.fillText(isConfirmed ? 'OFFICIAL CONFIRMED RECEIPT' : 'ORDER RECEIPT — PENDING', pad + 92, 100);
-
-    var badgeColor = isConfirmed ? '#16A34A' : '#F4C430';
-    var badgeText = isConfirmed ? 'CONFIRMED' : 'PENDING';
-    var badgeW = 140, badgeH = 42;
-    var bx = W - pad - badgeW, by = 44;
-    ctx.fillStyle = badgeColor;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(bx, by, badgeW, badgeH, 21);
-    else ctx.rect(bx, by, badgeW, badgeH);
-    ctx.fill();
-    ctx.fillStyle = isConfirmed ? '#FFFFFF' : '#3B1F00';
-    ctx.font = 'bold 16px Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(badgeText, bx + badgeW / 2, by + 27);
-    ctx.textAlign = 'left';
-
-    var y = 160;
-    ctx.fillStyle = '#031B43'; ctx.font = 'bold 14px Arial, sans-serif'; ctx.fillText('Receipt No:', pad, y);
-    ctx.font = 'bold 15px Arial, sans-serif'; ctx.fillStyle = '#005BEA'; ctx.fillText(receipt.receiptNo, pad + 100, y);
-
-    ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#49658A'; ctx.textAlign = 'right';
-    ctx.fillText('Date: ' + receipt.date, W - pad, y); ctx.textAlign = 'left';
-
-    y += 24;
-    ctx.font = 'bold 12px Arial, sans-serif'; ctx.fillStyle = '#031B43'; ctx.fillText('CUSTOMER', pad, y);
-    y += 20;
-    ctx.font = '14px Arial, sans-serif'; ctx.fillStyle = '#041A3A'; ctx.fillText(customerName || 'Walk-in Customer', pad, y);
-
-    ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#49658A'; ctx.textAlign = 'right';
-    ctx.fillText('Order Ref: ' + receipt.orderRef, W - pad, y); ctx.textAlign = 'left';
-
-    y += 22;
-    ctx.strokeStyle = '#CBE8FF'; ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
-
-    y += 26;
-    ctx.fillStyle = '#005BEA'; ctx.font = 'bold 12px Arial, sans-serif';
-    ctx.fillText('ITEMS', pad, y); ctx.textAlign = 'right'; ctx.fillText('AMOUNT', W - pad, y); ctx.textAlign = 'left';
-
-    var thumbs = await Promise.all(items.map(function (it) { return it.image_url ? loadImage(it.image_url) : Promise.resolve(null); }));
-
-    items.forEach(function (it, i) {
-        var thumb = thumbs[i];
-        var thumbX = pad;
-        var thumbY = y + 6;
-        var thumbSize = 52;
-
-        if (thumb) {
-            ctx.save();
-            ctx.beginPath();
-            if (ctx.roundRect) ctx.roundRect(thumbX, thumbY, thumbSize, thumbSize, 6);
-            else ctx.rect(thumbX, thumbY, thumbSize, thumbSize);
-            ctx.clip();
-            ctx.drawImage(thumb, thumbX, thumbY, thumbSize, thumbSize);
-            ctx.restore();
-            ctx.strokeStyle = '#CBE8FF'; ctx.lineWidth = 1;
-            ctx.strokeRect(thumbX, thumbY, thumbSize, thumbSize);
-        }
-
-        var textX = pad + (thumb ? thumbSize + 12 : 0);
-
-        y += 32;
-        ctx.fillStyle = '#041A3A'; ctx.font = 'bold 14px Arial, sans-serif';
-        ctx.fillText(it.name, textX, y);
-        ctx.textAlign = 'right'; ctx.fillText(money(it.price * it.qty), W - pad, y); ctx.textAlign = 'left';
-        y += 18;
-        ctx.font = '11px Arial, sans-serif'; ctx.fillStyle = '#49658A';
-        var v = (it.size ? 'Size ' + it.size + ' ' : '') + (it.color ? '· ' + it.color + ' ' : '') + '· Qty ' + it.qty;
-        ctx.fillText(v, textX, y);
-
-        y += thumb ? 20 : 0;
-    });
-
-    y += 32;
-    ctx.strokeStyle = '#031B43'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
-    y += 30;
-    ctx.fillStyle = '#031B43'; ctx.font = 'bold 18px Arial, sans-serif'; ctx.fillText('TOTAL', pad, y);
-    ctx.fillStyle = '#005BEA'; ctx.font = 'bold 22px Arial, sans-serif';
-    ctx.textAlign = 'right'; ctx.fillText(money(total), W - pad, y); ctx.textAlign = 'left';
-
-    y += 42;
-    if (isConfirmed) {
-        ctx.strokeStyle = '#CBE8FF'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
-        y += 26;
-        ctx.fillStyle = '#031B43'; ctx.font = 'bold 12px Arial, sans-serif'; ctx.fillText('CONFIRMED BY (Church Office)', pad, y);
-        y += 34;
-        ctx.strokeStyle = '#041A3A';
-        ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad + 280, y); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(W - pad - 200, y); ctx.lineTo(W - pad, y); ctx.stroke();
-        ctx.font = '10px Arial, sans-serif'; ctx.fillStyle = '#49658A';
-        ctx.fillText('Signature', pad, y + 14); ctx.fillText('Date / Stamp', W - pad - 200, y + 14);
-    } else {
-        ctx.fillStyle = '#92600A'; ctx.font = 'italic 11px Arial, sans-serif';
-        ctx.fillText('Pending confirmation — this is not yet a final receipt.', pad, y);
-        ctx.fillStyle = '#49658A'; y += 20; ctx.font = '10.5px Arial, sans-serif';
-        ctx.fillText('Bring this receipt to the church to collect your items.', pad, y);
-    }
-
-    y += 30;
-    ctx.fillStyle = '#49658A'; ctx.font = '11px Arial, sans-serif'; ctx.textAlign = 'center';
-    ctx.fillText('The Bridge Calvary Chapel — Jinja, Uganda', W / 2, y);
-    y += 16; ctx.fillText('Thank you for your order. God bless you.', W / 2, y); ctx.textAlign = 'left';
-
-    return canvas;
-}
-
-function downloadReceiptImage(canvas, filename) {
-    var link = document.createElement('a');
-    link.download = filename;
-    link.href = canvas.toDataURL('image/png');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
-async function shareReceiptImage(canvas, filename) {
-    if (!navigator.share || !navigator.canShare) {
-        downloadReceiptImage(canvas, filename);
-        showToast('Receipt downloaded — attach it in WhatsApp.');
-        return;
-    }
-    try {
-        var blob = await new Promise(function (resolve) { canvas.toBlob(resolve, 'image/png'); });
-        var file = new File([blob], filename, { type: 'image/png' });
-        if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: 'Receipt', text: 'My order from Bridge Calvary Chapel' });
-        } else {
-            downloadReceiptImage(canvas, filename);
-            showToast('Receipt downloaded.');
-        }
-    } catch (e) { downloadReceiptImage(canvas, filename); }
-}
-
-// ============================================
-// PRODUCT SHARING — WhatsApp / Facebook / Instagram / TikTok
-// ============================================
-function getProductUrl(p) { return SHOP_URL_BASE + '?product=' + encodeURIComponent(p.id); }
-
-// Download image helper for Instagram/TikTok manual posting
-async function downloadProductImage(p) {
-    if (!p.image_url) { showToast('No image to download'); return; }
-    try {
-        var img = await loadImage(p.image_url);
-        if (!img) throw new Error('Could not load');
-        var canvas = document.createElement('canvas');
-        canvas.width = img.naturalWidth || img.width;
-        canvas.height = img.naturalHeight || img.height;
-        canvas.getContext('2d').drawImage(img, 0, 0);
-        downloadReceiptImage(canvas, (p.name || 'product').replace(/[^\w]+/g, '_') + '.jpg');
-        showToast('Image saved! Now post it on Instagram or TikTok.');
-    } catch (e) {
-        window.open(p.image_url, '_blank');
-    }
-}
-
-// Show the full share menu with all platforms
-function shareProductMenu(p) {
-    var html = '<div class="modal-content">'
-        + '<div class="modal-icon-wrapper"><i class="fas fa-share-alt"></i></div>'
-        + '<h2>Share This Product</h2>'
-        + '<p style="font-size:12.5px;color:#49658A;margin-bottom:16px;">Choose a platform. WhatsApp and Facebook show the image preview. Instagram and TikTok require posting the image manually from your phone.</p>'
-
-        // WhatsApp row
-        + '<div class="share-row">'
-        +   '<button class="share-btn whatsapp" id="shWa"><i class="fab fa-whatsapp"></i> WhatsApp</button>'
-        +   '<button class="share-btn" id="shFb"><i class="fab fa-facebook-f"></i> Facebook</button>'
-        + '</div>'
-
-        // Instagram + TikTok row — download image then open app
-        + '<div class="share-row">'
-        +   '<button class="share-btn" id="shIg"><i class="fab fa-instagram"></i> Instagram</button>'
-        +   '<button class="share-btn" id="shTt"><i class="fab fa-tiktok"></i> TikTok</button>'
-        + '</div>'
-
-        // Email + copy row
-        + '<div class="share-row">'
-        +   '<button class="share-btn" id="shEmail"><i class="fas fa-envelope"></i> Gmail</button>'
-        +   '<button class="share-btn primary" id="shCopy"><i class="fas fa-link"></i> Copy Link</button>'
-        + '</div>'
-
-        + '<p style="font-size:10.5px;color:#49658A;text-align:center;margin-top:12px;">For Instagram/TikTok, the image is downloaded first — then open the app and create your post with it.</p>'
-        + '<div class="modal-actions"><button class="modal-btn modal-btn-secondary" onclick="closeModal()">Close</button></div>'
-        + '</div>';
-    openModal(html);
-
-    var url = getProductUrl(p);
-    var text = p.name + ' — ' + money(p.price) + '\n\n' + url;
-
-    // WhatsApp — open with text + link (image preview appears via OG tags)
-    document.getElementById('shWa').addEventListener('click', function () {
-        window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
-    });
-
-    // Facebook — open share dialog (image preview via OG tags)
-    document.getElementById('shFb').addEventListener('click', function () {
-        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank');
-    });
-
-    // Instagram — download image, then open Instagram app/website
-    document.getElementById('shIg').addEventListener('click', async function () {
-        await downloadProductImage(p);
-        setTimeout(function () {
-            window.open('https://www.instagram.com/', '_blank');
-        }, 600);
-    });
-
-    // TikTok — download image, then open TikTok
-    document.getElementById('shTt').addEventListener('click', async function () {
-        await downloadProductImage(p);
-        setTimeout(function () {
-            window.open('https://www.tiktok.com/', '_blank');
-        }, 600);
-    });
-
-    // Gmail
-    document.getElementById('shEmail').addEventListener('click', function () {
-        window.open('https://mail.google.com/mail/?view=cm&fs=1&su=' + encodeURIComponent(p.name) + '&body=' + encodeURIComponent(text), '_blank');
-    });
-
-    // Copy link
-    document.getElementById('shCopy').addEventListener('click', function () {
-        copyProductLink(encodeURIComponent(url));
-    });
-}
-
-function copyProductLink(encodedUrl) {
-    var url = decodeURIComponent(encodedUrl);
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(function () { showToast('Link copied!'); closeModal(); });
-    } else {
-        var inp = document.createElement('input');
-        inp.value = url; document.body.appendChild(inp); inp.select();
-        document.execCommand('copy'); inp.remove();
-        showToast('Link copied!'); closeModal();
-    }
 }
 
 // ============================================
@@ -350,34 +48,10 @@ window.closeModal = function () {
     overlay.classList.remove('active');
     panel.classList.remove('active');
     panel.setAttribute('inert', '');
-    var cartEl = document.getElementById('cartDrawer');
-    if (!cartEl || !cartEl.classList.contains('active')) document.body.style.overflow = '';
+    document.body.style.overflow = '';
     if (modalLastFocused && typeof modalLastFocused.focus === 'function') { try { modalLastFocused.focus(); } catch (e) {} }
     modalLastFocused = null;
 };
-
-// ============================================
-// SUPPORT TABS
-// ============================================
-function setupSupportTabs() {
-    var tabs = document.querySelectorAll('.tab-btn');
-    if (tabs.length) {
-        tabs.forEach(function (tab) {
-            tab.addEventListener('click', function () {
-                tabs.forEach(function (t) { t.classList.remove('active'); });
-                tab.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(function (c) { c.classList.remove('active'); });
-                var id = 'tab' + tab.dataset.tab.charAt(0).toUpperCase() + tab.dataset.tab.slice(1);
-                var target = document.getElementById(id);
-                if (target) target.classList.add('active');
-            });
-        });
-    }
-    var giveCard = document.querySelector('.support-card-give');
-    if (giveCard) giveCard.addEventListener('click', function () { var el = document.getElementById('directGiving'); if (el) el.scrollIntoView({ behavior: 'smooth' }); });
-    var shopCard = document.querySelector('.support-card-shop');
-    if (shopCard) shopCard.addEventListener('click', function () { var el = document.getElementById('shopSection'); if (el) el.scrollIntoView({ behavior: 'smooth' }); });
-}
 
 // ============================================
 // HERO
@@ -415,485 +89,250 @@ function renderDirectGiving() {
     setText('directDesc', header.description || 'Bank transfers, mobile money, and other verified donation methods');
     var grid = document.getElementById('directGrid');
     if (!grid) return;
-    var bankName = d.bank_name || 'Stanbic Bank Uganda';
-    var accountName = d.account_name || 'Bridge Calvary Chapel';
-    var accountNum = d.account_number || '903001234567';
-    var branch = d.branch || 'Jinja Main Branch';
-    var swift = d.swift || 'SBICUGKA';
+    var bankName = d.bank_name || 'THE BRIDGE STANBIC BANK';
+    var accountName = d.account_name || 'The Bridge of Calvary Chapel';
+    var accountNum = d.account_number || '9030026398737';
+    var branch = d.branch || 'Jinja';
+    var swift = d.swift || 'SBICUGKX';
     var bankNote = d.note || 'Use "Donation - [Your Name]" as the reference.';
-    var mobileNum = d.mobile_number || '+256 785 228 381';
+    var mobileNum = d.mobile_number || '9030026398737';
     var mobileNet = d.mobile_network || 'MTN MoMo / Airtel Money';
-    var mobileAcct = d.mobile_account || 'Bridge Calvary Chapel';
+    var mobileAcct = d.mobile_account || 'The Bridge of Calvary Chapel';
     var mobileNote = d.mobile_note || 'Send via mobile money with "Donation" as reference.';
     var cardStatus = d.card_status || 'Coming Soon';
     var cardNote = d.card_note || 'Online card payments will be available soon. Please use bank transfer or mobile money in the meantime.';
+    
     grid.innerHTML = ''
         + '<div class="direct-card"><div class="direct-card-icon"><i class="fas fa-university"></i></div><h4>Bank Transfer</h4>'
-        + '<p class="direct-detail"><strong>Bank:</strong> ' + escapeHtml(bankName) + '</p>'
+        + '<p class="direct-detail"><strong>Bank:</strong> ' + escapeHtml(bankName) + ' (' + escapeHtml(swift) + ')</p>'
+        + '<p class="direct-detail"><strong>Branch:</strong> ' + escapeHtml(branch) + '</p>'
         + '<p class="direct-detail"><strong>Account:</strong> ' + escapeHtml(accountName) + '</p>'
         + '<p class="direct-detail"><strong>Number:</strong> ' + escapeHtml(accountNum) + '</p>'
-        + '<p class="direct-detail"><strong>Branch:</strong> ' + escapeHtml(branch) + '</p>'
-        + '<p class="direct-detail"><strong>SWIFT:</strong> ' + escapeHtml(swift) + '</p>'
         + '<p class="direct-note">' + escapeHtml(bankNote) + '</p></div>'
-        + '<div class="direct-card"><div class="direct-card-icon"><i class="fas fa-mobile-alt"></i></div><h4>Mobile Money</h4>'
-        + '<p class="direct-detail"><strong>Number:</strong> ' + escapeHtml(mobileNum) + '</p>'
-        + '<p class="direct-detail"><strong>Network:</strong> ' + escapeHtml(mobileNet) + '</p>'
-        + '<p class="direct-detail"><strong>Account:</strong> ' + escapeHtml(mobileAcct) + '</p>'
-        + '<p class="direct-note">' + escapeHtml(mobileNote) + '</p></div>'
+        
+        + '<div class="direct-card direct-card-clickable" onclick="openMobileMoneyPanel()" tabindex="0" role="button">'
+        +   '<div class="direct-card-icon"><i class="fas fa-mobile-alt"></i></div><h4>Mobile Money <i class="fas fa-chevron-right" style="font-size:10px;margin-left:4px;"></i></h4>'
+        +   '<p class="direct-detail"><strong>Number:</strong> ' + escapeHtml(mobileNum) + '</p>'
+        +   '<p class="direct-detail"><strong>Network:</strong> ' + escapeHtml(mobileNet) + '</p>'
+        +   '<p class="direct-detail"><strong>Account:</strong> ' + escapeHtml(mobileAcct) + '</p>'
+        +   '<p class="direct-note">Tap to see payment steps and send your confirmation.</p>'
+        + '</div>'
+        
         + '<div class="direct-card"><div class="direct-card-icon"><i class="fas fa-credit-card"></i></div><h4>Card Payment</h4>'
         + '<span class="badge-coming">' + escapeHtml(cardStatus) + '</span>'
         + '<p class="direct-note">' + escapeHtml(cardNote) + '</p></div>';
 }
 
 // ============================================
-// STORE
+// MOBILE MONEY PANEL
 // ============================================
-function renderStoreHeader() {
-    var h = siteContent.donations_store || {};
-    setText('storeTitle', h.title || 'Bridge Calvary Chapel Store');
-    setText('storeDesc', h.description || 'Support the church by purchasing official church merchandise.');
-}
-function getShopCategories() {
-    var cats = {};
-    allProducts.forEach(function (p) { if (p.category && !cats[p.category]) cats[p.category] = true; });
-    return Object.keys(cats);
-}
-function renderShopCategoryStrip() {
-    var strip = document.getElementById('shopCategoryStrip');
-    if (!strip) return;
-    var cats = getShopCategories();
-    var html = '<button class="shop-cat-chip ' + (currentShopCategory === 'all' ? 'active' : '') + '" data-cat="all" type="button"><i class="fas fa-th"></i> All Products</button>';
-    cats.forEach(function (cat) { html += '<button class="shop-cat-chip ' + (currentShopCategory === cat ? 'active' : '') + '" data-cat="' + escapeHtml(cat) + '" type="button">' + escapeHtml(cat) + '</button>'; });
-    strip.innerHTML = html;
-    strip.querySelectorAll('.shop-cat-chip').forEach(function (chip) {
-        chip.addEventListener('click', function () {
-            currentShopCategory = chip.dataset.cat;
-            filterProducts();
-            renderShopCategoryStrip();
-            var section = document.getElementById('shopSection');
-            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    });
-}
-function filterProducts() {
-    if (currentShopCategory === 'all') filteredProducts = allProducts.slice();
-    else filteredProducts = allProducts.filter(function (p) { return p.category === currentShopCategory; });
-    renderProducts();
-}
+window.openMobileMoneyPanel = function () {
+    var d = siteContent.donations_bank || {};
+    var p = siteContent.mm_procedure || {};
+    var mobileNum  = d.mobile_number || '9030026398737';
+    var mobileNet  = d.mobile_network || 'MTN MoMo / Airtel Money';
+    var mobileAcct = d.mobile_account || 'The Bridge of Calvary Chapel';
 
-// ============================================
-// PRODUCTS
-// ============================================
-function renderProducts() {
-    var grid = document.getElementById('productsGrid');
-    if (!grid) return;
-    if (!filteredProducts.length) {
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#49658A;padding:40px;">No products in this category.</p>';
-        return;
+    var steps = [];
+    for (var i = 1; i <= 7; i++) { var s = p['step' + i]; if (s) steps.push(s); }
+    if (!steps.length) {
+        steps = [
+            'Dial your mobile money menu (MTN: *165#, Airtel: *185#).',
+            'Choose "Send Money".',
+            'Enter the number: ' + mobileNum,
+            'Enter the amount you wish to give.',
+            'Reference: type your full name, then "Donation".',
+            'Confirm with your PIN and wait for the SMS confirmation.',
+            'Fill the form on the right so we can verify and thank you.'
+        ];
     }
-    grid.innerHTML = filteredProducts.map(function (p) {
-        var badge = p.badge ? '<span class="product-badge ' + (p.badge === 'New' ? 'new' : (p.badge === 'Best Seller' ? 'hot' : '')) + '">' + escapeHtml(p.badge) + '</span>' : '';
-        var rating = p.rating ? '<div class="product-rating"><span class="stars">' + '★'.repeat(Math.round(p.rating)) + '</span> ' + p.rating + '</div>' : '';
-        var oldPrice = p.old_price ? '<span class="product-old-price">' + money(p.old_price) + '</span>' : '';
-        return '<article class="product-card" data-product="' + escapeHtml(p.id) + '" tabindex="0" role="button">'
-            + '<div class="product-image">' + badge
-            + '<button class="product-share-btn" type="button" aria-label="Share product" data-share-id="' + escapeHtml(p.id) + '"><i class="fas fa-share-alt"></i></button>'
-            + '<button class="product-fav" type="button" aria-label="Favorite"><i class="far fa-heart"></i></button>'
-            + '<img src="' + escapeHtml(p.image_url || '') + '" alt="' + escapeHtml(p.name || '') + '" onerror="this.style.display=\'none\'"></div>'
-            + '<div class="product-body">'
-            + (p.category ? '<div class="product-cat">' + escapeHtml(p.category) + '</div>' : '')
-            + '<h3 class="product-name">' + escapeHtml(p.name) + '</h3>'
-            + '<p class="product-desc">' + escapeHtml(p.description || '') + '</p>' + rating
-            + '<div class="product-price-row"><span class="product-price">' + money(p.price) + '</span>' + oldPrice + '</div>'
-            + '<button class="btn-add-cart" type="button"><i class="fas fa-cart-plus"></i><span>Add to Cart</span></button>'
-            + '</div></article>';
+    var stepsHtml = steps.map(function (s, idx) {
+        return '<div class="mm-procedure-step"><span class="num">' + (idx + 1) + '</span><span>' + escapeHtml(s) + '</span></div>';
     }).join('');
 
-    if (!grid._delegated) {
-        grid._delegated = true;
-        grid.addEventListener('click', handleProductGridClick);
-        grid.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                var card = e.target.closest('.product-card');
-                if (card) { e.preventDefault(); openCardProduct(card); }
-            }
-        });
-    }
-}
-
-function handleProductGridClick(e) {
-    var shareBtn = e.target.closest('.product-share-btn');
-    if (shareBtn) {
-        e.preventDefault(); e.stopPropagation();
-        var pid = shareBtn.getAttribute('data-share-id');
-        var p = allProducts.find(function (x) { return String(x.id) === String(pid); });
-        if (p) shareProductMenu(p);
-        return;
-    }
-    var favBtn = e.target.closest('.product-fav');
-    if (favBtn) { e.preventDefault(); e.stopPropagation(); return; }
-    var addBtn = e.target.closest('.btn-add-cart');
-    if (addBtn) {
-        e.preventDefault(); e.stopPropagation();
-        var card = addBtn.closest('.product-card');
-        if (card) openCardProduct(card);
-        return;
-    }
-    var card = e.target.closest('.product-card');
-    if (card) openCardProduct(card);
-}
-
-function openCardProduct(card) {
-    var p = allProducts.find(function (x) { return String(x.id) === String(card.dataset.product); });
-    if (p) openProductPanel(p);
-}
-
-// ============================================
-// PRODUCT PANEL
-// ============================================
-function openProductPanel(p) {
-    if (!p) return;
-    var sizes = Array.isArray(p.sizes) ? p.sizes.slice() : [];
-    var colors = Array.isArray(p.colors) ? p.colors.slice() : [];
-    var gallery = parseGallery(p.gallery);
-    if (p.image_url && gallery.indexOf(p.image_url) === -1) gallery.unshift(p.image_url);
-    gallery = gallery.filter(function (x) { return x && typeof x === 'string'; });
-    if (!gallery.length) gallery = [''];
-    var selectedSize = sizes.length ? null : '';
-    var selectedColor = colors.length ? null : '';
-    var qty = 1;
-
-    var thumbsHTML = '';
-    if (gallery.length > 1) {
-        thumbsHTML = gallery.map(function (img, i) {
-            return '<div class="gallery-thumb ' + (i === 0 ? 'active' : '') + '" data-idx="' + i + '"><img src="' + escapeHtml(img) + '" alt="" onerror="this.style.display=\'none\'"></div>';
-        }).join('');
-    }
-    var sizesHTML = sizes.length ? '<div class="modal-section-label">Size</div><div class="modal-option-row" id="sizeRow">'
-        + sizes.map(function (s) { return '<button class="modal-option-btn" type="button" data-size="' + escapeHtml(s) + '">' + escapeHtml(s) + '</button>'; }).join('') + '</div>' : '';
-
-    var colorsHTML = colors.length ? '<div class="modal-section-label">Color</div><div class="modal-option-row" id="colorRow">'
-        + colors.map(function (c) { 
-            var colorCode = c.toLowerCase() === 'red' ? '#FF0000' : c.toLowerCase() === 'blue' ? '#0000FF' : c.toLowerCase() === 'green' ? '#008000' : c.toLowerCase() === 'black' ? '#000000' : c.toLowerCase() === 'white' ? '#FFFFFF' : c;
-            return '<button class="modal-option-btn color-swatch" style="background-color: ' + colorCode + ';" type="button" data-color="' + escapeHtml(c) + '" title="' + escapeHtml(c) + '"></button>'; 
-        }).join('') + '</div>' : '';
-
-    var galleryHTML;
-    if (gallery.length > 1) {
-        galleryHTML = '<div class="product-gallery"><div class="gallery-thumbs">' + thumbsHTML + '</div><div class="gallery-main"><img id="galleryMainImg" src="' + escapeHtml(gallery[0]) + '" alt="" onerror="this.style.display=\'none\'"></div></div>';
-    } else {
-        galleryHTML = '<img class="modal-hero-image" src="' + escapeHtml(gallery[0]) + '" alt="' + escapeHtml(p.name || '') + '" onerror="this.style.display=\'none\'">';
-    }
-    var html = '<div class="modal-content">' + galleryHTML
-        + '<h2>' + escapeHtml(p.name || '') + '</h2>'
-        + '<p>' + escapeHtml(p.long_description || p.description || '') + '</p>'
-        + '<div class="product-price-row" style="margin:14px 0;"><span class="product-price" style="font-size:24px;">' + money(p.price) + '</span>'
-        + (p.old_price ? '<span class="product-old-price">' + money(p.old_price) + '</span>' : '') + '</div>'
-        + sizesHTML + colorsHTML
-        + '<div class="qty-row" style="margin-top:14px;"><span class="qty-label">Quantity</span><div class="qty-controls">'
-        + '<button class="qty-btn" id="qtyMinus" type="button">−</button><span class="qty-value" id="qtyValue">1</span><button class="qty-btn" id="qtyPlus" type="button">+</button></div></div>'
-        + '<div class="modal-actions"><button class="modal-btn modal-btn-primary" id="btnAddProduct" type="button"><i class="fas fa-cart-plus"></i><span>Add to Cart</span></button></div>'
-        + '<div class="share-row">'
-        +   '<button class="share-btn primary" type="button" id="sharePanelBtn"><i class="fas fa-share-alt"></i> Share Product</button>'
-        +   '<button class="share-btn" type="button" id="copyLinkBtn"><i class="fas fa-link"></i> Copy Link</button>'
+    var rightHtml = ''
+        + '<div class="mm-detail-list">'
+        +   '<div><strong>Network</strong>' + escapeHtml(mobileNet) + '</div>'
+        +   '<div><strong>Send to</strong>' + escapeHtml(mobileNum) + '</div>'
+        +   '<div><strong>Account Name</strong>' + escapeHtml(mobileAcct) + '</div>'
         + '</div>'
-        + '</div>';
-    openModal(html);
-
-    document.querySelectorAll('.gallery-thumb').forEach(function (thumb) {
-        thumb.addEventListener('click', function () {
-            document.querySelectorAll('.gallery-thumb').forEach(function (t) { t.classList.remove('active'); });
-            thumb.classList.add('active');
-            var idx = parseInt(thumb.dataset.idx, 10);
-            var mainImg = document.getElementById('galleryMainImg');
-            if (mainImg) mainImg.src = gallery[idx];
-        });
-    });
-    if (sizes.length) {
-        var sizeBtns = document.querySelectorAll('#sizeRow .modal-option-btn');
-        sizeBtns.forEach(function (b) {
-            b.addEventListener('click', function (e) {
-                e.preventDefault();
-                sizeBtns.forEach(function (x) { x.classList.remove('active'); });
-                b.classList.add('active');
-                selectedSize = b.dataset.size;
-            });
-        });
-    }
-    if (colors.length) {
-        var colorBtns = document.querySelectorAll('#colorRow .modal-option-btn');
-        colorBtns.forEach(function (b) {
-            b.addEventListener('click', function (e) {
-                e.preventDefault();
-                colorBtns.forEach(function (x) { x.classList.remove('active'); });
-                b.classList.add('active');
-                selectedColor = b.dataset.color;
-            });
-        });
-    }
-    document.getElementById('qtyMinus').addEventListener('click', function () { if (qty > 1) { qty--; setText('qtyValue', qty); } });
-    document.getElementById('qtyPlus').addEventListener('click', function () { qty++; setText('qtyValue', qty); });
-    document.getElementById('btnAddProduct').addEventListener('click', function () {
-        if (sizes.length && !selectedSize) { alert('Please choose a size.'); return; }
-        if (colors.length && !selectedColor) { alert('Please choose a color.'); return; }
-        addProductToCart(p, selectedSize, selectedColor, qty);
-        closeModal();
-        setTimeout(openCart, 300);
-    });
-    document.getElementById('sharePanelBtn').addEventListener('click', function () { shareProductMenu(p); });
-    document.getElementById('copyLinkBtn').addEventListener('click', function () { copyProductLink(encodeURIComponent(getProductUrl(p))); });
-}
-
-// ============================================
-// CART
-// ============================================
-function addProductToCart(product, size, color, qty) {
-    cart.push({ type: 'product', id: product.id, name: product.name, image_url: product.image_url || '', price: Number(product.price), size: size || '', color: color || '', qty: qty || 1 });
-    saveCart(); showToast('Added: ' + product.name);
-}
-function updateCartBadge() {
-    var badge = document.getElementById('cartBadge');
-    if (!badge) return;
-    var count = cart.reduce(function (sum, i) { return sum + (i.qty || 1); }, 0);
-    badge.textContent = count;
-    badge.style.display = count > 0 ? 'flex' : 'none';
-    var countEl = document.getElementById('cartCount');
-    if (countEl) countEl.textContent = '(' + count + ')';
-}
-function renderCart() {
-    var body = document.getElementById('cartBody');
-    var footer = document.getElementById('cartFooter');
-    if (!body) return;
-    if (!cart.length) {
-        body.innerHTML = '<div class="cart-empty"><i class="fas fa-shopping-cart"></i><p>Your cart is empty</p></div>';
-        if (footer) footer.style.display = 'none';
-        return;
-    }
-    var total = 0;
-    body.innerHTML = cart.map(function (item, idx) {
-        total += item.price * item.qty;
-        var variant = (item.size ? 'Size ' + item.size : '') + (item.color ? (item.size ? ' · ' : '') + item.color : '');
-        return '<div class="cart-item">'
-            + '<div class="cart-item-image"><img src="' + escapeHtml(item.image_url) + '" alt="" onerror="this.style.display=\'none\'"></div>'
-            + '<div class="cart-item-body">'
-            + '<div class="cart-item-name">' + escapeHtml(item.name) + '</div>'
-            + (variant ? '<div class="cart-item-variant">' + escapeHtml(variant) + '</div>' : '')
-            + '<div class="cart-item-bottom">'
-            + '<div class="cart-item-qty"><button data-minus="' + idx + '">−</button><span>' + item.qty + '</span><button data-plus="' + idx + '">+</button></div>'
-            + '<span class="cart-item-price">' + money(item.price * item.qty) + '</span>'
-            + '<button class="cart-item-remove" data-remove="' + idx + '"><i class="fas fa-trash"></i></button>'
-            + '</div></div></div>';
-    }).join('');
-    body.querySelectorAll('[data-minus]').forEach(function (b) { b.addEventListener('click', function () { var i = parseInt(b.dataset.minus, 10); if (cart[i].qty > 1) { cart[i].qty--; saveCart(); renderCart(); } }); });
-    body.querySelectorAll('[data-plus]').forEach(function (b) { b.addEventListener('click', function () { var i = parseInt(b.dataset.plus, 10); cart[i].qty = (cart[i].qty || 1) + 1; saveCart(); renderCart(); }); });
-    body.querySelectorAll('[data-remove]').forEach(function (b) { b.addEventListener('click', function () { cart.splice(parseInt(b.dataset.remove, 10), 1); saveCart(); renderCart(); }); });
-    setText('cartTotal', money(total));
-    if (footer) footer.style.display = 'block';
-}
-window.openCart = function () {
-    document.getElementById('cartDrawer').classList.add('active');
-    document.getElementById('cartOverlay').classList.add('active');
-    document.getElementById('cartDrawer').removeAttribute('inert');
-    document.body.style.overflow = 'hidden';
-    renderCart();
-};
-window.closeCart = function () {
-    document.getElementById('cartDrawer').classList.remove('active');
-    document.getElementById('cartOverlay').classList.remove('active');
-    document.getElementById('cartDrawer').setAttribute('inert', '');
-    document.body.style.overflow = '';
-};
-
-// ============================================
-// ORDER REFERENCE + RECEIPT NUMBERS
-// ============================================
-function generateOrderRef() {
-    var d = new Date();
-    var ymd = d.getFullYear().toString() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-    var rand = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return 'TBCC-' + ymd + '-' + rand;
-}
-function generateReceiptNumber(orderRef, status) {
-    var prefix = status === 'confirmed' ? 'RCPT-CONF-' : 'RCPT-PEND-';
-    var d = new Date();
-    var ymd = d.getFullYear().toString() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
-    var tail = orderRef.split('-').pop();
-    return prefix + ymd + '-' + tail;
-}
-
-// ============================================
-// ORDER FLOW — Receipt FIRST, then submit to WhatsApp/Email
-// ============================================
-window.openOrderSummary = function () {
-    if (!cart.length) { alert('Your cart is empty.'); return; }
-    var total = 0;
-    var itemsHTML = cart.map(function (i) {
-        var line = Number(i.price) * (i.qty || 1); total += line;
-        var variant = (i.size ? 'Size ' + i.size : '') + (i.color ? (i.size ? ' · ' : '') + i.color : '');
-        return '<div class="order-summary-item"><div class="order-summary-item-img"><img src="' + escapeHtml(i.image_url) + '" onerror="this.style.display=\'none\'"></div>'
-            + '<div class="order-summary-item-body"><div class="order-summary-item-name">' + escapeHtml(i.name) + '</div>'
-            + (variant ? '<div class="order-summary-item-variant">' + escapeHtml(variant) + ' · Qty ' + (i.qty || 1) + '</div>' : '<div class="order-summary-item-variant">Qty ' + (i.qty || 1) + '</div>')
-            + '</div><div class="order-summary-item-price">' + money(line) + '</div></div>';
-    }).join('');
-
-    var html = '<div class="modal-content">'
-        + '<div class="modal-icon-wrapper"><i class="fas fa-clipboard-list"></i></div>'
-        + '<h2>Complete Your Order</h2>'
-        + '<div class="modal-section-label">Your Items</div>'
-        + '<div class="order-summary-box">' + itemsHTML + '</div>'
-        + '<div class="order-total-box"><span class="order-total-label">Grand Total</span><span class="order-total-value">' + money(total) + '</span></div>'
-        + '<div class="modal-section-label">Your Contact Details</div>'
-        + '<form id="orderForm" class="order-form-grid">'
-        + '<div class="form-group full"><label>Your Name <span class="req">*</span></label><input type="text" name="name" required></div>'
-        + '<div class="form-group full"><label>WhatsApp / Phone <span class="req">*</span></label><input type="tel" name="phone" required></div>'
-        + '<div class="form-group full"><label>Email (optional)</label><input type="email" name="email"></div>'
-        + '<div class="form-group full"><label>Delivery Preference</label><select name="delivery_method"><option>Collection at church</option><option>Delivery within Uganda</option></select></div>'
-        + '<div class="form-group full"><label>District (if delivery)</label><input type="text" name="delivery_location" placeholder="e.g. Jinja, Mbale, Gulu..."></div>'
-        + '<div class="form-group full"><label>Additional Notes</label><textarea name="notes" rows="2"></textarea></div>'
+        + '<form id="mmConfirmForm" class="mm-form">'
+        +   '<label>Your Name *<input type="text" name="name" required></label>'
+        +   '<label>Your Phone *<input type="tel" name="phone" required></label>'
+        +   '<label>Amount Sent (UGX) *<input type="number" name="amount" required placeholder="e.g. 50000"></label>'
+        +   '<label>Transaction Reference *<input type="text" name="reference" required placeholder="From the SMS confirmation"></label>'
+        +   '<label>Note (optional)<textarea name="note" rows="2" placeholder="Any extra detail"></textarea></label>'
         + '</form>'
         + '<div class="modal-actions">'
-        +   '<button class="modal-btn modal-btn-primary" id="btnGenerateReceipt"><i class="fas fa-file-invoice"></i> Generate Receipt &amp; Send</button>'
-        + '</div>'
+        +   '<button class="modal-btn modal-btn-whatsapp" id="btnMMWhatsApp"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>'
+        +   '<button class="modal-btn modal-btn-email" id="btnMMEmail"><i class="fas fa-envelope"></i> Send Gmail</button>'
         + '</div>';
-    openModal(html);
-
-    document.getElementById('btnGenerateReceipt').addEventListener('click', function () {
-        var p = {};
-        new FormData(document.getElementById('orderForm')).forEach(function (v, k) { p[k] = v; });
-        if (!p.name || !p.phone) { alert('Please enter name and phone.'); return; }
-        var orderRef = generateOrderRef();
-        var orderDate = new Date().toLocaleString('en-UG', { dateStyle: 'medium', timeStyle: 'short' });
-        openReceiptScreen(p, orderRef, orderDate, total);
-    });
-};
-
-function openReceiptScreen(p, orderRef, orderDate, total) {
-    var pendingReceiptNo = generateReceiptNumber(orderRef, 'pending');
-
-    var itemsHTML = cart.map(function (i) {
-        var line = i.price * i.qty;
-        var variant = (i.size ? 'Size ' + i.size + ' ' : '') + (i.color ? '· ' + i.color + ' ' : '') + '· Qty ' + i.qty;
-        return '<div class="rc-item">'
-            + '<span style="display:flex;align-items:center;gap:8px;">'
-            +   '<img src="' + escapeHtml(i.image_url) + '" style="width:38px;height:38px;border-radius:6px;object-fit:cover;" onerror="this.style.display=\'none\'">'
-            +   '<span>' + escapeHtml(i.name) + '<br><small style="color:#49658A;">(' + variant + ')</small></span>'
-            + '</span>'
-            + '<span>' + money(line) + '</span></div>';
-    }).join('');
 
     var html = '<div class="modal-content">'
-        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#005BEA,#12D8F5);"><i class="fas fa-file-invoice"></i></div>'
-        + '<h2>Your Pending Receipt</h2>'
-        + '<p style="text-align:center;font-size:12.5px;color:#49658A;">Review your receipt, then send it to the church below.</p>'
-        + '<div class="receipt-card">'
-        +   '<div class="rc-header">'
-        +     '<div class="rc-shop">THE BRIDGE CALVARY CHAPEL<small>ORDER RECEIPT — PENDING</small></div>'
-        +     '<div class="rc-ref"><strong>' + orderRef + '</strong>' + orderDate + '</div>'
+        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#005BEA,#078BFF);"><i class="fas fa-mobile-alt"></i></div>'
+        + '<h2>' + escapeHtml(p.title || 'How to Send via Mobile Money') + '</h2>'
+        + '<p style="text-align:center;font-size:12.5px;color:#49658A;">Follow the steps on the left, then complete the form on the right.</p>'
+        + '<div class="mm-panel">'
+        +   '<div class="mm-side"><h4>Payment Procedure</h4><div>' + stepsHtml + '</div>'
+        +     (p.note ? '<div class="mm-note">' + escapeHtml(p.note) + '</div>' : '')
         +   '</div>'
-        +   itemsHTML
-        +   '<div class="rc-total"><span>TOTAL</span><span>' + money(total) + '</span></div>'
-        +   '<div class="rc-footer">Receipt No: ' + pendingReceiptNo + '<br>Bring this receipt to the church. Official receipt will be issued on collection.</div>'
+        +   '<div class="mm-side"><h4>Confirm Your Payment</h4>' + rightHtml + '</div>'
         + '</div>'
-        + '<div class="share-row">'
-        +   '<button class="share-btn" id="btnDownloadPendingReceipt"><i class="fas fa-download"></i> Download Receipt</button>'
-        +   '<button class="share-btn primary" id="btnSharePendingReceipt"><i class="fas fa-share-alt"></i> Share Receipt</button>'
-        + '</div>'
-        + '<div class="modal-section-label">Send Order to Church</div>'
-        + '<div class="modal-actions">'
-        +   '<button class="modal-btn modal-btn-whatsapp" id="btnSendWhatsApp"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>'
-        +   '<button class="modal-btn modal-btn-email" id="btnSendEmail"><i class="fas fa-envelope"></i> Send Gmail</button>'
-        + '</div>'
-        + '<p style="font-size:10.5px;color:#49658A;text-align:center;margin-top:10px;">The church will confirm your order by phone. Keep the receipt number.</p>'
+        + '<div class="modal-actions" style="margin-top:14px;"><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button></div>'
         + '</div>';
     openModal(html);
 
-    function buildMessage() {
-        var lines = ['Hello Bridge Calvary Chapel, I would like to place an order.', '', '🧾 Order Ref: ' + orderRef, '🧾 Pending Receipt No: ' + pendingReceiptNo, '📅 ' + orderDate, '', '👤 Name: ' + (p.name || ''), '📱 Phone: ' + (p.phone || '')];
-        if (p.email) lines.push('📧 Email: ' + p.email);
-        lines.push('', '🛒 ITEMS:');
-        cart.forEach(function (i) {
-            lines.push('• ' + i.name + (i.size ? ' (' + i.size + (i.color ? '/' + i.color : '') + ')' : '') + ' — Qty ' + i.qty + ' — ' + money(i.price * i.qty));
-        });
-        lines.push('', '💰 TOTAL: ' + money(total));
-        if (p.delivery_method) lines.push('🚚 Delivery: ' + p.delivery_method);
-        if (p.delivery_location) lines.push('📍 District: ' + p.delivery_location);
-        if (p.notes) lines.push('💬 Notes: ' + p.notes);
-        lines.push('', 'Status: PENDING — awaiting confirmation.');
-        return lines.join('\n');
-    }
+    function buildMessage(p) { return ['📱 MOBILE MONEY CONFIRMATION', 'Name: ' + (p.name || ''), 'Phone: ' + (p.phone || ''), 'Amount: UGX ' + (p.amount || '0'), 'Reference: ' + (p.reference || ''), (p.note ? 'Note: ' + p.note : '')].filter(Boolean).join('\n'); }
+    function collect() { var p = {}; new FormData(document.getElementById('mmConfirmForm')).forEach(function (v, k) { p[k] = v; }); return p; }
 
-    document.getElementById('btnSendWhatsApp').addEventListener('click', function () {
+    document.getElementById('btnMMWhatsApp').addEventListener('click', function () {
+        var p = collect(); if (!p.name || !p.phone || !p.amount || !p.reference) { alert('Please fill all required fields.'); return; }
         var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
-        window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage()), '_blank');
+        window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage(p)), '_blank');
     });
-    document.getElementById('btnSendEmail').addEventListener('click', function () {
+    document.getElementById('btnMMEmail').addEventListener('click', function () {
+        var p = collect(); if (!p.name || !p.phone || !p.amount || !p.reference) { alert('Please fill all required fields.'); return; }
         var c = window.CHURCH_CONTACT || { email: 'thebridgecalvarychapel1@gmail.com' };
-        window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Order ' + orderRef) + '&body=' + encodeURIComponent(buildMessage()), '_blank');
-    });
-
-    document.getElementById('btnDownloadPendingReceipt').addEventListener('click', async function () {
-        var receipt = { receiptNo: pendingReceiptNo, orderRef: orderRef, date: orderDate };
-        var canvas = await drawReceiptToCanvas(receipt, cart, total, p.name || 'Walk-in Customer', 'pending');
-        downloadReceiptImage(canvas, pendingReceiptNo + '.png');
-        showToast('Receipt downloaded');
-    });
-    document.getElementById('btnSharePendingReceipt').addEventListener('click', async function () {
-        var receipt = { receiptNo: pendingReceiptNo, orderRef: orderRef, date: orderDate };
-        var canvas = await drawReceiptToCanvas(receipt, cart, total, p.name || 'Walk-in Customer', 'pending');
-        await shareReceiptImage(canvas, pendingReceiptNo + '.png');
-    });
-}
-
-// ============================================
-// CONFIRMED RECEIPT (staff)
-// ============================================
-window.openConfirmedReceipt = function () {
-    var html = '<div class="modal-content">'
-        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#16A34A,#059669);"><i class="fas fa-check"></i></div>'
-        + '<h2>Issue Confirmed Receipt</h2>'
-        + '<p style="font-size:12.5px;">For staff use only. Enter the customer\'s pending receipt number after the items have been handed over.</p>'
-        + '<form id="confirmForm" class="order-form-grid">'
-        +   '<div class="form-group full"><label>Pending Receipt No. <span class="req">*</span></label><input type="text" name="pending_receipt" placeholder="RCPT-PEND-YYYYMMDD-XXXX" required></div>'
-        +   '<div class="form-group full"><label>Order Reference <span class="req">*</span></label><input type="text" name="order_ref" placeholder="TBCC-YYYYMMDD-XXXX" required></div>'
-        +   '<div class="form-group full"><label>Customer Name <span class="req">*</span></label><input type="text" name="customer_name" required></div>'
-        +   '<div class="form-group full"><label>Items (one per line: Name | Qty | Price) <span class="req">*</span></label><textarea name="items_raw" rows="4" placeholder="T-Shirt | 2 | 35000&#10;Cap | 1 | 25000" required></textarea></div>'
-        + '</form>'
-        + '<div class="modal-actions">'
-        +   '<button class="modal-btn modal-btn-primary" id="genConfirmed"><i class="fas fa-file-signature"></i> Generate Confirmed Receipt</button>'
-        + '</div>'
-        + '</div>';
-    openModal(html);
-    document.getElementById('genConfirmed').addEventListener('click', async function () {
-        var p = {};
-        new FormData(document.getElementById('confirmForm')).forEach(function (v, k) { p[k] = v; });
-        if (!p.pending_receipt || !p.order_ref || !p.customer_name || !p.items_raw) { alert('Please fill all fields.'); return; }
-        var items = p.items_raw.split('\n').map(function (line) {
-            var parts = line.split('|').map(function (s) { return s.trim(); });
-            if (parts.length < 3) return null;
-            return { name: parts[0], qty: parseInt(parts[1]) || 1, price: parseFloat(parts[2]) || 0 };
-        }).filter(Boolean);
-        if (!items.length) { alert('Please provide at least one valid item.'); return; }
-        var total = items.reduce(function (s, i) { return s + i.price * i.qty; }, 0);
-        var confirmedNo = p.pending_receipt.replace('RCPT-PEND-', 'RCPT-CONF-');
-        var receipt = { receiptNo: confirmedNo, orderRef: p.order_ref, date: new Date().toLocaleString('en-UG', { dateStyle: 'medium', timeStyle: 'short' }) };
-        var canvas = await drawReceiptToCanvas(receipt, items, total, p.customer_name, 'confirmed');
-        downloadReceiptImage(canvas, confirmedNo + '.png');
-        showToast('Confirmed receipt downloaded');
+        window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Mobile Money Confirmation') + '&body=' + encodeURIComponent(buildMessage(p)), '_blank');
     });
 };
 
 // ============================================
-// DONATION WIZARDS (UNCHANGED)
+// MINISTRY SUPPORT
+// ============================================
+window.openMinistrySupport = function () {
+    var items = [];
+    for (var i = 1; i <= 12; i++) { var m = siteContent['support_ministry_' + i]; if (m && m.title) items.push(m); }
+    if (!items.length) {
+        items = [
+            { title: 'Youth Ministry', description: 'Supporting teens through Bible teaching, camps, and mentorship.' },
+            { title: 'Hospital Ministry', description: 'Prayer and practical care for patients and families.' },
+            { title: 'Worship Ministry', description: 'Sustaining instruments, sound, and worship training.' },
+            { title: "Children's Ministry", description: 'Sunday school materials and children\'s programs.' },
+            { title: 'Evangelism & Outreach', description: 'Community outreach, street evangelism, and mission trips.' },
+            { title: 'Media Ministry', description: 'Livestreaming, recording, and communications.' }
+        ];
+    }
+    var cards = items.map(function (m) {
+        return '<div class="support-list-card" data-ministry="' + escapeHtml(m.title) + '"><h4>' + escapeHtml(m.title) + '</h4><p>' + escapeHtml(m.description || '') + '</p></div>';
+    }).join('');
+    var html = '<div class="modal-content">'
+        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);"><i class="fas fa-church"></i></div>'
+        + '<h2>Support a Ministry</h2>'
+        + '<p style="text-align:center;font-size:12.5px;color:#49658A;">Choose a ministry to support.</p>'
+        + '<div class="modal-section-label">Available Ministries</div>'
+        + '<div class="support-list-grid">' + cards + '</div>'
+        + '<div class="modal-actions"><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button></div>'
+        + '</div>';
+    openModal(html);
+    document.querySelectorAll('.support-list-card').forEach(function (card) {
+        card.addEventListener('click', function () { openMinistrySupportForm(card.getAttribute('data-ministry')); });
+    });
+};
+
+function openMinistrySupportForm(name) {
+    var html = '<div class="modal-content">'
+        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#8B5CF6,#7C3AED);"><i class="fas fa-heart"></i></div>'
+        + '<h2>Support ' + escapeHtml(name) + '</h2>'
+        + '<form id="minSupportForm" class="order-form-grid">'
+        +   '<div class="form-group full"><label>Your Name <span class="req">*</span></label><input type="text" name="name" required></div>'
+        +   '<div class="form-group full"><label>Email <span class="req">*</span></label><input type="email" name="email" required></div>'
+        +   '<div class="form-group full"><label>Phone</label><input type="tel" name="phone"></div>'
+        +   '<div class="form-group full"><label>Support Type</label><select name="supportType"><option>Financial gift</option><option>Prayer support</option><option>Volunteer time</option><option>Material donation</option></select></div>'
+        +   '<div class="form-group full"><label>Amount / Note</label><input type="text" name="amount"></div>'
+        +   '<div class="form-group full"><label>Message</label><textarea name="message" rows="3"></textarea></div>'
+        + '</form>'
+        + '<div class="modal-actions">'
+        +   '<button class="modal-btn modal-btn-whatsapp" id="btnMinWhatsApp"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>'
+        +   '<button class="modal-btn modal-btn-email" id="btnMinEmail"><i class="fas fa-envelope"></i> Send Gmail</button>'
+        + '</div>'
+        + '<div class="modal-actions" style="margin-top:8px;"><button class="modal-btn modal-btn-secondary" onclick="openMinistrySupport()" type="button">Back</button><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button></div>'
+        + '</div>';
+    openModal(html);
+    function collect() { var p = {}; new FormData(document.getElementById('minSupportForm')).forEach(function (v, k) { p[k] = v; }); return p; }
+    function buildMessage(p) { return ['Support Request — ' + name, '', 'Name: ' + (p.name||''), 'Email: ' + (p.email||''), 'Phone: ' + (p.phone||'—'), 'Support Type: ' + (p.supportType||''), 'Amount / Note: ' + (p.amount||'—'), 'Message: ' + (p.message||'—')].join('\n'); }
+    document.getElementById('btnMinWhatsApp').addEventListener('click', function () {
+        var p = collect(); if (!p.name || !p.email) { alert('Please fill name and email.'); return; }
+        var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
+        window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage(p)), '_blank');
+    });
+    document.getElementById('btnMinEmail').addEventListener('click', function () {
+        var p = collect(); if (!p.name || !p.email) { alert('Please fill name and email.'); return; }
+        var c = window.CHURCH_CONTACT || { email: 'thebridgecalvarychapel1@gmail.com' };
+        window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Support — ' + name) + '&body=' + encodeURIComponent(buildMessage(p)), '_blank');
+    });
+}
+
+// ============================================
+// SPECIAL PROJECTS
+// ============================================
+window.openSpecialProjects = function () {
+    var items = [];
+    for (var i = 1; i <= 12; i++) { var p = siteContent['special_project_' + i]; if (p && p.title) items.push(p); }
+    if (!items.length) {
+        items = [
+            { title: 'Sanctuary Renovation', description: 'New flooring, seating, and lighting.', target: 'UGX 15,000,000' },
+            { title: 'Youth Camp Fund', description: 'Send our youth to camp.', target: 'UGX 8,000,000' },
+            { title: 'Roof Repair', description: 'Replacing the leaking roof over the fellowship hall.', target: 'UGX 5,000,000' }
+        ];
+    }
+    var cards = items.map(function (p) {
+        return '<div class="support-list-card" data-project="' + escapeHtml(p.title) + '"><h4>' + escapeHtml(p.title) + '</h4><p>' + escapeHtml(p.description || '') + '</p>' + (p.target ? '<span class="target-tag">Target: ' + escapeHtml(p.target) + '</span>' : '') + '</div>';
+    }).join('');
+    var html = '<div class="modal-content">'
+        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><i class="fas fa-hard-hat"></i></div>'
+        + '<h2>Special Projects</h2>'
+        + '<p style="text-align:center;font-size:12.5px;color:#49658A;">Click a project to send your support.</p>'
+        + '<div class="modal-section-label">Current Projects</div>'
+        + '<div class="support-list-grid">' + cards + '</div>'
+        + '<div class="modal-actions"><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button></div>'
+        + '</div>';
+    openModal(html);
+    document.querySelectorAll('.support-list-card').forEach(function (card) {
+        card.addEventListener('click', function () { openSpecialProjectForm(card.getAttribute('data-project')); });
+    });
+};
+
+function openSpecialProjectForm(name) {
+    var html = '<div class="modal-content">'
+        + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#F59E0B,#D97706);"><i class="fas fa-hand-holding-heart"></i></div>'
+        + '<h2>Support: ' + escapeHtml(name) + '</h2>'
+        + '<form id="projSupportForm" class="order-form-grid">'
+        +   '<div class="form-group full"><label>Your Name <span class="req">*</span></label><input type="text" name="name" required></div>'
+        +   '<div class="form-group full"><label>Email <span class="req">*</span></label><input type="email" name="email" required></div>'
+        +   '<div class="form-group full"><label>Phone</label><input type="tel" name="phone"></div>'
+        +   '<div class="form-group full"><label>Amount (UGX)</label><input type="text" name="amount"></div>'
+        +   '<div class="form-group full"><label>Message</label><textarea name="message" rows="3"></textarea></div>'
+        + '</form>'
+        + '<div class="modal-actions">'
+        +   '<button class="modal-btn modal-btn-whatsapp" id="btnProjWhatsApp"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>'
+        +   '<button class="modal-btn modal-btn-email" id="btnProjEmail"><i class="fas fa-envelope"></i> Send Gmail</button>'
+        + '</div>'
+        + '<div class="modal-actions" style="margin-top:8px;"><button class="modal-btn modal-btn-secondary" onclick="openSpecialProjects()" type="button">Back</button><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button></div>'
+        + '</div>';
+    openModal(html);
+    function collect() { var p = {}; new FormData(document.getElementById('projSupportForm')).forEach(function (v, k) { p[k] = v; }); return p; }
+    function buildMessage(p) { return ['Special Project Support — ' + name, '', 'Name: ' + (p.name||''), 'Email: ' + (p.email||''), 'Phone: ' + (p.phone||'—'), 'Amount: UGX ' + (p.amount||'—'), 'Message: ' + (p.message||'—')].join('\n'); }
+    document.getElementById('btnProjWhatsApp').addEventListener('click', function () {
+        var p = collect(); if (!p.name || !p.email) { alert('Please fill name and email.'); return; }
+        var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
+        window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage(p)), '_blank');
+    });
+    document.getElementById('btnProjEmail').addEventListener('click', function () {
+        var p = collect(); if (!p.name || !p.email) { alert('Please fill name and email.'); return; }
+        var c = window.CHURCH_CONTACT || { email: 'thebridgecalvarychapel1@gmail.com' };
+        window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Support Project — ' + name) + '&body=' + encodeURIComponent(buildMessage(p)), '_blank');
+    });
+}
+
+// ============================================
+// MONEY WIZARD
 // ============================================
 var monetaryWizard = { step: 1, fund: 'general', amount: 0, donor: { name: '', email: '', phone: '' }, notes: '' };
-var materialWizard = { step: 1, category: null, items: '', qty: '', condition: 'New', donor: { name: '', email: '', phone: '', address: '' }, deliveryMethod: 'dropoff', notes: '' };
-
 window.openMonetaryDonation = function () { monetaryWizard = { step: 1, fund: 'general', amount: 0, donor: { name: '', email: '', phone: '' }, notes: '' }; renderMonetaryStep(); };
 function fundChoice(val, icon, title, sub) {
     var active = monetaryWizard.fund === val ? 'active' : '';
-    return '<div class="donation-panel-choice ' + active + '" data-value="' + val + '"><i class="fas ' + icon + '"></i>'
-        + '<div class="donation-panel-choice-title">' + title + '</div>'
-        + '<div class="donation-panel-choice-sub">' + sub + '</div></div>';
+    return '<div class="donation-panel-choice ' + active + '" data-value="' + val + '"><i class="fas ' + icon + '"></i><div class="donation-panel-choice-title">' + title + '</div><div class="donation-panel-choice-sub">' + sub + '</div></div>';
 }
 function renderMonetaryStep() {
     var step = monetaryWizard.step; var body = '';
@@ -906,8 +345,7 @@ function renderMonetaryStep() {
             + fundChoice('benevolence', 'fa-hands-helping', 'Benevolence', 'Help families')
             + '</div>';
     } else if (step === 2) {
-        body = '<div class="wizard-title">Step 2: Amount</div>'
-            + '<div class="amount-preset-grid">'
+        body = '<div class="wizard-title">Step 2: Amount</div><div class="amount-preset-grid">'
             + ['10000', '25000', '50000', '100000'].map(function (a) {
                 return '<button class="amount-preset ' + (monetaryWizard.amount === parseInt(a) ? 'active' : '') + '" onclick="setMonetaryAmount(' + a + ')">UGX ' + parseInt(a).toLocaleString() + '</button>';
             }).join('') + '</div>'
@@ -927,8 +365,7 @@ function renderMonetaryStep() {
             + '<div class="donation-summary-row"><span class="label">Donor</span><span class="value">' + escapeHtml(monetaryWizard.donor.name) + '</span></div>'
             + '<div class="donation-summary-row total"><span class="label">Total</span><span class="value">' + money(monetaryWizard.amount) + '</span></div></div>'
             + '<div class="wizard-note">This is a pledge. The church will share verified payment instructions.</div>'
-            + '<div class="wizard-actions"><button class="modal-btn modal-btn-whatsapp" id="monWhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button>'
-            + '<button class="modal-btn modal-btn-email" id="monEmailBtn"><i class="fas fa-envelope"></i> Email</button></div>';
+            + '<div class="wizard-actions"><button class="modal-btn modal-btn-whatsapp" id="monWhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button><button class="modal-btn modal-btn-email" id="monEmailBtn"><i class="fas fa-envelope"></i> Email</button></div>';
     }
     var html = '<div class="wizard"><div class="wizard-progress">' + [1, 2, 3, 4].map(function (n) {
         var cls = n < step ? 'done' : (n === step ? 'current' : '');
@@ -969,13 +406,16 @@ function advanceMonetary() {
 function submitMonetary(method) {
     var fundName = { general: 'General Fund', missions: 'Missions', building: 'Building Fund', benevolence: 'Benevolence' }[monetaryWizard.fund];
     var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
-    var msg = '🙏 MONETARY DONATION PLEDGE\n━━━━━━━━━━━━━━\nFund: ' + fundName + '\nAmount: ' + money(monetaryWizard.amount) + '\nStatus: PLEDGE\n━━━━━━━━━━━━━━\nDonor: ' + monetaryWizard.donor.name + '\nEmail: ' + monetaryWizard.donor.email + (monetaryWizard.donor.phone ? '\nPhone: ' + monetaryWizard.donor.phone : '') + (monetaryWizard.notes ? '\nNote: ' + monetaryWizard.notes : '') + '\n━━━━━━━━━━━━━━\nPlease send verified payment instructions.';
-    saveDonationToSupabase({ type: 'monetary', fund: monetaryWizard.fund, amount: monetaryWizard.amount, donor_name: monetaryWizard.donor.name, donor_email: monetaryWizard.donor.email, donor_phone: monetaryWizard.donor.phone, notes: monetaryWizard.notes, status: 'pledge' });
+    var msg = '🙏 MONETARY DONATION PLEDGE\nFund: ' + fundName + '\nAmount: ' + money(monetaryWizard.amount) + '\nDonor: ' + monetaryWizard.donor.name + '\nEmail: ' + monetaryWizard.donor.email + (monetaryWizard.donor.phone ? '\nPhone: ' + monetaryWizard.donor.phone : '') + (monetaryWizard.notes ? '\nNote: ' + monetaryWizard.notes : '');
     if (method === 'whatsapp') window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
     else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Donation Pledge') + '&body=' + encodeURIComponent(msg), '_blank');
     showThankYouDonation('monetary', monetaryWizard.amount);
 }
 
+// ============================================
+// MATERIAL WIZARD
+// ============================================
+var materialWizard = { step: 1, category: null, items: '', qty: '', condition: 'New', donor: { name: '', email: '', phone: '', address: '' }, deliveryMethod: 'dropoff', notes: '' };
 window.openMaterialDonation = function () { materialWizard = { step: 1, category: null, items: '', qty: '', condition: 'New', donor: { name: '', email: '', phone: '', address: '' }, deliveryMethod: 'dropoff', notes: '' }; renderMaterialStep(); };
 function renderMaterialStep() {
     var step = materialWizard.step; var body = '';
@@ -991,8 +431,7 @@ function renderMaterialStep() {
         body = '<div class="wizard-title">Step 1: Category</div><div class="material-category-grid">'
             + cats.map(function (c) {
                 var sel = materialWizard.category === c.id ? 'selected' : '';
-                return '<div class="material-category-card ' + sel + '" data-cat="' + c.id + '"><div class="material-category-icon"><i class="fas ' + c.icon + '"></i></div>'
-                    + '<div class="material-category-info"><h4>' + c.name + '</h4><p>' + c.desc + '</p></div></div>';
+                return '<div class="material-category-card ' + sel + '" data-cat="' + c.id + '"><div class="material-category-icon"><i class="fas ' + c.icon + '"></i></div><div class="material-category-info"><h4>' + c.name + '</h4><p>' + c.desc + '</p></div></div>';
             }).join('') + '</div>';
     } else if (step === 2) {
         body = '<div class="wizard-title">Step 2: Items</div><div class="wizard-form">'
@@ -1022,8 +461,7 @@ function renderMaterialStep() {
             + '<div class="donation-summary-row"><span class="label">Donor</span><span class="value">' + escapeHtml(materialWizard.donor.name) + '</span></div>'
             + '<div class="donation-summary-row"><span class="label">Method</span><span class="value">' + (materialWizard.deliveryMethod === 'dropoff' ? 'Drop Off' : 'Collection') + '</span></div>'
             + '</div><div class="wizard-note">This is a request. The church will contact you to confirm.</div>'
-            + '<div class="wizard-actions"><button class="modal-btn modal-btn-whatsapp" id="matWhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button>'
-            + '<button class="modal-btn modal-btn-email" id="matEmailBtn"><i class="fas fa-envelope"></i> Email</button></div>';
+            + '<div class="wizard-actions"><button class="modal-btn modal-btn-whatsapp" id="matWhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button><button class="modal-btn modal-btn-email" id="matEmailBtn"><i class="fas fa-envelope"></i> Email</button></div>';
     }
     var html = '<div class="wizard"><div class="wizard-progress">' + [1, 2, 3, 4, 5].map(function (n) {
         var cls = n < step ? 'done' : (n === step ? 'current' : '');
@@ -1068,31 +506,12 @@ function advanceMaterial() {
 function submitMaterial(method) {
     var catNames = { bibles: 'Bibles & Books', clothing: 'Clothing & Shoes', food: 'Food & Essentials', school: 'School Supplies', medical: 'Medical Items', household: 'Household Items' };
     var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
-    var msg = '🙏 MATERIAL DONATION REQUEST\n━━━━━━━━━━━━━━\nCategory: ' + (catNames[materialWizard.category] || '')
-        + '\nItems: ' + materialWizard.items + '\nQuantity: ' + (materialWizard.qty || '—')
-        + '\nCondition: ' + materialWizard.condition + '\nMethod: ' + (materialWizard.deliveryMethod === 'dropoff' ? 'Drop Off' : 'Collection')
-        + '\nStatus: REQUEST\n━━━━━━━━━━━━━━\nDonor: ' + materialWizard.donor.name + '\nPhone: ' + materialWizard.donor.phone
-        + (materialWizard.donor.email ? '\nEmail: ' + materialWizard.donor.email : '')
-        + (materialWizard.donor.address ? '\nAddress: ' + materialWizard.donor.address : '')
-        + '\n━━━━━━━━━━━━━━\nPlease contact me to arrange drop-off or collection.';
-    saveDonationToSupabase({ type: 'material', category: materialWizard.category, items: materialWizard.items, quantity: materialWizard.qty, condition: materialWizard.condition, donor_name: materialWizard.donor.name, donor_email: materialWizard.donor.email, donor_phone: materialWizard.donor.phone, donor_address: materialWizard.donor.address, delivery_method: materialWizard.deliveryMethod, notes: materialWizard.notes, status: 'request' });
+    var msg = '🙏 MATERIAL DONATION REQUEST\nCategory: ' + (catNames[materialWizard.category] || '') + '\nItems: ' + materialWizard.items + '\nQuantity: ' + (materialWizard.qty || '—') + '\nCondition: ' + materialWizard.condition + '\nMethod: ' + (materialWizard.deliveryMethod === 'dropoff' ? 'Drop Off' : 'Collection') + '\nDonor: ' + materialWizard.donor.name + '\nPhone: ' + materialWizard.donor.phone + (materialWizard.donor.email ? '\nEmail: ' + materialWizard.donor.email : '') + (materialWizard.donor.address ? '\nAddress: ' + materialWizard.donor.address : '');
     if (method === 'whatsapp') window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
     else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Material Donation') + '&body=' + encodeURIComponent(msg), '_blank');
     showThankYouDonation('material', 0);
 }
-async function saveDonationToSupabase(payload) {
-    try {
-        await fetch('https://mtmgvmvhgkoqjuhiqvsk.supabase.co/rest/v1/donation_submissions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10bWd2bXZoZ2tvcWp1aGlxdnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDUxNTEsImV4cCI6MjEwNzEyMTE1MX0.NqaWJyVulLgAvakFDqn5M8TD-IpSSgSn2LLEmL16c_U',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify(payload)
-        });
-    } catch (e) { console.warn(e); }
-}
+
 function showThankYouDonation(type, amount) {
     var title = type === 'monetary' ? 'Thank You for Your Gift!' : 'Thank You for Your Donation!';
     var msg = type === 'monetary' ? 'Your pledge of ' + money(amount) + ' has been prepared. Our team will contact you with payment instructions.' : 'Your donation request has been prepared. Our team will contact you to arrange drop-off or collection.';
@@ -1109,15 +528,8 @@ function showThankYouDonation(type, amount) {
 async function loadDonationData() {
     try {
         if (window.db && window.db.getSiteContent) siteContent = await window.db.getSiteContent() || {};
-        var base = 'https://mtmgvmvhgkoqjuhiqvsk.supabase.co/rest/v1/';
-        var key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10bWd2bXZoZ2tvcWp1aGlxdnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDUxNTEsImV4cCI6MjEwNzEyMTE1MX0.NqaWJyVulLgAvakFDqn5M8TD-IpSSgSn2LLEmL16c_U';
-        var prodRes = await fetch(base + 'products?select=*&is_published=eq.true&order=display_order.asc&apikey=' + key);
-        var prodData = await prodRes.json();
-        allProducts = Array.isArray(prodData) ? prodData : [];
-        filteredProducts = allProducts.slice();
-        renderHero(); renderDirectGiving(); renderStoreHeader();
-        renderShopCategoryStrip(); renderProducts();
-        updateCartBadge(); renderCart();
+        renderHero();
+        renderDirectGiving();
     } catch (err) { console.error(err); }
 }
 
@@ -1135,19 +547,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var overlay = document.getElementById('modalOverlay'), closeBtn = document.getElementById('modalClose');
     if (overlay) overlay.addEventListener('click', closeModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    var cartBtn = document.getElementById('cartBtn'), cartClose = document.getElementById('cartClose'), cartOverlay = document.getElementById('cartOverlay');
-    if (cartBtn) cartBtn.addEventListener('click', openCart);
-    if (cartClose) cartClose.addEventListener('click', closeCart);
-    if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
-    var cartClear = document.getElementById('cartClear');
-    if (cartClear) cartClear.addEventListener('click', function () {
-        if (confirm('Clear cart?')) { cart = []; saveCart(); renderCart(); }
-    });
-    var cartCheckout = document.getElementById('cartCheckout');
-    if (cartCheckout) cartCheckout.addEventListener('click', function () { closeCart(); setTimeout(openOrderSummary, 350); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); closeCart(); } });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
     var nl = document.getElementById('footerNewsletter');
     if (nl) nl.addEventListener('submit', function (e) { e.preventDefault(); alert('✅ Subscribed!'); nl.reset(); });
     var y = document.getElementById('currentYear'); if (y) y.textContent = new Date().getFullYear();
-    setupSupportTabs(); loadDonationData();
+    loadDonationData();
 });

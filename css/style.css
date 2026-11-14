@@ -1214,3 +1214,139 @@ ul { list-style: none; }
     .modal-panel-image { height: 160px; }
     .modal-panel-body { padding: 24px 22px 24px; }
 }
+/* ============================================
+   MODE BUTTONS (Navbar)
+   ============================================ */
+.mode-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s;
+}
+.mode-btn:hover {
+    background: rgba(24,200,255,0.18);
+    color: var(--cyan);
+    transform: scale(1.1);
+}
+#festiveBtn:hover { color: var(--gold); background: rgba(244,196,48,0.15); }
+#washBtn:hover { color: #00e5ff; background: rgba(0,229,255,0.15); }
+
+/* ============================================
+   FESTIVE CHRISTMAS MODE OVERRIDES
+   ============================================ */
+body.festive-mode {
+    --bg-gray: #0b1b2a;
+    --text-dark: #ffffff;
+    --text-muted: #a0b0c0;
+    --border-light: #1a3a2a;
+    --white: #122a3a;
+    --pale-blue: #0d2e1a;
+    
+    background-color: #0b1b2a !important;
+}
+
+/* Force sections to go dark */
+body.festive-mode .page-bg { background: linear-gradient(135deg, #0b1b2a 0%, #0d2e1a 100%) !important; }
+body.festive-mode .events-section,
+body.festive-mode .engagement-section { background: #0b1b2a !important; }
+body.festive-mode .ministries-section,
+body.festive-mode .sermons-section,
+body.festive-mode .values-section { background: #0d2e1a !important; }
+body.festive-mode .footer { background: #05140a !important; }
+body.festive-mode .navbar { background: rgba(5, 20, 10, 0.95) !important; border-bottom: 1px solid #8c1c1c; }
+
+/* Cards and Panels */
+body.festive-mode .value-card,
+body.festive-mode .event-card,
+body.festive-mode .sermon-card,
+body.festive-mode .family-card { background: #122a3a !important; border-color: #8c1c1c !important; }
+body.festive-mode .value-body h3,
+body.festive-mode .event-body h4,
+body.festive-mode .sermon-body h4 { color: #fff !important; }
+body.festive-mode .value-body p,
+body.festive-mode .event-body p,
+body.festive-mode .sermon-body p { color: #a0b0c0 !important; }
+
+/* ---------------------------------------------------
+   WASHING / CLEANING MODE OVERRIDES
+   --------------------------------------------------- */
+body.wash-mode {
+    --bg-gray: #e3f2fd;
+    --text-dark: #0d47a1;
+    --text-muted: #5472d2;
+    --border-light: #b3e5fc;
+    --white: #ffffff;
+    --pale-blue: #e1f5fe;
+    
+    background-color: #e3f2fd !important;
+}
+
+body.wash-mode .page-bg { background: linear-gradient(135deg, #e3f2fd 0%, #b3e5fc 100%) !important; }
+body.wash-mode .events-section,
+body.wash-mode .engagement-section { background: #ffffff !important; }
+body.wash-mode .ministries-section,
+body.wash-mode .sermons-section,
+body.wash-mode .values-section { background: #e1f5fe !important; }
+body.wash-mode .navbar { background: rgba(13, 71, 161, 0.95) !important; }
+body.wash-mode .footer { background: #0d47a1 !important; }
+
+/* ============================================
+   ANIMATIONS: SNOW & BUBBLES
+   ============================================ */
+
+/* Christmas Snowflake */
+.snowflake {
+    position: fixed;
+    top: -10px;
+    color: #fff;
+    font-size: 1em;
+    font-family: Arial, sans-serif;
+    text-shadow: 0 0 5px #fff;
+    pointer-events: none;
+    z-index: 9999;
+    animation: fall linear forwards;
+}
+@keyframes fall {
+    to { transform: translateY(105vh); }
+}
+
+/* Christmas Ball */
+.christmas-ball {
+    position: fixed;
+    top: -50px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    box-shadow: inset -5px -5px 15px rgba(0,0,0,0.5), 0 0 10px rgba(255,255,255,0.2);
+    animation: drop linear forwards;
+}
+.christmas-ball::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 15px;
+    border: 2px solid #f4c430;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+}
+@keyframes drop {
+    to { transform: translateY(110vh) rotate(360deg); }
+}
+
+/* Washing Mode Soap Bubble */
+.soap-bubble {
+    position: fixed;
+    bottom: -50px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(0,229,255,0.2) 60%, rgba(0,229,255,0.6));
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.4), inset -5px -5px 15px rgba(255,255,255,0.5);
+    border: 1px solid rgba(255,255,255,0.6);
+    pointer-events: none;
+    z-index: 9999;
+    animation: floatUp linear forwards;
+}
+@keyframes floatUp {
+    to { transform: translateY(-115vh) translateX(50px) scale(1.2); opacity: 0; }
+}

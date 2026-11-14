@@ -574,3 +574,116 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); closeWelcomeVideo(); } });
     var y = document.getElementById('currentYear'); if (y) y.textContent = new Date().getFullYear();
 });
+// ============================================
+// THEME MODES (Christmas & Washing) LOGIC
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    var festiveBtn = document.getElementById('festiveBtn');
+    var washBtn = document.getElementById('washBtn');
+    
+    var isFestive = localStorage.getItem('themeMode') === 'festive';
+    var isWash = localStorage.getItem('themeMode') === 'wash';
+    
+    var animationInterval;
+
+    // Initial check on page load
+    if (isFestive) {
+        document.body.classList.add('festive-mode');
+        startFestiveAnimations();
+    } else if (isWash) {
+        document.body.classList.add('wash-mode');
+        startWashAnimations();
+    }
+
+    if (festiveBtn) {
+        festiveBtn.addEventListener('click', function() {
+            document.body.classList.remove('wash-mode');
+            document.body.classList.toggle('festive-mode');
+            
+            if (document.body.classList.contains('festive-mode')) {
+                localStorage.setItem('themeMode', 'festive');
+                startFestiveAnimations();
+            } else {
+                localStorage.setItem('themeMode', 'none');
+                stopAnimations();
+            }
+        });
+    }
+
+    if (washBtn) {
+        washBtn.addEventListener('click', function() {
+            document.body.classList.remove('festive-mode');
+            document.body.classList.toggle('wash-mode');
+            
+            if (document.body.classList.contains('wash-mode')) {
+                localStorage.setItem('themeMode', 'wash');
+                startWashAnimations();
+            } else {
+                localStorage.setItem('themeMode', 'none');
+                stopAnimations();
+            }
+        });
+    }
+
+    function stopAnimations() {
+        clearInterval(animationInterval);
+        animationInterval = null;
+        document.querySelectorAll('.snowflake, .christmas-ball, .soap-bubble').forEach(function(el) { el.remove(); });
+    }
+
+    // --- CHRISTMAS ANIMATIONS ---
+    function startFestiveAnimations() {
+        stopAnimations();
+        animationInterval = setInterval(function() {
+            createSnowflake();
+            if (Math.random() < 0.25) createChristmasBall();
+        }, 300);
+    }
+
+    function createSnowflake() {
+        var snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        var size = Math.random() * 1.5 + 0.5;
+        snowflake.innerHTML = '❅';
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        snowflake.style.fontSize = size + 'em';
+        snowflake.style.opacity = Math.random() * 0.7 + 0.3;
+        snowflake.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        document.body.appendChild(snowflake);
+        setTimeout(function() { snowflake.remove(); }, 6000);
+    }
+
+    function createChristmasBall() {
+        var ball = document.createElement('div');
+        ball.classList.add('christmas-ball');
+        var size = Math.random() * 20 + 15;
+        var colors = ['#ff0000', '#005BEA', '#F4C430', '#16A34A', '#ffffff'];
+        ball.style.width = size + 'px';
+        ball.style.height = size + 'px';
+        ball.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        ball.style.left = Math.random() * 100 + 'vw';
+        ball.style.animationDuration = (Math.random() * 2 + 4) + 's';
+        document.body.appendChild(ball);
+        setTimeout(function() { ball.remove(); }, 7000);
+    }
+
+    // --- WASHING ANIMATIONS ---
+    function startWashAnimations() {
+        stopAnimations();
+        animationInterval = setInterval(function() {
+            createSoapBubble();
+        }, 400);
+    }
+
+    function createSoapBubble() {
+        var bubble = document.createElement('div');
+        bubble.classList.add('soap-bubble');
+        var size = Math.random() * 30 + 10;
+        bubble.style.width = size + 'px';
+        bubble.style.height = size + 'px';
+        bubble.style.left = Math.random() * 100 + 'vw';
+        bubble.style.animationDuration = (Math.random() * 4 + 4) + 's';
+        document.body.appendChild(bubble);
+        setTimeout(function() { bubble.remove(); }, 8000);
+    }
+});

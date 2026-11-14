@@ -3,18 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Donations & Church Shop - Bridge Calvary Chapel">
-    <title>Donations & Church Shop - Bridge Calvary Chapel</title>
-
-    <!-- Open Graph — makes shared product links show image preview -->
-    <meta property="og:site_name" content="The Bridge Calvary Chapel">
-    <meta property="og:title" content="Bridge Calvary Chapel Store">
-    <meta property="og:description" content="Support the church by purchasing official church merchandise.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://mtmgvmvhgkoqjuhiqvsk.supabase.co/storage/v1/object/public/church-media/hero/hero.jpg">
-    <meta property="og:url" content="https://thebridgecalvarychapel.org/donations.html">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://mtmgvmvhgkoqjuhiqvsk.supabase.co/storage/v1/object/public/church-media/hero/hero.jpg">
+    <meta name="description" content="Donation - Bridge Calvary Chapel">
+    <title>Donation - Bridge Calvary Chapel</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@400;600;700&display=swap" rel="stylesheet">
@@ -40,16 +30,13 @@
             <li><a href="ministries.html" class="nav-link">Ministries</a></li>
             <li><a href="sermons.html" class="nav-link">Sermons</a></li>
             <li><a href="events-announcements.html" class="nav-link">Events</a></li>
-            <li><a href="donations.html" class="nav-link active">Church Shop</a></li>
+            <li><a href="donations.html" class="nav-link active">Donation</a></li>
             <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
+            <li><a href="church-shop.html" class="nav-link">Church Shop</a></li>
         </ul>
         <div class="nav-actions">
             <button class="nav-search-icon" aria-label="Search"><i class="fas fa-search"></i></button>
-            <button class="nav-search-icon cart-icon" id="cartBtn" aria-label="Cart">
-                <i class="fas fa-shopping-cart"></i>
-                <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
-            </button>
-            <a href="#categoriesSection" class="btn-give"><i class="fas fa-heart"></i> Give</a>
+            <a href="donations.html#directGiving" class="btn-give"><i class="fas fa-heart"></i> Give</a>
             <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
                 <i class="fas fa-bars"></i>
             </button>
@@ -69,11 +56,11 @@
                 <p class="hero-verse" id="heroVerse"></p>
                 <p class="hero-desc" id="heroDesc"></p>
                 <div class="hero-buttons">
-                    <button class="btn-hero btn-hero-primary" onclick="document.getElementById('directGiving').scrollIntoView({behavior:'smooth'})" type="button">
-                        <i class="fas fa-hand-holding-heart"></i> Donate Now
+                    <button class="btn-hero btn-hero-primary" onclick="document.getElementById('givingCards').scrollIntoView({behavior:'smooth'})" type="button">
+                        <i class="fas fa-hand-holding-heart"></i> Start Giving
                     </button>
-                    <button class="btn-hero btn-hero-outline" onclick="document.getElementById('shopSection').scrollIntoView({behavior:'smooth'})" type="button">
-                        <i class="fas fa-shopping-bag"></i> Visit Store
+                    <button class="btn-hero btn-hero-outline" onclick="document.getElementById('directGiving').scrollIntoView({behavior:'smooth'})" type="button">
+                        <i class="fas fa-university"></i> Bank &amp; Mobile Money
                     </button>
                 </div>
                 <div class="hero-stats" id="heroStats"></div>
@@ -86,49 +73,22 @@
                         <div class="hiw-step">
                             <div class="hiw-num">1</div>
                             <div class="hiw-label">Choose</div>
-                            <div class="hiw-sub">Pick what to give or buy</div>
+                            <div class="hiw-sub">Pick a giving type</div>
                         </div>
                         <div class="hiw-step">
                             <div class="hiw-num">2</div>
-                            <div class="hiw-label">Review Cart</div>
-                            <div class="hiw-sub">Check your items</div>
-                        </div>
-                        <div class="hiw-step">
-                            <div class="hiw-num">3</div>
                             <div class="hiw-label">Your Details</div>
                             <div class="hiw-sub">Name &amp; contact</div>
                         </div>
                         <div class="hiw-step">
+                            <div class="hiw-num">3</div>
+                            <div class="hiw-label">Review</div>
+                            <div class="hiw-sub">Confirm the summary</div>
+                        </div>
+                        <div class="hiw-step">
                             <div class="hiw-num">4</div>
-                            <div class="hiw-label">Send Order</div>
+                            <div class="hiw-label">Send</div>
                             <div class="hiw-sub">WhatsApp or Email</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="support-tabs">
-                    <div class="tabs-header">
-                        <button class="tab-btn active" data-tab="giving" type="button">Support by Giving</button>
-                        <button class="tab-btn" data-tab="store" type="button">Shop by Store</button>
-                    </div>
-                    <div class="tab-content active" id="tabGiving">
-                        <div class="support-card support-card-give">
-                            <div class="support-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                            <div class="support-info">
-                                <h4>Donate</h4>
-                                <p>Make a difference with your gift</p>
-                            </div>
-                            <i class="fas fa-arrow-right support-arrow"></i>
-                        </div>
-                    </div>
-                    <div class="tab-content" id="tabStore">
-                        <div class="support-card support-card-shop">
-                            <div class="support-icon"><i class="fas fa-shopping-bag"></i></div>
-                            <div class="support-info">
-                                <h4>Shop</h4>
-                                <p>Get quality church merchandise</p>
-                            </div>
-                            <i class="fas fa-arrow-right support-arrow"></i>
                         </div>
                     </div>
                 </div>
@@ -142,8 +102,8 @@
     </div>
 </section>
 
-<!-- ===== TWO DONATION CARDS WITH IMAGES ===== -->
-<section class="categories-section" id="categoriesSection">
+<!-- ===== FOUR GIVING CARDS ===== -->
+<section class="categories-section" id="givingCards">
     <div class="container">
         <div class="section-header">
             <div class="section-header-left">
@@ -151,21 +111,21 @@
                 <div>
                     <span class="section-label">SUPPORT THE MINISTRY</span>
                     <h2 class="section-title">How Would You Like to Give?</h2>
-                    <p class="section-desc">Give money or donate materials. Every gift makes a difference.</p>
+                    <p class="section-desc">Give money, donate materials, support a ministry, or contribute to a special project. Every gift matters.</p>
                 </div>
             </div>
         </div>
 
-        <div class="two-card-grid">
-            <!-- Card 1: Donate Money -->
+        <div class="four-card-grid">
+            <!-- Card 1: Financial Giving -->
             <div class="main-donation-card card-monetary" onclick="openMonetaryDonation()" tabindex="0" role="button">
                 <div class="mdc-image">
-                    <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=800" alt="Monetary giving" onerror="this.style.display='none'">
+                    <img src="https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?q=80&w=800" alt="Financial giving" onerror="this.style.display='none'">
                     <div class="mdc-overlay"></div>
                     <div class="mdc-icon"><i class="fas fa-hand-holding-usd"></i></div>
                 </div>
                 <div class="mdc-body">
-                    <h3>Donate Money</h3>
+                    <h3>Financial Giving</h3>
                     <p>Support our ministries, missions, and community outreach.</p>
                     <button class="mdc-btn">Give Money <i class="fas fa-arrow-right"></i></button>
                 </div>
@@ -182,6 +142,34 @@
                     <h3>Donate Materials</h3>
                     <p>Give Bibles, clothing, food, school supplies, or household goods.</p>
                     <button class="mdc-btn">Donate Items <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Card 3: Support Ministries -->
+            <div class="main-donation-card card-ministry" onclick="openMinistrySupport()" tabindex="0" role="button">
+                <div class="mdc-image">
+                    <img src="https://images.unsplash.com/photo-1490730141103-6cac27aaab94?q=80&w=800" alt="Support ministries" onerror="this.style.display='none'">
+                    <div class="mdc-overlay"></div>
+                    <div class="mdc-icon"><i class="fas fa-church"></i></div>
+                </div>
+                <div class="mdc-body">
+                    <h3>Support Ministries</h3>
+                    <p>Give directly to a specific ministry — children, youth, outreach, and more.</p>
+                    <button class="mdc-btn">Choose Ministry <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+
+            <!-- Card 4: Special Projects -->
+            <div class="main-donation-card card-special" onclick="openSpecialProjects()" tabindex="0" role="button">
+                <div class="mdc-image">
+                    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800" alt="Special projects" onerror="this.style.display='none'">
+                    <div class="mdc-overlay"></div>
+                    <div class="mdc-icon"><i class="fas fa-hard-hat"></i></div>
+                </div>
+                <div class="mdc-body">
+                    <h3>Special Projects</h3>
+                    <p>Contribute towards specific church projects — building, equipment, and more.</p>
+                    <button class="mdc-btn">View Projects <i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
         </div>
@@ -203,53 +191,26 @@
     </div>
 </section>
 
-<!-- ===== CHURCH MERCHANDISE ===== -->
-<section class="store-section" id="shopSection">
-    <div class="store-bg-orb store-orb-1"></div>
-    <div class="store-bg-orb store-orb-2"></div>
-    <div class="container">
-        <div class="section-header">
-            <div class="section-header-left">
-                <div class="section-icon icon-blue"><i class="fas fa-store"></i></div>
-                <div>
-                    <span class="section-label">CHURCH MERCHANDISE</span>
-                    <h2 class="section-title" id="storeTitle">Bridge Calvary Chapel Store</h2>
-                    <p class="section-desc" id="storeDesc">Support the church by purchasing official church merchandise.</p>
-                </div>
-            </div>
-            <a href="#shopSection" class="section-link">View All Products <i class="fas fa-arrow-right"></i></a>
-        </div>
-
-        <div id="shopCategoryStrip"></div>
-        <div class="products-grid" id="productsGrid"></div>
-        <!-- Hidden proxy — no visible effect, used only for safe share event delegation -->
-        <div id="shareProxy" style="display:none;" aria-hidden="true"></div>
-    </div>
-</section>
-
-<!-- ===== HELP + THANK YOU STRIP ===== -->
+<!-- ===== INFO ROW ===== -->
 <section class="info-row">
     <div class="container">
         <div class="info-row-grid">
-            <div class="info-card info-card-navy">
-                <div class="info-icon"><i class="fas fa-hand-holding-usd"></i></div>
-                <h3>Want to Give Directly?</h3>
-                <p>Financial gifts are still welcome and help us further the work of the Gospel.</p>
-                <button class="btn-info" onclick="document.getElementById('directGiving').scrollIntoView({behavior:'smooth'})" type="button">Give Now <i class="fas fa-arrow-right"></i></button>
-            </div>
             <div class="info-card info-card-navy">
                 <div class="info-icon"><i class="fas fa-headset"></i></div>
                 <h3>Need Help?</h3>
                 <p>Call, WhatsApp or Email us. We are here to help.</p>
                 <a class="btn-info" href="events-contact.html">Contact Us <i class="fas fa-arrow-right"></i></a>
             </div>
+            <div class="info-card info-card-navy">
+                <div class="info-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Secure Giving</h3>
+                <p>We never ask for card details on this website. All giving is confirmed by the church office.</p>
+            </div>
             <div class="info-card info-card-gradient">
-                <div class="info-icon"><i class="fas fa-heart"></i></div>
-                <h3>Thank You!</h3>
-                <p>After your order, we'll package and send it to your location. Please subscribe to our YouTube channel for updates and more blessings!</p>
-                <a class="btn-info btn-youtube" href="https://www.youtube.com/@TBCCChurchmedia" target="_blank" rel="noopener">
-                    <i class="fab fa-youtube"></i> Subscribe to Our Channel
-                </a>
+                <div class="info-icon"><i class="fas fa-shopping-bag"></i></div>
+                <h3>Looking for Merchandise?</h3>
+                <p>Visit our Church Shop for official merchandise. Every purchase supports the ministry.</p>
+                <a class="btn-info" href="church-shop.html">Visit Church Shop <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </div>
@@ -285,8 +246,9 @@
                     <li><a href="ministries.html">Ministries</a></li>
                     <li><a href="sermons.html">Sermons</a></li>
                     <li><a href="events-announcements.html">Events</a></li>
-                    <li><a href="donations.html">Donations</a></li>
+                    <li><a href="donations.html">Donation</a></li>
                     <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
+                    <li><a href="church-shop.html">Church Shop</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -329,26 +291,6 @@
     </button>
     <div class="modal-panel-body" id="modalBody"></div>
 </div>
-
-<!-- ===== CART DRAWER (PRODUCTS) ===== -->
-<div class="modal-overlay" id="cartOverlay"></div>
-<aside class="cart-drawer" id="cartDrawer" inert>
-    <div class="cart-header">
-        <h3><i class="fas fa-shopping-cart"></i> Your Cart <span id="cartCount" style="color:#49658A;font-size:12px;font-weight:600;margin-left:4px;"></span></h3>
-        <button class="cart-close" id="cartClose" aria-label="Close cart" type="button"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="cart-body" id="cartBody"></div>
-    <div class="cart-footer" id="cartFooter" style="display:none;">
-        <div class="cart-total-row">
-            <span class="cart-total-lbl">Total</span>
-            <span class="cart-total-value" id="cartTotal">UGX 0</span>
-        </div>
-        <div class="cart-actions">
-            <button class="modal-btn modal-btn-secondary" id="cartClear" type="button"><i class="fas fa-trash"></i> Clear</button>
-            <button class="modal-btn modal-btn-primary" id="cartCheckout" type="button"><i class="fas fa-check"></i> Proceed to Order</button>
-        </div>
-    </div>
-</aside>
 
 <script src="js/supabase.js"></script>
 <script src="js/donations.js"></script>

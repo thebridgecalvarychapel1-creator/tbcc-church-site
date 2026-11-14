@@ -998,3 +998,253 @@ ul { list-style: none; }
     border-color: transparent;
 }
 .share-btn.primary:hover { box-shadow: 0 4px 14px rgba(0,91,234,0.4); }
+/* ============================================
+   FOUR GIVING CARDS — WELL-ORGANIZED GRID
+   ============================================ */
+.four-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    align-items: stretch;
+}
+
+/* Make sure every card in the four-card grid is a fixed shape */
+.four-card-grid .main-donation-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Standardize the image area */
+.four-card-grid .mdc-image {
+    height: 160px;
+    flex-shrink: 0;
+}
+
+/* Standardize the icon badge */
+.four-card-grid .mdc-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+}
+
+/* Standardize the body */
+.four-card-grid .mdc-body {
+    padding: 30px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 190px;
+}
+
+.four-card-grid .mdc-body h3 {
+    font-size: 16px;
+    line-height: 1.25;
+    margin-bottom: 8px;
+    min-height: 40px;
+}
+
+.four-card-grid .mdc-body p {
+    font-size: 12.5px;
+    line-height: 1.55;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.four-card-grid .mdc-btn {
+    width: 100%;
+    justify-content: center;
+    align-self: stretch;
+    margin-top: auto;
+}
+
+/* Distinct accent colors per card */
+.card-ministry .mdc-icon {
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+}
+.card-ministry .mdc-btn {
+    background: linear-gradient(135deg, #8B5CF6, #7C3AED);
+    color: var(--white);
+}
+
+.card-special .mdc-icon {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+.card-special .mdc-btn {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
+    color: var(--white);
+}
+
+/* Info-panel card styles (used by the new panels) */
+.support-list-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 6px 0 4px;
+}
+.support-list-card {
+    background: var(--pale-blue);
+    border: 1px solid var(--border-blue);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.support-list-card:hover {
+    background: var(--white);
+    border-color: var(--electric-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,91,234,0.12);
+}
+.support-list-card h4 {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-navy);
+    margin-bottom: 4px;
+}
+.support-list-card p {
+    font-size: 11.5px;
+    color: var(--text-blue-gray);
+    line-height: 1.4;
+    margin: 0;
+}
+.support-list-card .target-tag {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--royal-blue);
+    background: var(--white);
+    padding: 3px 9px;
+    border-radius: 50px;
+    border: 1px solid var(--border-blue);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .four-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 640px) {
+    .four-card-grid {
+        grid-template-columns: 1fr;
+    }
+    .support-list-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ============================================
+   MOBILE MONEY PANEL — TWO SIDES
+   ============================================ */
+.mm-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 8px 0 4px;
+}
+.mm-side {
+    background: var(--pale-blue);
+    border: 1px solid var(--border-blue);
+    border-radius: 14px;
+    padding: 16px 18px;
+}
+.mm-side h4 {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--royal-blue);
+    margin: 0 0 10px 0;
+}
+.mm-procedure-step {
+    display: flex;
+    gap: 10px;
+    font-size: 12.5px;
+    color: var(--text-navy);
+    line-height: 1.5;
+    padding: 7px 0;
+    border-bottom: 1px dashed var(--border-blue);
+}
+.mm-procedure-step:last-child { border-bottom: none; }
+.mm-procedure-step .num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--royal-blue), var(--electric-blue));
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+}
+.mm-note {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--red);
+    font-weight: 600;
+    line-height: 1.5;
+    background: rgba(200, 30, 60, 0.06);
+    border-left: 3px solid var(--red);
+    padding: 8px 10px;
+    border-radius: 6px;
+}
+.mm-detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--text-navy);
+    margin-bottom: 12px;
+}
+.mm-detail-list strong {
+    color: var(--royal-blue);
+    font-weight: 800;
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.mm-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.mm-form label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-navy);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.mm-form input,
+.mm-form textarea {
+    padding: 9px 12px;
+    font-size: 12.5px;
+    font-family: inherit;
+    border: 2px solid var(--border-blue);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--text-navy);
+    outline: none;
+    transition: all 0.2s;
+}
+.mm-form input:focus,
+.mm-form textarea:focus {
+    border-color: var(--electric-blue);
+    box-shadow: 0 0 0 3px rgba(7,139,255,0.12);
+}
+
+@media (max-width: 720px) {
+    .mm-panel {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Church Shop - Bridge Calvary Chapel">
+    <title>Church Shop - Bridge Calvary Chapel</title>
+
+    <meta property="og:site_name" content="The Bridge Calvary Chapel">
+    <meta property="og:title" content="Bridge Calvary Chapel Church Shop">
+    <meta property="og:description" content="Support the ministry by purchasing official church merchandise.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://thebridgecalvarychapel.org/church-shop.html">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/shop.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="container">
+        <a href="index.html" class="nav-logo">
+            <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="logo-img" onerror="this.style.display='none'">
+            <div class="logo-text">
+                <span class="logo-the">THE</span>
+                <span class="logo-bridge">BRIDGE</span>
+                <span class="logo-calvary">CALVARY CHAPEL</span>
+            </div>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="index.html" class="nav-link">Home</a></li>
+            <li><a href="about.html" class="nav-link">About Us</a></li>
+            <li><a href="ministries.html" class="nav-link">Ministries</a></li>
+            <li><a href="sermons.html" class="nav-link">Sermons</a></li>
+            <li><a href="events-announcements.html" class="nav-link">Events</a></li>
+            <li><a href="donations.html" class="nav-link">Donation</a></li>
+            <li><a href="plan-your-visit.html" class="nav-link">Plan Your Visit</a></li>
+            <li><a href="church-shop.html" class="nav-link active">Church Shop</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="nav-search-icon" aria-label="Search"><i class="fas fa-search"></i></button>
+            
+            <!-- NEW FESTIVE MODE BUTTON -->
+            <button class="nav-search-icon festive-toggle" id="festiveBtn" aria-label="Toggle Christmas Mode" title="Toggle Christmas Mode">
+                <i class="fas fa-gift"></i>
+            </button>
+            
+            <button class="nav-search-icon cart-icon" id="cartBtn" aria-label="Cart">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+            </button>
+            <a href="donations.html#directGiving" class="btn-give"><i class="fas fa-heart"></i> Give</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ===== FULL-WIDTH HERO ===== -->
+<section class="shop-hero-full">
+    <div class="hero-bg-image" id="heroBg"></div>
+    <div class="hero-overlay-dark"></div>
+    
+    <div class="container hero-content-wrapper">
+        <div class="hero-text-block">
+            <span class="hero-badge" id="heroEyebrow">CHURCH MERCHANDISE</span>
+            <h1 class="hero-title-modern" id="heroTitle">Bridge Calvary Chapel Store</h1>
+            <p class="hero-desc-modern" id="heroDesc">Support the ministry by purchasing official church merchandise.</p>
+            
+            <div class="hero-buttons-modern">
+                <button class="btn-shop-modern primary" onclick="document.getElementById('shopSection').scrollIntoView({behavior:'smooth'})" type="button">
+                    Shop Now <i class="fas fa-arrow-right"></i>
+                </button>
+                <a class="btn-shop-modern outline" href="donations.html">
+                    Make a Donation
+                </a>
+            </div>
+
+            <!-- How It Works -->
+            <div class="howitworks-modern">
+                <h3 class="hiw-title">How It Works</h3>
+                <div class="hiw-steps">
+                    <div class="hiw-step">
+                        <div class="hiw-num">1</div>
+                        <div class="hiw-label">Choose</div>
+                        <div class="hiw-sub">Pick what to give or buy</div>
+                    </div>
+                    <div class="hiw-step">
+                        <div class="hiw-num">2</div>
+                        <div class="hiw-label">Review Cart</div>
+                        <div class="hiw-sub">Check your items</div>
+                    </div>
+                    <div class="hiw-step">
+                        <div class="hiw-num">3</div>
+                        <div class="hiw-label">Your Details</div>
+                        <div class="hiw-sub">Name & contact</div>
+                    </div>
+                    <div class="hiw-step">
+                        <div class="hiw-num">4</div>
+                        <div class="hiw-label">Send Order</div>
+                        <div class="hiw-sub">WhatsApp or Email</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Thumbnails -->
+    <div class="hero-thumbnails-floating" id="heroThumbs" style="display: none;"></div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section class="store-section-modern" id="shopSection">
+    <div class="container">
+        <div class="section-header-modern">
+            <h2 class="section-title-modern">Featured Products</h2>
+            <a href="#shopSection" class="section-link-modern">View All <i class="fas fa-arrow-right"></i></a>
+        </div>
+        
+        <div id="shopCategoryStrip"></div>
+        
+        <!-- Compact Grid for Products -->
+        <div class="products-grid-compact" id="productsGrid"></div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo-link">
+                    <img src="assets/images/logo.jpg" alt="Bridge Calvary Chapel" class="footer-logo" onerror="this.style.display='none'">
+                    <div class="footer-logo-text">
+                        <span class="footer-the">THE</span>
+                        <span class="footer-bridge">BRIDGE</span>
+                        <span class="footer-calvary">CALVARY CHAPEL</span>
+                    </div>
+                </a>
+                <p id="footerTagline">Helping people find the perfect place to call home. You're invited and welcome.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="ministries.html">Ministries</a></li>
+                    <li><a href="sermons.html">Sermons</a></li>
+                    <li><a href="events-announcements.html">Events</a></li>
+                    <li><a href="donations.html">Donation</a></li>
+                    <li><a href="plan-your-visit.html">Plan Your Visit</a></li>
+                    <li><a href="church-shop.html">Church Shop</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <div class="footer-contact-item"><i class="fas fa-phone"></i><span id="footerPhone"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-envelope"></i><span id="footerEmail"></span></div>
+                <div class="footer-contact-item"><i class="fas fa-map-marker-alt"></i><span id="footerAddress"></span></div>
+            </div>
+            <div class="footer-col">
+                <h4>Join Our Newsletter</h4>
+                <p style="font-size:11px;color:rgba(255,255,255,0.6);margin-bottom:4px;">Get updates directly in your inbox.</p>
+                <form class="footer-newsletter-form" id="footerNewsletter">
+                    <input type="email" placeholder="Your email address" required aria-label="Email">
+                    <button type="submit" aria-label="Subscribe"><i class="fas fa-arrow-right"></i></button>
+                </form>
+                <h4 style="margin-top:14px;">Follow Us</h4>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="currentYear">2025</span> <span id="footerCopyrightName">Bridge Calvary Chapel</span>. All rights reserved.</p>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <span style="opacity:0.3;">|</span>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modalOverlay"></div>
+<div class="modal-panel" id="modalPanel" role="dialog" aria-modal="true" inert>
+    <button class="modal-panel-close" id="modalClose" aria-label="Close" type="button">
+        <i class="fas fa-times"></i>
+    </button>
+    <div class="modal-panel-body" id="modalBody"></div>
+</div>
+
+<!-- ===== CART DRAWER ===== -->
+<div class="modal-overlay" id="cartOverlay"></div>
+<aside class="cart-drawer" id="cartDrawer" inert>
+    <div class="cart-header">
+        <h3><i class="fas fa-shopping-cart"></i> Your Cart <span id="cartCount" style="color:#49658A;font-size:12px;font-weight:600;margin-left:4px;"></span></h3>
+        <button class="cart-close" id="cartClose" aria-label="Close cart" type="button"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-body" id="cartBody"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+        <div class="cart-total-row">
+            <span class="cart-total-lbl">Total</span>
+            <span class="cart-total-value" id="cartTotal">UGX 0</span>
+        </div>
+        <div class="cart-actions">
+            <button class="modal-btn modal-btn-secondary" id="cartClear" type="button"><i class="fas fa-trash"></i> Clear</button>
+            <button class="modal-btn modal-btn-primary" id="cartCheckout" type="button"><i class="fas fa-check"></i> Proceed to Order</button>
+        </div>
+    </div>
+</aside>
+
+<script src="js/supabase.js"></script>
+<script src="js/shop.js"></script>
+</body>
+</html>
