@@ -22,8 +22,6 @@ function sectionImg(name) {
 }
 
 // ---------- MODAL ----------
-// Second argument (imageUrl) shows a top banner image inside the modal.
-// When not passed, the modal behaves exactly as before.
 window.openModal = function (html, imageUrl) {
     var overlay = document.getElementById('modalOverlay');
     var panel = document.getElementById('modalPanel');
@@ -99,11 +97,10 @@ window.openValuePanel = function (key) {
         + (d.scripture ? '<div class="modal-panel-scripture"><p>' + escapeHtml(d.scripture) + '</p></div>' : '')
         + ctaHTML;
 
-    // Pass the card's image as the top banner — everything else identical to before
     openModal(html, sectionImg(key));
 };
 
-// ---------- SMALL GROUP PANEL ----------
+// ---------- SMALL GROUP / VOLUNTEER ----------
 window.openSmallGroupPanel = function () {
     if (!smallGroupsCache.length) {
         openModal('<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-users"></i></div><h2>Find a Small Group</h2><p class="modal-panel-subtitle">No groups available right now.</p></div>');
@@ -127,7 +124,6 @@ window.openSmallGroupPanel = function () {
     });
 };
 
-// ---------- VOLUNTEER PANEL ----------
 window.openVolunteerPanel = function () {
     var opportunities = [
         { name: "Children's Ministry", icon: 'fa-child' },
@@ -146,7 +142,6 @@ window.openVolunteerPanel = function () {
     });
 };
 
-// ---------- JOIN GROUP ----------
 window.joinGroup = function (groupName) {
     var html = '<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-user-plus"></i></div><h2>Join "' + escapeHtml(groupName) + '"</h2><p class="modal-panel-subtitle">Fill in your details.</p></div>'
         + '<form id="joinGroupForm" class="modal-form">'
@@ -278,66 +273,88 @@ function renderValueCards() {
     });
 }
 
-// ---------- RENDER: EVENTS ----------
+// ---------- RENDER: EVENTS (Horizontal, Small Cards) ----------
 function renderEvents(events) {
     var c = document.getElementById('eventsSlider');
     if (!c) return;
-    if (!events.length) { c.innerHTML = '<p class="empty-state" style="color:#94a3b8;">No upcoming events.</p>'; return; }
-    c.innerHTML = events.slice(0, 3).map(function (e) {
+    if (!events.length) { c.innerHTML = '<p style="padding:20px;color:#94a3b8;">No upcoming events.</p>'; return; }
+    
+    c.innerHTML = events.slice(0, 8).map(function (e) {
         return '<article class="event-card">'
             + '<div class="event-image"><img src="' + escapeHtml(e.image_url || '') + '" alt="" onerror="this.style.display=\'none\'"><div class="event-date-badge"><span class="event-month">' + escapeHtml(e.month_label || '') + '</span><span class="event-day">' + escapeHtml(e.day_label || '') + '</span></div></div>'
             + '<div class="event-body"><h4>' + escapeHtml(e.title || '') + '</h4>'
             + (e.time_label ? '<p><i class="fas fa-clock"></i> ' + escapeHtml(e.time_label) + '</p>' : '')
             + (e.location ? '<p><i class="fas fa-map-marker-alt"></i> ' + escapeHtml(e.location) + '</p>' : '')
-            + '<a href="events-announcements.html" class="btn btn-primary" style="margin-top:12px;padding:8px 16px;font-size:12px;">View Details <i class="fas fa-arrow-right"></i></a>'
+            + '<a href="events-announcements.html" class="btn btn-primary" style="margin-top:12px;width:100%;justify-content:center;">View Details <i class="fas fa-arrow-right"></i></a>'
             + '</div></article>';
     }).join('');
 }
 
-// ---------- RENDER: MINISTRIES ----------
+// ---------- RENDER: MINISTRIES (Horizontal, Small Cards) ----------
 function renderMinistries(ministries) {
     var c = document.getElementById('ministriesGrid');
     if (!c) return;
-    if (!ministries.length) { c.innerHTML = '<p class="empty-state" style="color:#94a3b8;">No ministries.</p>'; return; }
-    var top3 = ministries.slice(0, 3);
-    var colors = ['icon-blue', 'icon-maroon', 'icon-blue'];
-    c.innerHTML = top3.map(function (m, i) {
+    if (!ministries.length) { c.innerHTML = '<p style="padding:20px;color:#94a3b8;">No ministries.</p>'; return; }
+    
+    var top8 = ministries.slice(0, 8);
+    var colors = ['icon-blue', 'icon-maroon', 'icon-blue', 'icon-gold'];
+    
+    c.innerHTML = top8.map(function (m, i) {
         return '<a href="ministries.html" class="ministry-card">'
             + '<div class="ministry-image"><img src="' + escapeHtml(m.image_url || '') + '" alt="" onerror="this.style.display=\'none\'"></div>'
-            + '<div class="ministry-icon ' + colors[i % 3] + '"><i class="fas ' + (m.icon || 'fa-church') + '"></i></div>'
+            + '<div class="ministry-icon ' + colors[i % colors.length] + '"><i class="fas ' + (m.icon || 'fa-church') + '"></i></div>'
             + '<div class="ministry-overlay"><h4>' + escapeHtml(m.name || '') + '</h4><span class="ministry-arrow"><i class="fas fa-arrow-right"></i></span></div></a>';
     }).join('');
 }
 
-// ---------- RENDER: SERMONS ----------
+// ---------- RENDER: SERMONS (Horizontal, Small Cards) ----------
 function renderSermons(sermons) {
     var c = document.getElementById('sermonsSlider');
     if (!c) return;
-    if (!sermons.length) { c.innerHTML = '<p class="empty-state" style="color:#94a3b8;">No sermons.</p>'; return; }
-    var top3 = sermons.slice(0, 3);
-    c.innerHTML = top3.map(function (s) {
+    if (!sermons.length) { c.innerHTML = '<p style="padding:20px;color:#94a3b8;">No sermons.</p>'; return; }
+    
+    var top8 = sermons.slice(0, 8);
+    
+    c.innerHTML = top8.map(function (s) {
         return '<article class="sermon-card">'
             + '<div class="sermon-image"><img src="' + escapeHtml(s.thumbnail_url || '') + '" alt="" onerror="this.style.display=\'none\'"><div class="sermon-play"><i class="fas fa-play"></i></div>' + (s.duration ? '<span class="sermon-duration">' + escapeHtml(s.duration) + '</span>' : '') + '</div>'
             + '<div class="sermon-body"><h4>' + escapeHtml(s.title || '') + '</h4>'
             + (s.speaker ? '<p><i class="fas fa-user"></i> ' + escapeHtml(s.speaker) + '</p>' : '')
-            + (s.date_label ? '<p><i class="fas fa-calendar"></i> ' + escapeHtml(s.date_label) + '</p>' : '')
-            + '<a href="sermons.html" class="btn btn-primary" style="margin-top:10px;padding:8px 14px;font-size:12px;">Watch Video <i class="fas fa-arrow-right"></i></a>'
+            + '<a href="sermons.html" class="btn btn-primary" style="margin-top:8px;width:100%;justify-content:center;">Watch <i class="fas fa-arrow-right"></i></a>'
             + '</div></article>';
     }).join('');
 }
 
-// ---------- RENDER: DEVOTION ----------
-function renderDevotion(d) {
-    var banner = document.getElementById('devotionBanner');
-    if (!banner) return;
-    if (!d) return;
-    if (d.image_url) setBg('devotionBg', d.image_url);
-    setText('devotionTitle', d.title || "Start each day with God's Word.");
-    setText('devotionVerse', d.verse_text ? '"' + d.verse_text + '" — ' + (d.verse_reference || '') : '');
-    setText('devotionDesc', d.reflection || '');
-    var btn = document.getElementById('btnReadDevotion');
-    if (btn) {
-        btn.onclick = function () {
+// ---------- RENDER: DEVOTIONS (Horizontal, Exactly 4 Small Cards) ----------
+function renderDevotion(devotions) {
+    var container = document.getElementById('devotionSlider');
+    if (!container) return;
+    
+    var list = Array.isArray(devotions) ? devotions : (devotions ? [devotions] : []);
+    
+    if (!list.length) {
+        container.innerHTML = '<p style="padding:20px;color:#94a3b8;">No devotions available.</p>';
+        return;
+    }
+
+    // Limit to exactly 4 cards
+    container.innerHTML = list.slice(0, 4).map(function(d, idx) {
+        var imgHtml = d.image_url ? '<div class="devotion-thumb" style="display:block;"><img src="' + escapeHtml(d.image_url) + '" onerror="this.parentNode.style.display=\'none\'"></div>' : '';
+        return '<div class="devotion-card" data-devotion="' + idx + '" role="button" tabindex="0">'
+            + imgHtml
+            + '<div class="devotion-card-title">' + escapeHtml(d.title || 'Daily Devotion') + '</div>'
+            + '<div class="devotion-card-ref">' + escapeHtml(d.verse_reference || '') + '</div>'
+            + '<div class="devotion-card-desc">' + escapeHtml(d.reflection || '') + '</div>'
+            + '<div class="devotion-card-btn">Read More <i class="fas fa-arrow-right"></i></div>'
+            + '</div>';
+    }).join('');
+
+    container.querySelectorAll('.devotion-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            var idx = parseInt(card.dataset.devotion, 10);
+            var d = list[idx];
+            if (!d) return;
+            
             var html = '<div class="modal-panel-header">'
                 + '<div class="modal-panel-icon"><i class="fas fa-book-bible"></i></div>'
                 + '<h2>' + escapeHtml(d.title || 'Daily Devotion') + '</h2>'
@@ -346,9 +363,10 @@ function renderDevotion(d) {
                 + (d.verse_text ? '<div class="modal-panel-scripture"><p>"' + escapeHtml(d.verse_text) + '"</p></div>' : '')
                 + (d.reflection ? '<p class="modal-panel-description">' + escapeHtml(d.reflection) + '</p>' : '')
                 + (d.prayer ? '<div class="modal-panel-scripture"><p><strong>Prayer:</strong> ' + escapeHtml(d.prayer) + '</p></div>' : '');
+            
             openModal(html, d.image_url || null);
-        };
-    }
+        });
+    });
 }
 
 // ============================================
@@ -360,9 +378,9 @@ function pickRandomCard(cards) {
 }
 
 function renderPopupCard(card) {
-    if (!card) { console.warn('⚠️ renderPopupCard: no card'); return; }
+    if (!card) return;
     var overlay = document.getElementById('shopPopupOverlay');
-    if (!overlay) { console.error('❌ shopPopupOverlay not found'); return; }
+    if (!overlay) return;
 
     var isDonation = (card.type === 'donation');
 
@@ -376,14 +394,8 @@ function renderPopupCard(card) {
     var ph  = document.getElementById('shopPopupPlaceholder');
     if (img && ph) {
         if (card.image_url) {
-            img.onerror = function () {
-                this.style.display = 'none';
-                ph.style.display = 'flex';
-            };
-            img.onload = function () {
-                this.style.display = 'block';
-                ph.style.display = 'none';
-            };
+            img.onerror = function () { this.style.display = 'none'; ph.style.display = 'flex'; };
+            img.onload = function () { this.style.display = 'block'; ph.style.display = 'none'; };
             img.style.display = 'block';
             ph.style.display = 'flex';
             img.src = card.image_url;
@@ -396,43 +408,21 @@ function renderPopupCard(card) {
     setText('shopPopupTitle', card.title || '');
     setText('shopPopupMessage', card.description || card.message || '');
 
-    var priceEl = document.getElementById('shopPopupPrice');
-    if (priceEl) {
-        if (card.price && !isDonation) {
-            priceEl.textContent = card.price;
-            priceEl.hidden = false;
-        } else {
-            priceEl.hidden = true;
-        }
-    }
-
     var btn = document.getElementById('shopPopupBtn');
     if (btn) {
-        btn.href = card.button_url || (isDonation ? 'donations.html' : 'donations.html#shopSection');
-        btn.innerHTML = (card.button_text || (isDonation ? 'Donate Now' : 'Buy Now')) + ' <i class="fas fa-arrow-right"></i>';
+        btn.href = card.button_url || (isDonation ? 'donations.html' : 'church-shop.html');
+        btn.innerHTML = (card.button_text || (isDonation ? 'Donate Now' : 'Visit Church Shop')) + ' <i class="fas fa-arrow-right"></i>';
         btn.classList.toggle('is-donation', isDonation);
     }
 
     var delay = (card.display_delay_seconds || 3) * 1000;
     var duration = (card.display_duration_seconds || 60) * 1000;
 
-    setTimeout(function () {
-        overlay.classList.add('active');
-        overlay.setAttribute('aria-hidden', 'false');
-    }, delay);
+    setTimeout(function () { overlay.classList.add('active'); overlay.setAttribute('aria-hidden', 'false'); }, delay);
+    setTimeout(function () { overlay.classList.remove('active'); overlay.setAttribute('aria-hidden', 'true'); }, delay + duration);
 
-    setTimeout(function () {
-        overlay.classList.remove('active');
-        overlay.setAttribute('aria-hidden', 'true');
-    }, delay + duration);
-
-    function closePopup() {
-        overlay.classList.remove('active');
-        overlay.setAttribute('aria-hidden', 'true');
-    }
     var closeBtn = document.getElementById('shopPopupClose');
-    if (closeBtn) closeBtn.onclick = closePopup;
-    overlay.addEventListener('click', function (e) { if (e.target === overlay) closePopup(); });
+    if (closeBtn) closeBtn.onclick = function() { overlay.classList.remove('active'); overlay.setAttribute('aria-hidden', 'true'); };
 }
 
 // ============================================
@@ -448,7 +438,7 @@ async function loadAllData() {
             window.db.getEvents(),
             window.db.getSermons(),
             window.db.getSmallGroups(),
-            window.db.getLatestDevotion ? window.db.getLatestDevotion() : Promise.resolve(null),
+            window.db.getDevotions ? window.db.getDevotions(4) : Promise.resolve([]),
             window.db.getPopupCards ? window.db.getPopupCards() : Promise.resolve([])
         ]);
         siteContent = results[0] || {};
@@ -464,6 +454,16 @@ async function loadAllData() {
         renderMinistries(results[2]);
         renderSermons(results[4]);
         renderDevotion(results[6]);
+
+        // Engagement Cards Fallback Images
+        var sgImg = document.getElementById('engSmallGroupImg');
+        if (sgImg) sgImg.src = siteContent.engagement_smallgroup && siteContent.engagement_smallgroup.image ? siteContent.engagement_smallgroup.image : 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=600';
+
+        var volImg = document.getElementById('engVolunteerImg');
+        if (volImg) volImg.src = siteContent.engagement_volunteer && siteContent.engagement_volunteer.image ? siteContent.engagement_volunteer.image : 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=600';
+
+        var newsImg = document.getElementById('engNewsletterImg');
+        if (newsImg) newsImg.src = siteContent.engagement_newsletter && siteContent.engagement_newsletter.image ? siteContent.engagement_newsletter.image : 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600';
 
         if (popupCards && popupCards.length) {
             var chosen = pickRandomCard(popupCards);
@@ -502,7 +502,6 @@ window.closeWelcomeVideo = function () {
 
 // ---------- DOM READY ----------
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('✅ main.js initialized');
     var navbar = document.getElementById('navbar');
     if (navbar) window.addEventListener('scroll', function () { navbar.classList.toggle('scrolled', window.pageYOffset > 40); }, { passive: true });
 
@@ -573,40 +572,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeModal(); closeWelcomeVideo(); } });
     var y = document.getElementById('currentYear'); if (y) y.textContent = new Date().getFullYear();
-});
-// ============================================
-// THEME MODES (Christmas & Washing) LOGIC
-// ============================================
-document.addEventListener('DOMContentLoaded', function() {
+
+    // THEME MODES
     var festiveBtn = document.getElementById('festiveBtn');
     var washBtn = document.getElementById('washBtn');
-    
     var isFestive = localStorage.getItem('themeMode') === 'festive';
     var isWash = localStorage.getItem('themeMode') === 'wash';
-    
     var animationInterval;
 
-    // Initial check on page load
-    if (isFestive) {
-        document.body.classList.add('festive-mode');
-        startFestiveAnimations();
-    } else if (isWash) {
-        document.body.classList.add('wash-mode');
-        startWashAnimations();
-    }
+    if (isFestive) { document.body.classList.add('festive-mode'); startFestiveAnimations(); }
+    else if (isWash) { document.body.classList.add('wash-mode'); startWashAnimations(); }
 
     if (festiveBtn) {
         festiveBtn.addEventListener('click', function() {
             document.body.classList.remove('wash-mode');
             document.body.classList.toggle('festive-mode');
-            
-            if (document.body.classList.contains('festive-mode')) {
-                localStorage.setItem('themeMode', 'festive');
-                startFestiveAnimations();
-            } else {
-                localStorage.setItem('themeMode', 'none');
-                stopAnimations();
-            }
+            if (document.body.classList.contains('festive-mode')) { localStorage.setItem('themeMode', 'festive'); startFestiveAnimations(); }
+            else { localStorage.setItem('themeMode', 'none'); stopAnimations(); }
         });
     }
 
@@ -614,14 +596,8 @@ document.addEventListener('DOMContentLoaded', function() {
         washBtn.addEventListener('click', function() {
             document.body.classList.remove('festive-mode');
             document.body.classList.toggle('wash-mode');
-            
-            if (document.body.classList.contains('wash-mode')) {
-                localStorage.setItem('themeMode', 'wash');
-                startWashAnimations();
-            } else {
-                localStorage.setItem('themeMode', 'none');
-                stopAnimations();
-            }
+            if (document.body.classList.contains('wash-mode')) { localStorage.setItem('themeMode', 'wash'); startWashAnimations(); }
+            else { localStorage.setItem('themeMode', 'none'); stopAnimations(); }
         });
     }
 
@@ -630,8 +606,6 @@ document.addEventListener('DOMContentLoaded', function() {
         animationInterval = null;
         document.querySelectorAll('.snowflake, .christmas-ball, .soap-bubble').forEach(function(el) { el.remove(); });
     }
-
-    // --- CHRISTMAS ANIMATIONS ---
     function startFestiveAnimations() {
         stopAnimations();
         animationInterval = setInterval(function() {
@@ -639,7 +613,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (Math.random() < 0.25) createChristmasBall();
         }, 300);
     }
-
     function createSnowflake() {
         var snowflake = document.createElement('div');
         snowflake.classList.add('snowflake');
@@ -652,35 +625,27 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(snowflake);
         setTimeout(function() { snowflake.remove(); }, 6000);
     }
-
     function createChristmasBall() {
         var ball = document.createElement('div');
         ball.classList.add('christmas-ball');
         var size = Math.random() * 20 + 15;
         var colors = ['#ff0000', '#005BEA', '#F4C430', '#16A34A', '#ffffff'];
-        ball.style.width = size + 'px';
-        ball.style.height = size + 'px';
+        ball.style.width = size + 'px'; ball.style.height = size + 'px';
         ball.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
         ball.style.left = Math.random() * 100 + 'vw';
         ball.style.animationDuration = (Math.random() * 2 + 4) + 's';
         document.body.appendChild(ball);
         setTimeout(function() { ball.remove(); }, 7000);
     }
-
-    // --- WASHING ANIMATIONS ---
     function startWashAnimations() {
         stopAnimations();
-        animationInterval = setInterval(function() {
-            createSoapBubble();
-        }, 400);
+        animationInterval = setInterval(function() { createSoapBubble(); }, 400);
     }
-
     function createSoapBubble() {
         var bubble = document.createElement('div');
         bubble.classList.add('soap-bubble');
         var size = Math.random() * 30 + 10;
-        bubble.style.width = size + 'px';
-        bubble.style.height = size + 'px';
+        bubble.style.width = size + 'px'; bubble.style.height = size + 'px';
         bubble.style.left = Math.random() * 100 + 'vw';
         bubble.style.animationDuration = (Math.random() * 4 + 4) + 's';
         document.body.appendChild(bubble);
