@@ -144,6 +144,19 @@ window.db = {
         return data;
     },
 
+    async getDevotions(limit) {
+        if (!supabaseClient) return [];
+        const count = Math.max(1, Math.floor(Number(limit) || 5));
+        const { data, error } = await supabaseClient
+            .from('devotions')
+            .select('*')
+            .eq('is_published', true)
+            .order('devotion_date', { ascending: false })
+            .limit(count);
+        if (error) { console.error('getDevotions:', error); return []; }
+        return data || [];
+    },
+
     // ---- LATEST DEVOTION ----
     async getLatestDevotion() {
         if (!supabaseClient) return null;

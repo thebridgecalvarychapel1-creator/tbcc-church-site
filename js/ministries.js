@@ -12,7 +12,7 @@ function escapeHtml(str) {
     if (str === null || str === undefined) return '';
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
-function secImg(name) { var s = siteContent[name] || {}; return s.image || s.hero_image || s.background_image || ''; }
+function secImg(name) { var s = siteContent[name] || {}; return s.image || s.image_url || s.hero_image || s.background_image || ''; }
 
 function parseGallery(g) {
     if (!g) return [];

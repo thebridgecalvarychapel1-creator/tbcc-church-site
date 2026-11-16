@@ -442,3 +442,1361 @@ h1, h2, h3, h4, h5, p, a, span, li {
         scroll-behavior: auto !important;
     }
 }
+
+/* Homepage upcoming events */
+.events-section {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(56px, 7vw, 88px) 0 !important;
+    isolation: isolate;
+    background: linear-gradient(180deg, #F8FBFF 0%, #EDF6FF 100%);
+}
+
+.events-section::before,
+.events-section::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: min(42vw, 540px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: blur(2px);
+    pointer-events: none;
+}
+
+.events-section::before {
+    top: -38%;
+    left: -12%;
+    background: radial-gradient(circle, rgba(24, 200, 255, 0.16), transparent 68%);
+}
+
+.events-section::after {
+    right: -14%;
+    bottom: -48%;
+    background: radial-gradient(circle, rgba(11, 94, 215, 0.13), transparent 68%);
+}
+
+.events-section .section-header-centered {
+    position: relative;
+    max-width: 760px;
+    margin-bottom: clamp(28px, 4vw, 46px);
+    animation: events-header-enter 650ms ease-out both;
+}
+
+.events-section .section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 13px;
+    border: 1px solid rgba(11, 94, 215, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.78);
+    color: #0B5ED7;
+    letter-spacing: 1.8px;
+}
+
+.events-section .section-eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.13);
+}
+
+.events-section .section-title-serif {
+    margin: 14px 0 12px;
+    color: #06152F;
+    font-size: clamp(2rem, 4.2vw, 3.2rem);
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+}
+
+.events-section .section-title-serif span {
+    display: inline;
+    color: #0B5ED7;
+    background: linear-gradient(110deg, #0B5ED7 10%, #087BFF 55%, #08AFCF 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.events-section .section-description {
+    max-width: 590px;
+    margin: 0 auto;
+    color: #475569;
+    font-size: clamp(14px, 1.5vw, 16px);
+    line-height: 1.75;
+}
+
+.events-section .section-divider {
+    width: 68px;
+    height: 3px;
+    margin: 22px 0 24px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, #0B5ED7, #18C8FF);
+    box-shadow: 0 0 18px rgba(8, 123, 255, 0.3);
+}
+
+.events-section .section-header-centered > .btn-outline-dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 22px;
+    border: 1px solid rgba(11, 94, 215, 0.2);
+    border-radius: 999px;
+    background: #fff;
+    color: #0B5ED7;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 8px 22px rgba(6, 21, 47, 0.08);
+    transition: color 220ms ease, background 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.events-section .section-header-centered > .btn-outline-dark:hover {
+    transform: translateY(-2px);
+    border-color: transparent;
+    background: linear-gradient(110deg, #0B5ED7, #087BFF);
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(11, 94, 215, 0.28);
+}
+
+.events-section .section-header-centered > .btn-outline-dark i,
+.events-section .event-body > .btn i {
+    transition: transform 220ms ease;
+}
+
+.events-section .section-header-centered > .btn-outline-dark:hover i,
+.events-section .event-body > .btn:hover i {
+    transform: translateX(4px);
+}
+
+.events-section #eventsSlider {
+    display: flex !important;
+    align-items: stretch;
+    gap: clamp(16px, 2vw, 24px) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    padding: 12px 8px 28px;
+    scroll-padding-inline: 8px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: #9CC8F0 transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+.events-section #eventsSlider::-webkit-scrollbar {
+    height: 6px;
+}
+
+.events-section #eventsSlider::-webkit-scrollbar-track {
+    background: rgba(11, 94, 215, 0.08);
+    border-radius: 99px;
+}
+
+.events-section #eventsSlider::-webkit-scrollbar-thumb {
+    background: #9CC8F0;
+    border-radius: 99px;
+}
+
+.events-section #eventsSlider:focus-visible {
+    outline: 3px solid rgba(8, 123, 255, 0.45);
+    outline-offset: 3px;
+    border-radius: 16px;
+}
+
+.events-section #eventsSlider > .event-card {
+    display: flex;
+    flex: 0 0 clamp(280px, 30vw, 360px) !important;
+    flex-direction: column;
+    width: clamp(280px, 30vw, 360px) !important;
+    min-height: 100%;
+    border: 1px solid rgba(11, 94, 215, 0.12) !important;
+    border-radius: 20px !important;
+    background: #fff !important;
+    box-shadow: 0 10px 26px rgba(6, 21, 47, 0.08), 0 2px 6px rgba(6, 21, 47, 0.04) !important;
+    scroll-snap-align: start;
+    animation: events-card-enter 560ms cubic-bezier(0.2, 0.75, 0.25, 1) backwards !important;
+    transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+}
+
+.events-section #eventsSlider > .event-card:nth-child(2) { animation-delay: 70ms; }
+.events-section #eventsSlider > .event-card:nth-child(3) { animation-delay: 140ms; }
+.events-section #eventsSlider > .event-card:nth-child(4) { animation-delay: 210ms; }
+
+.events-section #eventsSlider > .event-card:hover,
+.events-section #eventsSlider > .event-card:focus-within {
+    transform: translateY(-5px);
+    border-color: rgba(8, 123, 255, 0.45) !important;
+    box-shadow: 0 0 0 1px rgba(24, 200, 255, 0.2), 0 18px 38px rgba(6, 21, 47, 0.15), 0 0 28px rgba(8, 123, 255, 0.16) !important;
+    transform: translateY(-5px) !important;
+}
+
+.events-section #eventsSlider .event-image {
+    height: 220px !important;
+    flex: 0 0 220px;
+    background: linear-gradient(135deg, #0A2548, #087BFF);
+}
+
+.events-section #eventsSlider .event-image::after {
+    content: "";
+    position: absolute;
+    inset: 45% 0 0;
+    background: linear-gradient(180deg, transparent, rgba(6, 21, 47, 0.28));
+    pointer-events: none;
+}
+
+.events-section #eventsSlider .event-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 500ms ease;
+}
+
+.events-section #eventsSlider > .event-card:hover .event-image img {
+    transform: scale(1.045);
+}
+
+.events-section #eventsSlider .event-date-badge {
+    z-index: 1;
+    top: 14px;
+    left: 14px;
+    min-width: 56px;
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 13px;
+    background: linear-gradient(140deg, #0B5ED7, #087BFF);
+    box-shadow: 0 7px 20px rgba(6, 21, 47, 0.25);
+}
+
+.events-section #eventsSlider .event-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px 20px 22px !important;
+}
+
+.events-section #eventsSlider .event-body h4 {
+    display: -webkit-box;
+    overflow: hidden;
+    margin: 0 0 14px;
+    color: #06152F;
+    font-size: 19px !important;
+    line-height: 1.35;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.events-section #eventsSlider .event-body p {
+    align-items: flex-start;
+    color: #52647B;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.events-section #eventsSlider .event-body p i {
+    margin-top: 3px;
+    color: #0B5ED7;
+}
+
+.events-section #eventsSlider .event-body > .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 46px;
+    margin-top: auto !important;
+    padding: 0 18px;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: linear-gradient(110deg, #0B5ED7, #087BFF) !important;
+    color: #fff !important;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 7px 18px rgba(11, 94, 215, 0.2) !important;
+    transition: box-shadow 220ms ease, filter 220ms ease;
+}
+
+.events-section #eventsSlider .event-body > .btn:hover {
+    filter: brightness(1.08);
+    background: linear-gradient(110deg, #0B5ED7, #087BFF) !important;
+    color: #fff !important;
+    box-shadow: 0 10px 23px rgba(11, 94, 215, 0.32) !important;
+}
+
+.events-section #eventsSlider .event-body > .btn:focus-visible,
+.events-section .section-header-centered > .btn-outline-dark:focus-visible {
+    outline: 3px solid rgba(8, 123, 255, 0.45);
+    outline-offset: 3px;
+}
+
+@keyframes events-header-enter {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes events-card-enter {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    .events-section {
+        padding: 54px 0 !important;
+    }
+
+    .events-section .section-header-centered {
+        margin-bottom: 26px;
+    }
+
+    .events-section .section-description {
+        max-width: 520px;
+        padding: 0 8px;
+    }
+
+    .events-section #eventsSlider > .event-card {
+        flex-basis: min(86vw, 360px) !important;
+        width: min(86vw, 360px) !important;
+    }
+
+    .events-section #eventsSlider .event-image {
+        height: 195px !important;
+        flex-basis: 195px;
+    }
+}
+
+@media (max-width: 480px) {
+    .events-section {
+        padding: 46px 0 !important;
+    }
+
+    .events-section .section-title-serif {
+        font-size: clamp(1.85rem, 8vw, 2.45rem);
+    }
+
+    .events-section #eventsSlider {
+        gap: 14px !important;
+        padding-inline: 4px;
+    }
+
+    .events-section #eventsSlider .event-body {
+        padding: 18px 16px 18px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .events-section .section-header-centered,
+    .events-section #eventsSlider > .event-card {
+        animation: none !important;
+    }
+}
+
+/* Homepage navigation, devotions, and footer */
+.navbar {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-bottom: 1px solid rgba(11, 94, 215, 0.12) !important;
+    box-shadow: 0 4px 20px rgba(6, 21, 47, 0.06);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.navbar .container {
+    height: 70px;
+    gap: 18px;
+}
+
+.navbar .logo-text {
+    color: #06152F !important;
+}
+
+.navbar .nav-menu {
+    gap: 2px;
+}
+
+.navbar .nav-link {
+    padding: 9px 11px;
+    border-radius: 999px;
+    color: #334155 !important;
+    font-size: 12.5px;
+    transition: color 180ms ease, background 180ms ease;
+}
+
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    background: #EDF6FF;
+    color: #0B5ED7 !important;
+}
+
+.navbar .nav-link.active::after {
+    right: 16px;
+    bottom: 3px;
+    left: 16px;
+    height: 2px;
+    background: linear-gradient(90deg, #0B5ED7, #18C8FF) !important;
+    box-shadow: 0 0 10px rgba(24, 200, 255, 0.4) !important;
+}
+
+.navbar .nav-actions {
+    gap: 7px;
+}
+
+.navbar .nav-search-icon,
+.navbar .mode-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgba(11, 94, 215, 0.12);
+    border-radius: 50%;
+    background: #F4F8FD;
+    color: #0B5ED7 !important;
+    transition: transform 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.navbar .nav-search-icon:hover,
+.navbar .mode-btn:hover {
+    transform: translateY(-1px);
+    background: #E5F3FF;
+    box-shadow: 0 4px 14px rgba(11, 94, 215, 0.14);
+}
+
+.navbar .btn-give {
+    gap: 8px;
+    padding: 10px 19px;
+    border-radius: 999px !important;
+    background: linear-gradient(115deg, #005BEA, #078BFF) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 18px rgba(0, 91, 234, 0.32), 0 0 18px rgba(0, 217, 255, 0.14);
+    animation: give-button-enter 720ms cubic-bezier(0.2, 0.75, 0.25, 1) both, give-button-breathe 2.8s ease-in-out 720ms infinite;
+}
+
+.navbar .btn-give i {
+    color: #FF6B9D !important;
+    animation: give-heartbeat 1.8s ease-in-out infinite;
+}
+
+.navbar .btn-give span {
+    display: inline !important;
+}
+
+.floating-give {
+    border-radius: 999px !important;
+    background: linear-gradient(115deg, #005BEA, #078BFF) !important;
+    box-shadow: 0 8px 24px rgba(0, 91, 234, 0.38), 0 0 22px rgba(0, 217, 255, 0.2) !important;
+    animation: give-button-enter 720ms cubic-bezier(0.2, 0.75, 0.25, 1) both, give-button-breathe 2.8s ease-in-out 720ms infinite !important;
+}
+
+.floating-give i {
+    color: #FF6B9D !important;
+    animation: give-heartbeat 1.8s ease-in-out infinite;
+}
+
+.navbar .nav-toggle {
+    color: #0B5ED7;
+    border: 1px solid rgba(11, 94, 215, 0.16);
+    background: #F4F8FD;
+}
+
+.devotion-section {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: clamp(56px, 7vw, 88px) 0 !important;
+    background: linear-gradient(180deg, #F8FBFF 0%, #EAF4FF 100%) !important;
+}
+
+.devotion-section::before,
+.devotion-section::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    width: min(42vw, 520px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.devotion-section::before {
+    top: -34%;
+    right: -14%;
+    background: radial-gradient(circle, rgba(24, 200, 255, 0.17), transparent 68%);
+}
+
+.devotion-section::after {
+    bottom: -48%;
+    left: -12%;
+    background: radial-gradient(circle, rgba(11, 94, 215, 0.14), transparent 68%);
+}
+
+.devotion-section .section-header-elevation {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
+.devotion-section .section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #0B5ED7 !important;
+    letter-spacing: 1.7px;
+}
+
+.devotion-section .section-eyebrow::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #18C8FF;
+    box-shadow: 0 0 0 4px rgba(24, 200, 255, 0.15);
+}
+
+.devotion-section .section-title-serif {
+    margin: 8px 0 8px;
+    color: #06152F !important;
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+}
+
+.devotion-section .section-title-serif span {
+    color: #0B5ED7 !important;
+    background: linear-gradient(110deg, #0B5ED7, #087BFF 58%, #08AFCF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.devotion-intro {
+    max-width: 560px;
+    margin: 0;
+    color: #52647B !important;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.devotion-section .section-header-elevation > .btn-outline-dark {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 46px;
+    padding: 0 20px;
+    border: 1px solid rgba(11, 94, 215, 0.18);
+    border-radius: 999px;
+    background: #fff;
+    color: #0B5ED7;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 7px 20px rgba(6, 21, 47, 0.08);
+    transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease, color 200ms ease;
+}
+
+.devotion-section .section-header-elevation > .btn-outline-dark:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(110deg, #0B5ED7, #087BFF);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(11, 94, 215, 0.24);
+}
+
+.devotion-section #devotionSlider {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 18px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    padding: 10px 4px 18px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: #8CBCEB transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+.devotion-section #devotionSlider > .devotion-card {
+    position: relative;
+    display: flex;
+    flex: 0 0 320px !important;
+    width: 320px !important;
+    max-width: none;
+    min-height: 340px;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+    scroll-snap-align: start;
+    border: 1px solid rgba(11, 94, 215, 0.12) !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    box-shadow: 0 10px 26px rgba(6, 21, 47, 0.08), 0 2px 6px rgba(6, 21, 47, 0.04) !important;
+    animation: devotion-card-enter 560ms cubic-bezier(0.2, 0.75, 0.25, 1) backwards !important;
+    transition: transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+}
+
+.devotion-section #devotionSlider > .devotion-card::before {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    left: 20px;
+    height: 3px;
+    border-radius: 0 0 99px 99px;
+    background: linear-gradient(90deg, #0B5ED7, #18C8FF);
+    content: "";
+}
+
+.devotion-section #devotionSlider > .devotion-card::after {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    border: 1px solid rgba(24, 200, 255, 0.58);
+    border-radius: inherit;
+    box-shadow: inset 0 0 26px rgba(24, 200, 255, 0.08), 0 0 22px rgba(8, 123, 255, 0.14);
+    content: "";
+    pointer-events: none;
+    animation: devotion-card-glow 4.2s ease-in-out infinite;
+}
+
+.devotion-section #devotionSlider > .devotion-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.devotion-section #devotionSlider > .devotion-card:nth-child(2) { animation-delay: 80ms !important; }
+.devotion-section #devotionSlider > .devotion-card:nth-child(3) { animation-delay: 160ms !important; }
+.devotion-section #devotionSlider > .devotion-card:nth-child(4) { animation-delay: 240ms !important; }
+.devotion-section #devotionSlider > .devotion-card:nth-child(5) { animation-delay: 320ms !important; }
+
+.devotion-section #devotionSlider > .devotion-card:hover,
+.devotion-section #devotionSlider > .devotion-card:focus-visible {
+    transform: translateY(-5px) !important;
+    border-color: rgba(8, 123, 255, 0.42) !important;
+    box-shadow: 0 0 0 1px rgba(24, 200, 255, 0.18), 0 18px 36px rgba(6, 21, 47, 0.13), 0 0 26px rgba(8, 123, 255, 0.14) !important;
+}
+
+.devotion-section #devotionSlider > .devotion-card:hover::after,
+.devotion-section #devotionSlider > .devotion-card:focus-visible::after {
+    animation-play-state: paused;
+    opacity: 0.95;
+}
+
+.devotion-section .devotion-thumb {
+    display: block;
+    height: 148px;
+    margin: 4px 0 16px;
+    overflow: hidden;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #0B5ED7, #18C8FF);
+}
+
+.devotion-section .devotion-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 450ms ease;
+}
+
+.devotion-section .devotion-card:hover .devotion-thumb img {
+    transform: scale(1.04);
+}
+
+.devotion-section .devotion-card-title {
+    margin: 4px 0 8px;
+    color: #06152F !important;
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.devotion-section .devotion-card-ref {
+    align-self: flex-start;
+    margin-bottom: 12px;
+    padding: 5px 9px;
+    border-radius: 999px;
+    background: #EAF4FF;
+    color: #0B5ED7 !important;
+    font-size: 10px;
+    letter-spacing: 0.7px;
+}
+
+.devotion-section .devotion-card-desc {
+    display: -webkit-box;
+    overflow: hidden;
+    margin-bottom: 18px;
+    color: #52647B !important;
+    font-size: 13px;
+    line-height: 1.65;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+}
+
+.devotion-section .devotion-card-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 44px;
+    margin-top: auto;
+    padding: 0 14px;
+    border: 0 !important;
+    border-radius: 12px !important;
+    background: linear-gradient(110deg, #0B5ED7, #087BFF) !important;
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    transition: box-shadow 220ms ease, filter 220ms ease;
+}
+
+.devotion-section .devotion-card:hover .devotion-card-btn {
+    filter: brightness(1.08);
+    border-color: transparent !important;
+    background: linear-gradient(110deg, #0B5ED7, #087BFF) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 20px rgba(11, 94, 215, 0.25) !important;
+}
+
+.devotion-section .devotion-card-btn i {
+    transition: transform 200ms ease;
+}
+
+.devotion-section .devotion-card:hover .devotion-card-btn i {
+    transform: translateX(4px);
+}
+
+.devotion-section .devotion-card:focus-visible,
+.devotion-section .section-header-elevation > .btn-outline-dark:focus-visible {
+    outline: 3px solid rgba(8, 123, 255, 0.5);
+    outline-offset: 3px;
+}
+
+.modal-panel.devotion-panel {
+    border-color: rgba(24, 200, 255, 0.48) !important;
+    border-radius: 24px !important;
+    background: linear-gradient(155deg, #0B2B52 0%, #06152F 78%) !important;
+    box-shadow: 0 0 44px rgba(8, 123, 255, 0.3), 0 28px 72px rgba(0, 0, 0, 0.48) !important;
+}
+
+.modal-panel.devotion-panel::before {
+    background: linear-gradient(135deg, rgba(24, 200, 255, 0.72), rgba(11, 94, 215, 0.62), rgba(8, 175, 207, 0.42));
+}
+
+.modal-panel.devotion-panel .modal-panel-body {
+    padding: 34px clamp(22px, 5vw, 42px) 38px;
+}
+
+.modal-panel.devotion-panel .modal-panel-image {
+    height: 245px;
+    flex: 0 0 245px;
+}
+
+.modal-panel.devotion-panel .modal-panel-image::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6, 21, 47, 0.02), rgba(6, 21, 47, 0.42));
+    content: "";
+    pointer-events: none;
+}
+
+.modal-panel.devotion-panel .modal-panel-icon {
+    background: linear-gradient(135deg, #0B5ED7, #18C8FF) !important;
+    color: #fff !important;
+    box-shadow: 0 0 30px rgba(24, 200, 255, 0.38) !important;
+}
+
+.modal-panel.devotion-panel .modal-panel-header h2 {
+    background: linear-gradient(135deg, #fff, #8BE9FF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #fff !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.modal-panel.devotion-panel .modal-panel-subtitle {
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.devotion-panel-label {
+    display: block;
+    margin-bottom: 8px;
+    color: #8BE9FF;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.modal-panel.devotion-panel .devotion-panel-scripture,
+.modal-panel.devotion-panel .devotion-panel-prayer {
+    padding: 18px 20px;
+    border-left-color: #18C8FF;
+    background: linear-gradient(130deg, rgba(8, 123, 255, 0.18), rgba(24, 200, 255, 0.07));
+}
+
+.modal-panel.devotion-panel .devotion-panel-scripture p,
+.modal-panel.devotion-panel .devotion-panel-prayer p {
+    color: #D9F7FF;
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.devotion-panel-reflection h3 {
+    margin: 22px 0 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.modal-panel.devotion-panel .devotion-panel-reflection .modal-panel-description {
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.modal-panel.devotion-panel .devotion-panel-intro {
+    margin: 0 0 18px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+.devotion-share-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.devotion-share-button {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 0 20px;
+    border: 1px solid rgba(139, 233, 255, 0.4);
+    border-radius: 999px;
+    background: linear-gradient(115deg, #0B5ED7, #087BFF);
+    color: #FFFFFF;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 22px rgba(8, 123, 255, 0.24);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.devotion-share-button:hover,
+.devotion-share-button:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 0 24px rgba(24, 200, 255, 0.32);
+}
+
+.devotion-share-status {
+    min-height: 18px;
+    margin: 0;
+    color: #B9F2FF;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.footer {
+    position: relative;
+    overflow: hidden;
+    padding: 28px 0 16px !important;
+    border-top: 1px solid rgba(24, 200, 255, 0.14) !important;
+    background: linear-gradient(135deg, #06152F 0%, #0A2B56 100%) !important;
+}
+
+.footer .container {
+    position: relative;
+    z-index: 1;
+}
+
+.footer .footer-grid {
+    grid-template-columns: 1.25fr 1.2fr 1fr 1.35fr;
+    gap: 26px;
+    padding: 4px 0 20px;
+}
+
+.footer-description {
+    max-width: 280px;
+    margin: 10px 0 14px;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.footer .footer-col h4 {
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 12px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+.footer .footer-link-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px 12px;
+}
+
+.footer .footer-col ul li {
+    margin: 0;
+}
+
+.footer .footer-col ul li a,
+.footer .footer-contact-item {
+    color: rgba(232, 241, 252, 0.76) !important;
+    font-size: 11.5px;
+    line-height: 1.5;
+    transition: color 180ms ease;
+}
+
+.footer .footer-col ul li a:hover {
+    color: #8BE9FF;
+}
+
+.footer .footer-contact-item {
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.footer .footer-contact-item i {
+    color: #59D9F5;
+}
+
+.footer .footer-newsletter-form {
+    margin-bottom: 0;
+}
+
+.footer .footer-bottom {
+    justify-content: center;
+    padding-top: 14px;
+    font-size: 10.5px;
+}
+
+.floating-give {
+    right: 20px;
+    bottom: 20px;
+    padding: 11px 17px;
+    border-radius: 999px;
+    background: linear-gradient(120deg, #0B5ED7, #087BFF) !important;
+    box-shadow: 0 8px 24px rgba(11, 94, 215, 0.35), 0 0 22px rgba(24, 200, 255, 0.18) !important;
+    animation: floatPulse 3.5s ease-in-out infinite;
+}
+
+.floating-give i {
+    color: #B9F2FF;
+}
+
+@keyframes devotion-card-enter {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1200px) {
+    .navbar .mode-btn {
+        display: none;
+    }
+}
+
+@media (max-width: 1024px) {
+    .navbar .container {
+        height: 66px;
+    }
+
+    .navbar .nav-menu {
+        top: 66px;
+        padding: 14px 18px 18px;
+        border-top: 1px solid rgba(24, 200, 255, 0.2);
+        border-radius: 0 0 18px 18px;
+        background: rgba(6, 21, 47, 0.98);
+        box-shadow: 0 18px 32px rgba(6, 21, 47, 0.22);
+    }
+
+    .navbar .nav-link {
+        color: rgba(255, 255, 255, 0.82) !important;
+    }
+
+    .navbar .nav-link:hover,
+    .navbar .nav-link.active {
+        background: rgba(24, 200, 255, 0.13);
+        color: #8BE9FF !important;
+    }
+
+    .devotion-section #devotionSlider {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer .footer-grid {
+        grid-template-columns: 1.2fr 1fr 1fr !important;
+    }
+
+    .footer .footer-grid > .footer-brand {
+        grid-row: span 2;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar .container {
+        height: 60px;
+    }
+
+    .navbar .nav-menu {
+        top: 60px;
+    }
+
+    .navbar .nav-toggle {
+        width: 36px;
+        height: 36px;
+        color: #0B5ED7;
+    }
+
+    .devotion-section {
+        padding: 54px 0 !important;
+    }
+
+    .devotion-section .section-header-elevation {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .devotion-section #devotionSlider {
+        display: flex !important;
+        gap: 16px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden;
+        padding: 10px 6px 24px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: thin;
+        scrollbar-color: #9CC8F0 transparent;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .devotion-section #devotionSlider > .devotion-card {
+        flex: 0 0 min(86vw, 360px) !important;
+        width: min(86vw, 360px) !important;
+        min-height: 330px;
+        scroll-snap-align: start;
+    }
+
+    .devotion-section #devotionSlider::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .devotion-section #devotionSlider::-webkit-scrollbar-thumb {
+        border-radius: 99px;
+        background: #9CC8F0;
+    }
+
+    .footer .footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 20px 16px;
+    }
+
+    .footer .footer-grid > .footer-brand,
+    .footer .footer-grid > .footer-col:last-child {
+        grid-column: 1 / -1;
+        grid-row: auto;
+    }
+
+    .footer-description {
+        max-width: 420px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar .container {
+        gap: 8px;
+    }
+
+    .navbar .nav-actions {
+        gap: 5px;
+    }
+
+    .navbar .nav-search-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .navbar .btn-give {
+        padding: 8px 12px;
+    }
+
+    .devotion-section {
+        padding: 46px 0 !important;
+    }
+
+    .devotion-section .section-title-serif {
+        font-size: clamp(1.85rem, 8vw, 2.45rem);
+    }
+
+    .modal-panel.devotion-panel {
+        width: calc(100% - 24px);
+        max-height: 90vh;
+        border-radius: 19px;
+    }
+
+    .modal-panel.devotion-panel .modal-panel-body {
+        padding: 26px 20px 28px;
+    }
+
+    .footer {
+        padding: 24px 0 14px !important;
+    }
+
+    .footer .footer-grid {
+        gap: 18px 12px;
+    }
+
+    .footer .footer-col ul li a,
+    .footer .footer-contact-item {
+        font-size: 10.5px;
+    }
+
+    .floating-give {
+        right: 14px;
+        bottom: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .devotion-section #devotionSlider > .devotion-card {
+        animation: none !important;
+    }
+}
+
+.devotion-section #devotionSlider::-webkit-scrollbar,
+.sermons-section #sermonsSlider::-webkit-scrollbar {
+    height: 7px;
+}
+
+.devotion-section #devotionSlider::-webkit-scrollbar-thumb,
+.sermons-section #sermonsSlider::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #8CBCEB;
+}
+
+.sermons-section {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, #F5F9FF 0%, #EAF3FF 100%) !important;
+}
+
+.sermons-section #sermonsSlider {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 20px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    padding: 6px 4px 18px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: #8CBCEB transparent;
+    -webkit-overflow-scrolling: touch;
+}
+
+.sermons-section #sermonsSlider > .sermon-card {
+    display: flex;
+    flex: 0 0 300px !important;
+    width: 300px !important;
+    min-height: 370px;
+    flex-direction: column;
+    overflow: hidden;
+    scroll-snap-align: start;
+    border: 1px solid rgba(11, 94, 215, 0.14) !important;
+    border-radius: 20px !important;
+    background: linear-gradient(155deg, #FFFFFF 0%, #F7FBFF 100%) !important;
+    box-shadow: 0 10px 28px rgba(6, 21, 47, 0.09), 0 2px 6px rgba(6, 21, 47, 0.04) !important;
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.sermons-section #sermonsSlider > .sermon-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: rgba(8, 123, 255, 0.42) !important;
+    box-shadow: 0 16px 34px rgba(6, 21, 47, 0.14), 0 0 24px rgba(8, 123, 255, 0.14) !important;
+}
+
+.sermons-section .sermon-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, #0A2B56, #087BFF);
+}
+
+.sermons-section .sermon-image img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sermons-section .sermon-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px !important;
+}
+
+.sermons-section .sermon-body h4 {
+    min-height: 44px;
+    margin: 0 !important;
+    color: #071E42 !important;
+    font-size: 16px !important;
+    line-height: 1.4;
+}
+
+.sermons-section .sermon-body p {
+    margin: 0 0 8px !important;
+    color: #52647B !important;
+    font-size: 12px !important;
+}
+
+.sermons-section .sermon-body p i {
+    color: #0B5ED7 !important;
+}
+
+.sermons-section .sermon-body .btn {
+    min-height: 42px;
+    margin-top: auto !important;
+    border-radius: 999px !important;
+    background: linear-gradient(110deg, #0B5ED7, #087BFF) !important;
+    color: #fff !important;
+    box-shadow: 0 6px 16px rgba(11, 94, 215, 0.24);
+}
+
+.sermons-section #sermonsSlider:focus-visible,
+.devotion-section #devotionSlider:focus-visible {
+    outline: 3px solid rgba(8, 123, 255, 0.5);
+    outline-offset: 3px;
+}
+
+.modal-panel:not(.devotion-panel) {
+    border: 1px solid rgba(24, 200, 255, 0.42) !important;
+    border-radius: 22px !important;
+    background: linear-gradient(155deg, #0B2B52 0%, #06152F 78%) !important;
+    box-shadow: 0 0 38px rgba(8, 123, 255, 0.24), 0 28px 72px rgba(0, 0, 0, 0.48) !important;
+}
+
+.modal-panel:not(.devotion-panel) .modal-panel-header h2 {
+    background: linear-gradient(135deg, #FFFFFF, #8BE9FF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.modal-panel:not(.devotion-panel) .modal-panel-subtitle,
+.modal-panel:not(.devotion-panel) .modal-panel-description {
+    color: rgba(255, 255, 255, 0.78) !important;
+}
+
+.modal-panel:not(.devotion-panel) .modal-panel-icon {
+    background: linear-gradient(135deg, #0B5ED7, #18C8FF) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 28px rgba(24, 200, 255, 0.32) !important;
+}
+
+.modal-panel:not(.devotion-panel) .modal-list-item {
+    border: 1px solid rgba(24, 200, 255, 0.2);
+    border-radius: 17px;
+    background: linear-gradient(135deg, rgba(11, 94, 215, 0.2), rgba(24, 200, 255, 0.06));
+}
+
+.modal-panel:not(.devotion-panel) .modal-list-item:hover {
+    border-color: rgba(24, 200, 255, 0.52);
+    box-shadow: 0 0 26px rgba(24, 200, 255, 0.16);
+}
+
+.modal-panel:not(.devotion-panel) .modal-form label {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.modal-panel:not(.devotion-panel) .modal-form input,
+.modal-panel:not(.devotion-panel) .modal-form textarea {
+    border-color: rgba(139, 233, 255, 0.24) !important;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.07) !important;
+    color: #FFFFFF !important;
+}
+
+.modal-panel:not(.devotion-panel) .request-contact-actions .modal-btn {
+    min-height: 46px;
+    border-radius: 999px;
+    text-decoration: none;
+}
+
+.modal-panel:not(.devotion-panel) .request-contact-actions .modal-btn-whatsapp {
+    background: linear-gradient(120deg, #25D366, #128C7E) !important;
+    color: #FFFFFF !important;
+}
+
+.modal-panel:not(.devotion-panel) .request-contact-actions .modal-btn-email {
+    background: linear-gradient(120deg, #005BEA, #078BFF) !important;
+    color: #FFFFFF !important;
+}
+
+@keyframes give-button-breathe {
+    0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 6px 18px rgba(0, 91, 234, 0.32), 0 0 14px rgba(0, 217, 255, 0.12); }
+    50% { transform: translateY(-2px) scale(1.035); box-shadow: 0 9px 24px rgba(0, 91, 234, 0.44), 0 0 24px rgba(0, 217, 255, 0.28); }
+}
+
+@keyframes give-button-enter {
+    from { opacity: 0; transform: translateY(10px) scale(0.88); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes give-heartbeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.18); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.12); }
+}
+
+@keyframes devotion-card-glow {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.72; }
+}
+
+@media (max-width: 480px) {
+    .navbar .btn-give {
+        gap: 6px;
+        padding: 8px 11px;
+        font-size: 11px;
+    }
+
+    .sermons-section #sermonsSlider > .sermon-card {
+        flex-basis: min(82vw, 300px) !important;
+        width: min(82vw, 300px) !important;
+    }
+
+    .modal-panel.devotion-panel .modal-panel-image {
+        height: 180px;
+        flex-basis: 180px;
+    }
+
+    .devotion-share-button {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navbar .btn-give,
+    .navbar .btn-give i,
+    .floating-give,
+    .floating-give i,
+    .devotion-section #devotionSlider > .devotion-card::after {
+        animation: none !important;
+    }
+}

@@ -22,13 +22,14 @@ function sectionImg(name) {
 }
 
 // ---------- MODAL ----------
-window.openModal = function (html, imageUrl) {
+window.openModal = function (html, imageUrl, panelClass) {
     var overlay = document.getElementById('modalOverlay');
     var panel = document.getElementById('modalPanel');
     var body = document.getElementById('modalBody');
     var imageWrap = document.getElementById('modalPanelImage');
     var imageEl = document.getElementById('modalPanelImg');
     if (!panel || !body) return;
+    panel.classList.toggle('devotion-panel', panelClass === 'devotion-panel');
 
     if (imageWrap && imageEl) {
         if (imageUrl) {
@@ -58,6 +59,7 @@ window.closeModal = function () {
     if (!panel) return;
     overlay.classList.remove('active');
     panel.classList.remove('active');
+    panel.classList.remove('devotion-panel');
     panel.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
     if (imageWrap) imageWrap.hidden = true;
@@ -103,7 +105,8 @@ window.openValuePanel = function (key) {
 // ---------- SMALL GROUP / VOLUNTEER ----------
 window.openSmallGroupPanel = function () {
     if (!smallGroupsCache.length) {
-        openModal('<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-users"></i></div><h2>Find a Small Group</h2><p class="modal-panel-subtitle">No groups available right now.</p></div>');
+        openModal('<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-users"></i></div><h2>Find Your Community</h2><p class="modal-panel-subtitle">There are no groups listed right now, but we would love to help you find one.</p></div><button class="modal-panel-btn" id="requestGroupInfo" type="button"><span>Request Group Information</span> <i class="fas fa-arrow-right"></i></button>');
+        document.getElementById('requestGroupInfo').addEventListener('click', function () { joinGroup('Small Group'); });
         return;
     }
     var items = smallGroupsCache.map(function (g) {
@@ -118,7 +121,7 @@ window.openSmallGroupPanel = function () {
             + '<button class="modal-list-btn" data-group="' + escapeHtml(g.name) + '" type="button">Join This Group <i class="fas fa-arrow-right"></i></button>'
             + '</div>';
     }).join('');
-    openModal('<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-users"></i></div><h2>Find a Small Group</h2><p class="modal-panel-subtitle">Grow deeper in your faith through real community.</p></div><div class="modal-list">' + items + '</div>');
+    openModal('<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-users"></i></div><h2>Find Your Community</h2><p class="modal-panel-subtitle">Grow in faith and friendship through a group that fits your life.</p></div><div class="modal-list">' + items + '</div>');
     document.querySelectorAll('.modal-list-btn[data-group]').forEach(function (btn) {
         btn.addEventListener('click', function () { joinGroup(btn.dataset.group); });
     });
@@ -136,7 +139,7 @@ window.openVolunteerPanel = function () {
     var items = opportunities.map(function (o) {
         return '<div class="modal-list-item"><h4><i class="fas ' + o.icon + '"></i> ' + o.name + '</h4><button class="modal-list-btn" data-volunteer="' + o.name + '" type="button">Get Involved <i class="fas fa-arrow-right"></i></button></div>';
     }).join('');
-    openModal('<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-hands-helping"></i></div><h2>Start Volunteering</h2><p class="modal-panel-subtitle">Use your gifts to make an eternal impact.</p></div><div class="modal-list">' + items + '</div>');
+    openModal('<div class="modal-panel-header"><div class="modal-panel-icon"><i class="fas fa-hands-helping"></i></div><h2>Serve With Purpose</h2><p class="modal-panel-subtitle">Use your gifts to make an eternal impact.</p></div><div class="modal-list">' + items + '</div>');
     document.querySelectorAll('.modal-list-btn[data-volunteer]').forEach(function (btn) {
         btn.addEventListener('click', function () { volunteerInterest(btn.dataset.volunteer); });
     });
@@ -162,8 +165,7 @@ window.joinGroup = function (groupName) {
         new FormData(e.target).forEach(function (v, k) { payload[k] = v; });
         try {
             await window.db.submitGroupRequest(payload);
-            st.textContent = '✅ Thank you!'; st.className = 'form-status success';
-            e.target.reset();
+            showRequestContactActions(e.target, payload, 'Small group request');
         } catch (err) {
             console.error(err);
             st.textContent = '❌ ' + (err.message || 'Error'); st.className = 'form-status error'; btn.disabled = false;
@@ -191,14 +193,45 @@ window.volunteerInterest = function (ministryName) {
         new FormData(e.target).forEach(function (v, k) { payload[k] = v; });
         try {
             await window.db.submitVolunteerRequest(payload);
-            st.textContent = '✅ Thank you!'; st.className = 'form-status success';
-            e.target.reset();
+            showRequestContactActions(e.target, payload, 'Volunteer interest');
         } catch (err) {
             console.error(err);
             st.textContent = '❌ ' + (err.message || 'Error'); st.className = 'form-status error'; btn.disabled = false;
         }
     });
 };
+
+function showRequestContactActions(form, payload, subject) {
+    var contact = window.CHURCH_CONTACT || {};
+    var phone = String(contact.whatsapp || '').replace(/\D/g, '');
+    var email = contact.email || '';
+    var lines = [
+        'Hello ' + (contact.name || 'Bridge Calvary Chapel') + ',',
+        '',
+        subject,
+        'Name: ' + (payload.name || ''),
+        'Email: ' + (payload.email || ''),
+        'Phone: ' + (payload.phone || 'Not provided'),
+        'Message: ' + (payload.message || 'Not provided')
+    ];
+    if (payload.group_name) lines.splice(3, 0, 'Group: ' + payload.group_name);
+    if (payload.ministry) lines.splice(3, 0, 'Ministry: ' + payload.ministry);
+
+    var message = lines.join('\n');
+    var actions = '';
+    if (phone) {
+        actions += '<a class="modal-btn modal-btn-whatsapp" href="https://wa.me/' + phone + '?text=' + encodeURIComponent(message) + '" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Send with WhatsApp</a>';
+    }
+    if (email) {
+        actions += '<a class="modal-btn modal-btn-email" href="mailto:' + encodeURIComponent(email) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(message) + '"><i class="fas fa-envelope"></i> Send with Email</a>';
+    }
+
+    var status = actions
+        ? 'Your request is saved. Choose WhatsApp or Email to send it to the church.'
+        : 'Your request is saved, but the church contact details are not configured yet.';
+    form.innerHTML = '<p class="form-status success">' + status + '</p>'
+        + (actions ? '<div class="modal-actions request-contact-actions">' + actions + '</div>' : '');
+}
 
 window.openFamilyPanel = function () { openSmallGroupPanel(); };
 
@@ -325,7 +358,150 @@ function renderSermons(sermons) {
     }).join('');
 }
 
-// ---------- RENDER: DEVOTIONS (Horizontal, Exactly 4 Small Cards) ----------
+function drawDevotionShareText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+    var words = String(text || '').replace(/\s+/g, ' ').trim().split(' ');
+    if (!words[0]) return y;
+
+    var lines = [];
+    var line = '';
+    var index = 0;
+    var truncated = false;
+    for (; index < words.length; index++) {
+        var candidate = line ? line + ' ' + words[index] : words[index];
+        if (line && ctx.measureText(candidate).width > maxWidth) {
+            lines.push(line);
+            line = words[index];
+            if (lines.length >= maxLines) {
+                truncated = true;
+                break;
+            }
+        } else {
+            line = candidate;
+        }
+    }
+    if (line && lines.length < maxLines) {
+        lines.push(line);
+        if (index < words.length - 1) truncated = true;
+    }
+    if (truncated && lines.length) {
+        var last = lines[lines.length - 1];
+        while (last && ctx.measureText(last + '...').width > maxWidth) last = last.slice(0, -1);
+        lines[lines.length - 1] = last.trimEnd() + '...';
+    }
+    lines.forEach(function (value, lineIndex) {
+        ctx.fillText(value, x, y + lineIndex * lineHeight);
+    });
+    return y + lines.length * lineHeight;
+}
+
+function createDevotionShareImage(devotion) {
+    return new Promise(function (resolve, reject) {
+        var canvas = document.createElement('canvas');
+        canvas.width = 1080;
+        canvas.height = 1350;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) {
+            reject(new Error('Your browser could not create the devotion image.'));
+            return;
+        }
+
+        var background = ctx.createLinearGradient(0, 0, 1080, 1350);
+        background.addColorStop(0, '#071E42');
+        background.addColorStop(0.55, '#0B5ED7');
+        background.addColorStop(1, '#06152F');
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = 'rgba(24, 200, 255, 0.18)';
+        ctx.beginPath();
+        ctx.arc(940, 180, 260, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.beginPath();
+        ctx.arc(80, 1190, 300, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#8BE9FF';
+        ctx.font = '700 25px Arial, sans-serif';
+        ctx.fillText('DAILY INSPIRATION', 78, 105);
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = '700 56px Georgia, serif';
+        var titleBottom = drawDevotionShareText(ctx, devotion.title || 'Daily Devotion', 78, 185, 920, 70, 2);
+
+        ctx.fillStyle = '#B9F2FF';
+        ctx.font = '700 27px Arial, sans-serif';
+        ctx.fillText(String(devotion.verse_reference || 'A moment in Scripture').slice(0, 68), 78, titleBottom + 18, 920);
+
+        ctx.fillStyle = 'rgba(4, 20, 45, 0.5)';
+        ctx.fillRect(60, titleBottom + 58, 960, 400);
+        ctx.fillStyle = '#8BE9FF';
+        ctx.font = '700 22px Arial, sans-serif';
+        ctx.fillText('SCRIPTURE', 92, titleBottom + 112);
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'italic 34px Georgia, serif';
+        var verseBottom = drawDevotionShareText(ctx, devotion.verse_text || devotion.description || '', 92, titleBottom + 170, 890, 48, 5);
+
+        ctx.fillStyle = '#8BE9FF';
+        ctx.font = '700 22px Arial, sans-serif';
+        ctx.fillText('REFLECTION', 78, verseBottom + 98);
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.font = '30px Arial, sans-serif';
+        var reflectionBottom = drawDevotionShareText(ctx, devotion.reflection || devotion.description || '', 78, verseBottom + 150, 920, 44, 5);
+
+        if (devotion.prayer) {
+            ctx.fillStyle = '#8BE9FF';
+            ctx.font = '700 22px Arial, sans-serif';
+            ctx.fillText('PRAYER', 78, reflectionBottom + 58);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.font = 'italic 27px Georgia, serif';
+            drawDevotionShareText(ctx, devotion.prayer, 78, reflectionBottom + 104, 920, 40, 3);
+        }
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+        ctx.font = '700 20px Arial, sans-serif';
+        ctx.fillText('THE BRIDGE CALVARY CHAPEL', 78, 1290);
+        canvas.toBlob(function (blob) {
+            if (blob) resolve(blob);
+            else reject(new Error('The devotion image could not be created.'));
+        }, 'image/png');
+    });
+}
+
+async function shareDevotionImage(devotion, status) {
+    status.textContent = 'Preparing your devotion image...';
+    try {
+        var blob = await createDevotionShareImage(devotion);
+        var safeTitle = (devotion.title || 'daily-devotion').replace(/[^\w-]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase();
+        var file = new File([blob], (safeTitle || 'daily-devotion') + '.png', { type: 'image/png' });
+        var shareText = (devotion.title || 'Daily Devotion') + (devotion.verse_reference ? ' — ' + devotion.verse_reference : '');
+
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: devotion.title || 'Daily Devotion', text: shareText });
+            status.textContent = 'Your devotion image was shared.';
+            return;
+        }
+
+        var url = URL.createObjectURL(blob);
+        var download = document.createElement('a');
+        download.href = url;
+        download.download = file.name;
+        document.body.appendChild(download);
+        download.click();
+        download.remove();
+        setTimeout(function () { URL.revokeObjectURL(url); }, 30000);
+        status.textContent = 'Image downloaded. Attach it to a message to share.';
+    } catch (err) {
+        if (err.name === 'AbortError') {
+            status.textContent = 'Sharing cancelled.';
+            return;
+        }
+        console.error('Could not share the devotion image:', err);
+        status.textContent = 'Could not create the image. Please try again.';
+    }
+}
+
+// ---------- RENDER: DEVOTIONS (Five Latest Published Cards) ----------
 function renderDevotion(devotions) {
     var container = document.getElementById('devotionSlider');
     if (!container) return;
@@ -337,9 +513,9 @@ function renderDevotion(devotions) {
         return;
     }
 
-    // Limit to exactly 4 cards
-    container.innerHTML = list.slice(0, 4).map(function(d, idx) {
-        var imgHtml = d.image_url ? '<div class="devotion-thumb" style="display:block;"><img src="' + escapeHtml(d.image_url) + '" onerror="this.parentNode.style.display=\'none\'"></div>' : '';
+    container.innerHTML = list.slice(0, 5).map(function(d, idx) {
+        var imageUrl = d.image_url || sectionImg('devotion') || 'assets/images/yh.jpg';
+        var imgHtml = '<div class="devotion-thumb"><img src="' + escapeHtml(imageUrl) + '" alt="' + escapeHtml(d.title || 'Daily devotion') + '" loading="lazy" onerror="this.onerror=null;this.src=\'assets/images/yh.jpg\'"></div>';
         return '<div class="devotion-card" data-devotion="' + idx + '" role="button" tabindex="0">'
             + imgHtml
             + '<div class="devotion-card-title">' + escapeHtml(d.title || 'Daily Devotion') + '</div>'
@@ -350,7 +526,7 @@ function renderDevotion(devotions) {
     }).join('');
 
     container.querySelectorAll('.devotion-card').forEach(function(card) {
-        card.addEventListener('click', function() {
+        function openDevotion() {
             var idx = parseInt(card.dataset.devotion, 10);
             var d = list[idx];
             if (!d) return;
@@ -360,11 +536,31 @@ function renderDevotion(devotions) {
                 + '<h2>' + escapeHtml(d.title || 'Daily Devotion') + '</h2>'
                 + '<p class="modal-panel-subtitle">' + escapeHtml(d.verse_reference || '') + '</p>'
                 + '</div>'
-                + (d.verse_text ? '<div class="modal-panel-scripture"><p>"' + escapeHtml(d.verse_text) + '"</p></div>' : '')
-                + (d.reflection ? '<p class="modal-panel-description">' + escapeHtml(d.reflection) + '</p>' : '')
-                + (d.prayer ? '<div class="modal-panel-scripture"><p><strong>Prayer:</strong> ' + escapeHtml(d.prayer) + '</p></div>' : '');
+                + (d.description ? '<p class="devotion-panel-intro">' + escapeHtml(d.description) + '</p>' : '')
+                + (d.verse_text ? '<div class="modal-panel-scripture devotion-panel-scripture"><span class="devotion-panel-label">TODAY\'S SCRIPTURE</span><p>"' + escapeHtml(d.verse_text) + '"</p></div>' : '')
+                + (d.reflection ? '<section class="devotion-panel-reflection"><h3>Reflection</h3><p class="modal-panel-description">' + escapeHtml(d.reflection) + '</p></section>' : '')
+                + (d.prayer ? '<div class="modal-panel-scripture devotion-panel-prayer"><span class="devotion-panel-label">PRAYER</span><p>' + escapeHtml(d.prayer) + '</p></div>' : '')
+                + '<div class="devotion-share-row"><button class="devotion-share-button" id="shareDevotionImage" type="button"><i class="fas fa-share-alt"></i> Share devotion image</button><p class="devotion-share-status" id="devotionShareStatus" role="status" aria-live="polite"></p></div>';
             
-            openModal(html, d.image_url || null);
+            var panelImageUrl = d.image_url || sectionImg('devotion') || 'assets/images/yh.jpg';
+            var panelImage = document.getElementById('modalPanelImg');
+            if (panelImage) {
+                panelImage.onerror = function () {
+                    panelImage.onerror = null;
+                    if (!document.getElementById('modalPanelImage').hidden) panelImage.src = 'assets/images/yh.jpg';
+                };
+            }
+            openModal(html, panelImageUrl, 'devotion-panel');
+            var shareButton = document.getElementById('shareDevotionImage');
+            var shareStatus = document.getElementById('devotionShareStatus');
+            shareButton.addEventListener('click', function () { shareDevotionImage(d, shareStatus); });
+        }
+
+        card.addEventListener('click', openDevotion);
+        card.addEventListener('keydown', function(e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            openDevotion();
         });
     });
 }
@@ -438,7 +634,7 @@ async function loadAllData() {
             window.db.getEvents(),
             window.db.getSermons(),
             window.db.getSmallGroups(),
-            window.db.getDevotions ? window.db.getDevotions(4) : Promise.resolve([]),
+            window.db.getDevotions ? window.db.getDevotions(5) : Promise.resolve([]),
             window.db.getPopupCards ? window.db.getPopupCards() : Promise.resolve([])
         ]);
         siteContent = results[0] || {};
@@ -457,10 +653,10 @@ async function loadAllData() {
 
         // Engagement Cards Fallback Images
         var sgImg = document.getElementById('engSmallGroupImg');
-        if (sgImg) sgImg.src = siteContent.engagement_smallgroup && siteContent.engagement_smallgroup.image ? siteContent.engagement_smallgroup.image : 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=600';
+        if (sgImg) sgImg.src = siteContent.engagement_smallgroup && (siteContent.engagement_smallgroup.image || siteContent.engagement_smallgroup.image_url) ? (siteContent.engagement_smallgroup.image || siteContent.engagement_smallgroup.image_url) : 'assets/images/sp.jpg';
 
         var volImg = document.getElementById('engVolunteerImg');
-        if (volImg) volImg.src = siteContent.engagement_volunteer && siteContent.engagement_volunteer.image ? siteContent.engagement_volunteer.image : 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=600';
+        if (volImg) volImg.src = siteContent.engagement_volunteer && (siteContent.engagement_volunteer.image || siteContent.engagement_volunteer.image_url) ? (siteContent.engagement_volunteer.image || siteContent.engagement_volunteer.image_url) : 'assets/images/yh.jpg';
 
         var newsImg = document.getElementById('engNewsletterImg');
         if (newsImg) newsImg.src = siteContent.engagement_newsletter && siteContent.engagement_newsletter.image ? siteContent.engagement_newsletter.image : 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?q=80&w=600';
@@ -485,11 +681,19 @@ window.openWelcomeVideo = function () {
     var modal = document.getElementById('videoModal');
     var video = document.getElementById('welcomeVideo');
     if (!modal || !video) return;
-    var url = (siteContent.hero && siteContent.hero.welcome_video) || 'assets/videos/welcome.mp4';
-    if (video.getAttribute('src') !== url) video.setAttribute('src', url);
+    if (!video.getAttribute('src')) {
+        console.error('Set a local video path on #welcomeVideo in index.html.');
+        return;
+    }
     modal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    try { video.play().catch(function () {}); } catch (e) {}
+    try {
+        video.play().catch(function (err) {
+            if (err.name !== 'NotAllowedError') console.error('Could not play the church welcome video:', err);
+        });
+    } catch (err) {
+        console.error('Could not play the church welcome video:', err);
+    }
 };
 window.closeWelcomeVideo = function () {
     var modal = document.getElementById('videoModal');
