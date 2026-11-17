@@ -87,7 +87,7 @@ ul { list-style: none; }
    ============================================ */
 .ministries-hero {
     position: relative;
-    min-height: 275px;
+    min-height: clamp(330px, 37vw, 460px);
     background: var(--navy-deep);
     overflow: hidden;
     display: flex; align-items: center;
@@ -259,7 +259,8 @@ ul { list-style: none; }
 
 .ministry-image {
     position: relative;
-    height: 88px;
+    height: clamp(150px, 17vw, 220px);
+    flex: 0 0 auto;
     overflow: hidden;
     background: linear-gradient(135deg, var(--navy-deep), var(--royal-blue));
 }
@@ -694,6 +695,7 @@ ul { list-style: none; }
 
 @media (max-width: 640px) {
     .ministries-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ministry-image { height: 150px; }
     .hero-content { padding: 32px 0 24px; }
     .hero-title { font-size: 2rem; }
     .verse-banner { grid-template-columns: 1fr; gap: 16px; padding: 22px 20px; }

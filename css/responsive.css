@@ -443,6 +443,173 @@ h1, h2, h3, h4, h5, p, a, span, li {
     }
 }
 
+/* Donation dialogs use a light, high-contrast surface distinct from other pages. */
+.donations-page .modal-panel:not(.devotion-panel) {
+    max-width: 650px;
+    border: 1px solid #B9D2EC !important;
+    border-radius: 24px !important;
+    background: linear-gradient(155deg, #FFFFFF 0%, #EAF3FF 100%) !important;
+    box-shadow: 0 28px 80px rgba(3, 24, 55, 0.4), 0 0 30px rgba(8, 123, 255, 0.16) !important;
+}
+
+.donations-page .modal-panel.mobile-money-panel:not(.devotion-panel) {
+    max-width: 900px;
+}
+
+.donations-page .modal-panel-body {
+    background: linear-gradient(155deg, #FFFFFF 0%, #EAF3FF 100%);
+}
+
+.donations-page .modal-panel-close {
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    background: linear-gradient(135deg, #0755C8, #12A6E5);
+    box-shadow: 0 6px 18px rgba(3, 24, 55, 0.3);
+}
+
+.donations-page .modal-content,
+.donations-page .wizard {
+    background: linear-gradient(160deg, #FFFFFF 0%, #F1F7FF 100%);
+}
+
+.donations-page .modal-content h2,
+.donations-page .wizard-title {
+    color: #10213A !important;
+    -webkit-text-fill-color: #10213A !important;
+}
+
+.donations-page .modal-content p,
+.donations-page .wizard-subtitle {
+    color: #405873;
+}
+
+.donations-page .wizard {
+    border: 1px solid #D3E5F8;
+    border-radius: 18px;
+    box-shadow: 0 14px 36px rgba(10, 52, 99, 0.08);
+}
+
+.donations-page .wizard-progress-step {
+    gap: 6px;
+}
+
+.donations-page .wizard-progress-label {
+    color: #405873;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.donations-page .donation-panel-choice-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.donations-page .donation-panel-choice {
+    display: flex;
+    width: 100%;
+    min-height: 132px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 18px 12px;
+    border: 2px solid #C9DDF2;
+    border-radius: 16px;
+    background: #FFFFFF;
+}
+
+.donations-page .donation-panel-choice.active,
+.donations-page .donation-panel-choice[aria-pressed="true"] {
+    border-color: #087BFF;
+    background: linear-gradient(155deg, #E8F3FF, #FFFFFF);
+    box-shadow: 0 8px 24px rgba(8, 123, 255, 0.16);
+}
+
+.donations-page .donation-panel-choice-title {
+    color: #10213A;
+    font-size: 15px;
+}
+
+.donations-page .donation-panel-choice-sub {
+    color: #526A84;
+    line-height: 1.4;
+}
+
+.donations-page .wizard-payment-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: 1px solid #BBD9F7;
+    border-left: 4px solid #087BFF;
+    border-radius: 12px;
+    background: linear-gradient(120deg, #EAF4FF, #F8FBFF);
+    color: #405873;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.donations-page .wizard-payment-summary strong {
+    color: #0755C8;
+    font-size: 13px;
+}
+
+.donations-page .mm-note {
+    border-left-color: #087BFF;
+    background: #EAF4FF;
+    color: #405873;
+}
+
+.donations-page .wizard-form input,
+.donations-page .wizard-form textarea {
+    width: 100%;
+    min-width: 0;
+    color: #10213A;
+}
+
+.donations-page .wizard-form input[readonly] {
+    background: #F1F7FF;
+    color: #0755C8;
+    font-weight: 700;
+}
+
+.donations-page .wizard-actions {
+    margin-top: 16px;
+}
+
+.donations-page .modal-btn-primary {
+    background: linear-gradient(120deg, #0755C8, #087BFF);
+    box-shadow: 0 7px 18px rgba(11, 94, 215, 0.22);
+}
+
+.donations-page .modal-btn-secondary {
+    border: 1px solid #B9D2EC;
+    background: #FFFFFF;
+    color: #173A63;
+}
+
+.donations-page .modal-btn:focus-visible,
+.donations-page .donation-panel-choice:focus-visible,
+.donations-page .mm-give-button:focus-visible {
+    outline: 3px solid #087BFF;
+    outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+    .donations-page .modal-panel:not(.devotion-panel) {
+        width: calc(100% - 20px);
+        max-height: 92vh;
+        border-radius: 20px !important;
+    }
+
+    .donations-page .modal-content {
+        padding: 22px 16px 18px;
+    }
+
+    .donations-page .wizard {
+        padding: 18px 14px 14px;
+    }
+}
+
 /* Homepage upcoming events */
 .events-section {
     position: relative;
@@ -1798,5 +1965,506 @@ h1, h2, h3, h4, h5, p, a, span, li {
     .floating-give i,
     .devotion-section #devotionSlider > .devotion-card::after {
         animation: none !important;
+    }
+}
+
+/* EVENTS PAGE */
+.events-page .events-hero {
+    min-height: 490px;
+    background: linear-gradient(135deg, #06152F, #0B376A);
+}
+
+.events-page .hero-bg {
+    background-size: cover;
+    background-position: center 42%;
+}
+
+.events-page .hero-overlay {
+    background: linear-gradient(90deg, rgba(4, 17, 40, 0.94) 0%, rgba(4, 24, 53, 0.82) 48%, rgba(4, 24, 53, 0.42) 100%);
+}
+
+.events-page .hero-content {
+    max-width: 760px;
+    padding: 64px 0 78px;
+}
+
+.events-page .hero-title {
+    max-width: 740px;
+    font-size: clamp(2.8rem, 5.2vw, 4.35rem);
+    line-height: 1.06;
+    text-wrap: balance;
+}
+
+.events-page .hero-desc {
+    max-width: 620px;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.events-page .section-wrap.pale {
+    background: linear-gradient(180deg, #F1F7FF 0%, #EAF3FF 100%);
+}
+
+.events-page .section-wrap.white {
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FBFF 100%);
+}
+
+.events-page .section-wrap,
+.events-page .weekly-section {
+    padding-top: 68px;
+    padding-bottom: 68px;
+}
+
+.events-page .section-icon {
+    background: linear-gradient(140deg, #0755C8, #12A6E5);
+    box-shadow: 0 7px 20px rgba(11, 94, 215, 0.24);
+}
+
+.events-page .section-title {
+    color: #10213A;
+}
+
+.events-page .section-desc {
+    max-width: 680px;
+    color: #50627A;
+    line-height: 1.7;
+}
+
+.events-page .programs-grid {
+    align-items: stretch;
+}
+
+.events-page .programs-grid > .program-card {
+    min-height: 390px;
+    padding: 20px;
+    border: 1px solid #D6E4F4;
+    border-radius: 20px;
+    background: linear-gradient(160deg, #FFFFFF 0%, #F6FAFF 100%);
+    box-shadow: 0 10px 28px rgba(8, 35, 75, 0.08);
+    animation: none;
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.events-page .programs-grid > .program-card:hover,
+.events-page .programs-grid > .program-card:focus-visible {
+    transform: translateY(-5px);
+    border-color: #77B5F4;
+    box-shadow: 0 16px 34px rgba(8, 35, 75, 0.13), 0 0 20px rgba(8, 123, 255, 0.12);
+}
+
+.events-page .program-image {
+    width: calc(100% + 40px);
+    height: 156px;
+    margin: -20px -20px 17px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0A2B56, #087BFF);
+}
+
+.events-page .program-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.events-page .program-status {
+    top: 12px;
+    right: 12px;
+    max-width: calc(100% - 24px);
+    padding: 6px 10px;
+    background: #E5F2FF;
+    color: #084A9F;
+    font-size: 10px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.events-page .program-status.upcoming {
+    background: #FFF4D8;
+    color: #79500B;
+}
+
+.events-page .program-icon {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 12px;
+    border-radius: 14px;
+}
+
+.events-page .program-title {
+    color: #10213A;
+    font-size: 17px;
+    line-height: 1.4;
+}
+
+.events-page .program-divider {
+    background: linear-gradient(90deg, #0B5ED7, rgba(24, 200, 255, 0.16));
+}
+
+.events-page .program-sched .sched-line {
+    color: #344B67;
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+.events-page .program-loc {
+    background: #FFF3F4;
+    color: #8A2637;
+    line-height: 1.4;
+}
+
+.events-page .program-desc {
+    color: #50627A;
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.events-page .btn-join {
+    min-height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(120deg, #0755C8, #087BFF);
+    box-shadow: 0 6px 16px rgba(11, 94, 215, 0.2);
+}
+
+.events-page .scroll-track > .event-card {
+    min-height: 360px;
+    border: 1px solid #D6E4F4;
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow: 0 10px 26px rgba(8, 35, 75, 0.08);
+    animation: none;
+}
+
+.events-page .scroll-track > .event-card:hover {
+    border-color: #77B5F4;
+    box-shadow: 0 15px 32px rgba(8, 35, 75, 0.13), 0 0 20px rgba(8, 123, 255, 0.12);
+}
+
+.events-page .scroll-track > .event-card .event-image {
+    background: linear-gradient(135deg, #0A2B56, #087BFF);
+}
+
+.events-page .scroll-track > .event-card .event-image img,
+.events-page .announcement-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.events-page #announcementsGrid > .announcement-card {
+    position: relative;
+    flex: 0 0 280px !important;
+    width: 280px !important;
+    min-height: 370px;
+    height: auto !important;
+    aspect-ratio: auto !important;
+    align-items: stretch;
+    padding: 18px;
+    overflow: hidden;
+    border: 1px solid #D6E4F4;
+    border-radius: 20px;
+    background: linear-gradient(160deg, #FFFFFF 0%, #F4F8FF 100%);
+    box-shadow: 0 10px 28px rgba(8, 35, 75, 0.08);
+    animation: none;
+    transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.events-page #announcementsGrid > .announcement-card:hover,
+.events-page #announcementsGrid > .announcement-card:focus-visible {
+    transform: translateY(-5px);
+    border-color: #77B5F4;
+    box-shadow: 0 16px 34px rgba(8, 35, 75, 0.13), 0 0 20px rgba(8, 123, 255, 0.12);
+}
+
+.events-page .announcement-image {
+    width: calc(100% + 36px);
+    height: 154px;
+    flex: 0 0 154px;
+    margin: -18px -18px 16px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0A2B56, #087BFF);
+}
+
+.events-page .announcement-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    margin: 0 0 12px;
+    background: #E7F2FF;
+    color: #0755C8;
+    box-shadow: inset 0 0 0 1px #D2E6FA;
+}
+
+.events-page .announcement-title {
+    min-height: 0;
+    margin-bottom: 8px;
+    color: #10213A;
+    font-size: 16px;
+    line-height: 1.45;
+}
+
+.events-page .announcement-meta {
+    min-height: 22px;
+    margin-bottom: 10px;
+    align-items: center;
+    color: #445A73;
+}
+
+.events-page .announcement-date {
+    color: #445A73;
+    font-size: 11px;
+}
+
+.events-page .ann-cat-badge {
+    margin: 0;
+    padding: 4px 9px;
+    background: #E5F2FF;
+    color: #084A9F;
+    line-height: 1.3;
+}
+
+.events-page .announcement-desc {
+    display: -webkit-box;
+    min-height: 60px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    color: #50627A;
+    font-size: 13px;
+    line-height: 1.65;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.events-page .announcement-link {
+    min-height: 42px;
+    margin-top: auto;
+    border: 1px solid #D6E8FB;
+    border-radius: 12px;
+    background: #EAF4FF;
+    color: #0755C8;
+}
+
+.events-page #announcementsGrid > .announcement-card:hover .announcement-link {
+    background: linear-gradient(120deg, #0755C8, #087BFF);
+    color: #FFFFFF;
+}
+
+.events-page .modal-panel {
+    border: 1px solid #A9CCE9;
+    border-radius: 24px;
+    background: linear-gradient(155deg, #F7FAFF 0%, #EAF3FF 100%) !important;
+    box-shadow: 0 28px 80px rgba(3, 24, 55, 0.36), 0 0 30px rgba(8, 123, 255, 0.12);
+}
+
+.events-page .modal-panel-close {
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    background: linear-gradient(135deg, #0755C8, #087BFF);
+    box-shadow: 0 6px 18px rgba(3, 24, 55, 0.3);
+}
+
+.events-page .modal-panel-body {
+    background: linear-gradient(155deg, #F7FAFF 0%, #EAF3FF 100%);
+}
+
+.events-page .modal-hero-image {
+    width: 100%;
+    height: min(42vh, 360px);
+    min-height: 180px;
+    object-fit: contain;
+    object-position: center;
+    background: linear-gradient(135deg, #0B2B52, #06152F);
+}
+
+.events-page .modal-content {
+    padding: 28px clamp(20px, 5vw, 34px) 30px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(234, 243, 255, 0.9));
+}
+
+.events-page .modal-content h2 {
+    color: #10213A;
+    font-size: clamp(21px, 3vw, 27px);
+    line-height: 1.35;
+}
+
+.events-page .modal-content p {
+    color: #3D526B;
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.events-page .modal-content p strong,
+.events-page .modal-section-label {
+    color: #0755C8;
+}
+
+.events-page .modal-icon-wrapper {
+    background: linear-gradient(140deg, #0755C8, #12A6E5);
+    box-shadow: 0 10px 26px rgba(11, 94, 215, 0.24);
+}
+
+.events-page .modal-welcome {
+    color: #0755C8;
+}
+
+.events-page .detail-line {
+    gap: 10px;
+    margin: 7px 0;
+    color: #344B67;
+    line-height: 1.6;
+}
+
+.events-page .verse-block {
+    border-left-color: #0B5ED7;
+    background: linear-gradient(120deg, #E8F3FF, #F5FAFF);
+    color: #173A63;
+    line-height: 1.75;
+}
+
+.events-page .event-tag {
+    background: #E0EEFF;
+    color: #084A9F;
+}
+
+.events-page .modal-btn-primary {
+    background: linear-gradient(120deg, #0755C8, #087BFF);
+    box-shadow: 0 7px 18px rgba(11, 94, 215, 0.22);
+}
+
+.events-page .modal-btn-secondary {
+    border: 1px solid #B9D2EC;
+    background: #FFFFFF;
+    color: #173A63;
+}
+
+.events-page .modal-btn:focus-visible,
+.events-page .btn-join:focus-visible,
+.events-page .program-card:focus-visible,
+.events-page .announcement-card:focus-visible {
+    outline: 3px solid #087BFF;
+    outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+    .events-page .events-hero {
+        min-height: 440px;
+    }
+
+    .events-page .hero-content {
+        padding: 54px 0 70px;
+    }
+
+    .events-page .hero-title {
+        font-size: clamp(2.4rem, 10vw, 3.25rem) !important;
+    }
+
+    .events-page .hero-desc {
+        font-size: 14px !important;
+    }
+
+    .events-page .section-wrap,
+    .events-page .weekly-section {
+        padding-top: 48px;
+        padding-bottom: 48px;
+    }
+
+    .events-page .programs-grid {
+        display: flex !important;
+        flex-wrap: nowrap;
+        gap: 16px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 10px 4px 20px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: thin;
+        scrollbar-color: #8CBCEB transparent;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .events-page .programs-grid > .program-card {
+        flex: 0 0 min(82vw, 310px);
+        width: min(82vw, 310px);
+        min-height: 390px;
+        scroll-snap-align: start;
+    }
+
+    .events-page #announcementsGrid > .announcement-card {
+        flex-basis: min(82vw, 310px) !important;
+        width: min(82vw, 310px) !important;
+        min-height: 360px;
+    }
+
+    .events-page .modal-hero-image {
+        height: min(36vh, 280px) !important;
+        min-height: 150px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .events-page .program-card,
+    .events-page .event-card,
+    .events-page .announcement-card,
+    .events-page .btn-hero,
+    .events-page .modal-panel,
+    .events-page .modal-overlay {
+        animation: none !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+.ministries-page .modal-panel.ministry-detail-panel {
+    border: 1px solid rgba(8, 123, 255, 0.32) !important;
+    border-radius: 22px !important;
+    background: linear-gradient(155deg, #F7FAFF 0%, #EAF3FF 100%) !important;
+    box-shadow: 0 28px 80px rgba(3, 24, 55, 0.38), 0 0 32px rgba(8, 123, 255, 0.18) !important;
+}
+
+.ministries-page .modal-panel.ministry-detail-panel .modal-panel-body {
+    background: linear-gradient(155deg, #F7FAFF 0%, #EAF3FF 100%);
+}
+
+.ministries-page .modal-panel.ministry-detail-panel .modal-panel-close {
+    border: 2px solid rgba(255,255,255,0.88);
+    background: linear-gradient(135deg, #0755C8, #087BFF);
+    color: #FFFFFF;
+}
+
+.ministries-page .modal-panel.ministry-detail-panel .modal-hero-image {
+    height: min(42vh, 360px);
+    min-height: 240px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.ministries-page .modal-panel.ministry-detail-panel .modal-content {
+    background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(234,243,255,0.96));
+}
+
+.ministries-page .modal-panel.ministry-detail-panel .modal-content h2 { color: #10213A; }
+.ministries-page .modal-panel.ministry-detail-panel .modal-subtitle,
+.ministries-page .modal-panel.ministry-detail-panel .modal-description,
+.ministries-page .modal-panel.ministry-detail-panel .modal-activity-item,
+.ministries-page .modal-panel.ministry-detail-panel .modal-detail-row { color: #3D526B; }
+.ministries-page .modal-panel.ministry-detail-panel .modal-section-title { color: #0755C8; }
+.ministries-page .modal-panel.ministry-detail-panel .modal-details {
+    border: 1px solid #D6E8FB;
+    background: linear-gradient(135deg, #FFFFFF, #EAF4FF);
+}
+.ministries-page .modal-panel.ministry-detail-panel .modal-detail-row .detail-value { color: #10213A; }
+.ministries-page .modal-panel.ministry-detail-panel .modal-form label { color: #3D526B !important; }
+.ministries-page .modal-panel.ministry-detail-panel .modal-form input,
+.ministries-page .modal-panel.ministry-detail-panel .modal-form textarea,
+.ministries-page .modal-panel.ministry-detail-panel .modal-form select {
+    border-color: #B9D7F2 !important;
+    background: #FFFFFF !important;
+    color: #10213A !important;
+}
+
+@media (max-width: 640px) {
+    .ministries-page .modal-panel.ministry-detail-panel .modal-hero-image {
+        height: min(40vh, 290px) !important;
+        min-height: 200px;
+        object-fit: cover !important;
     }
 }

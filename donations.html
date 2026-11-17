@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="css/donations.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body>
+<body class="donations-page">
 
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar" id="navbar">
@@ -69,16 +69,20 @@
 
 <!-- ===== HERO ===== -->
 <section class="donations-hero">
-    <div class="hero-bg" id="heroBg"></div>
+    <video id="donationHeroVideo" class="donation-hero-background" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1"></video>
+    <div class="donation-video-fallback" id="donationVideoFallback" hidden>
+        <i class="fas fa-video"></i>
+        <span>Video preview unavailable. Add your church video URL to the donations hero content.</span>
+    </div>
     <div class="hero-overlay"></div>
     <div class="container">
         <div class="hero-grid">
             <div class="hero-left">
-                <span class="hero-eyebrow" id="heroEyebrow">BRIDGE CALVARY CHAPEL</span>
+                <span class="hero-eyebrow hero-animate hero-animate-1" id="heroEyebrow">BRIDGE CALVARY CHAPEL</span>
                 <h1 class="hero-title" id="heroTitle"></h1>
-                <p class="hero-verse" id="heroVerse"></p>
-                <p class="hero-desc" id="heroDesc"></p>
-                <div class="hero-buttons">
+                <p class="hero-verse hero-animate hero-animate-3" id="heroVerse"></p>
+                <p class="hero-desc hero-animate hero-animate-4" id="heroDesc"></p>
+                <div class="hero-buttons hero-animate hero-animate-5">
                     <button class="btn-hero btn-hero-primary" onclick="document.getElementById('givingCards').scrollIntoView({behavior:'smooth'})" type="button">
                         <i class="fas fa-hand-holding-heart"></i> Start Giving
                     </button>
@@ -86,30 +90,25 @@
                         <i class="fas fa-university"></i> Bank &amp; Mobile Money
                     </button>
                 </div>
-                <div class="hero-stats" id="heroStats"></div>
+                <div class="hero-stats hero-animate hero-animate-6" id="heroStats"></div>
             </div>
 
-            <div class="hero-right">
+            <div class="hero-right hero-animate hero-animate-7">
                 <div class="howitworks">
                     <h3 class="hiw-title">How It Works</h3>
                     <div class="hiw-steps">
                         <div class="hiw-step">
                             <div class="hiw-num">1</div>
                             <div class="hiw-label">Choose</div>
-                            <div class="hiw-sub">Pick a giving type</div>
+                            <div class="hiw-sub">Tithe or offering</div>
                         </div>
                         <div class="hiw-step">
                             <div class="hiw-num">2</div>
                             <div class="hiw-label">Your Details</div>
-                            <div class="hiw-sub">Name &amp; contact</div>
+                            <div class="hiw-sub">Name, email &amp; phone</div>
                         </div>
                         <div class="hiw-step">
                             <div class="hiw-num">3</div>
-                            <div class="hiw-label">Review</div>
-                            <div class="hiw-sub">Confirm the summary</div>
-                        </div>
-                        <div class="hiw-step">
-                            <div class="hiw-num">4</div>
                             <div class="hiw-label">Send</div>
                             <div class="hiw-sub">WhatsApp or Email</div>
                         </div>
@@ -118,11 +117,9 @@
             </div>
         </div>
     </div>
-    <div class="hero-wave">
-        <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
-            <path d="M0,60 L0,30 Q360,0 720,30 Q1080,60 1440,20 L1440,60 Z" fill="#F1F8FF"/>
-        </svg>
-    </div>
+    <button class="hero-video-toggle" id="heroVideoToggle" type="button" aria-label="Pause background video" aria-pressed="true">
+        <i class="fas fa-pause" aria-hidden="true"></i><span>Pause video</span>
+    </button>
 </section>
 
 <!-- ===== FOUR GIVING CARDS ===== -->

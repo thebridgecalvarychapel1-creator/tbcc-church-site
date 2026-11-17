@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="css/ministries.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
-<body>
+<body class="ministries-page">
 
 <!-- ===== NAVBAR ===== -->
 <nav class="navbar" id="navbar">
@@ -134,26 +134,7 @@
                 <h2 class="involved-title" id="involvedTitle"></h2>
                 <p class="involved-desc" id="involvedDesc"></p>
             </div>
-            <div class="involved-cards">
-                <div class="involved-card involved-card-1" id="cardJoinMinistry" tabindex="0" role="button">
-                    <div class="involved-card-icon"><i class="fas fa-users"></i></div>
-                    <h4>Join a Ministry</h4>
-                    <p>Find the right ministry for your gifts and passion.</p>
-                    <i class="fas fa-arrow-right arrow"></i>
-                </div>
-                <div class="involved-card involved-card-2" id="cardVolunteer" tabindex="0" role="button">
-                    <div class="involved-card-icon"><i class="fas fa-hands-helping"></i></div>
-                    <h4>Volunteer</h4>
-                    <p>Serve others and make an impact.</p>
-                    <i class="fas fa-arrow-right arrow"></i>
-                </div>
-                <div class="involved-card involved-card-3" id="cardPrayer" tabindex="0" role="button">
-                    <div class="involved-card-icon"><i class="fas fa-pray"></i></div>
-                    <h4>Request Prayer</h4>
-                    <p>We're here to pray with you.</p>
-                    <i class="fas fa-arrow-right arrow"></i>
-                </div>
-            </div>
+            <div class="involved-cards" id="involvedCards"></div>
         </div>
     </div>
 </section>
@@ -231,6 +212,20 @@
         <i class="fas fa-times"></i>
     </button>
     <div class="modal-panel-body" id="modalBody"></div>
+</div>
+<div class="ministry-lightbox" id="ministryLightbox" role="dialog" aria-modal="true" aria-label="Ministry image gallery" aria-hidden="true">
+    <button class="ministry-lightbox-close" id="ministryLightboxClose" type="button" aria-label="Close image gallery"><i class="fas fa-times"></i></button>
+    <button class="ministry-lightbox-arrow previous" id="ministryLightboxPrevious" type="button" aria-label="Previous image"><i class="fas fa-chevron-left"></i></button>
+    <div class="ministry-lightbox-content">
+        <div class="ministry-lightbox-stage">
+            <img id="ministryLightboxImage" alt="">
+        </div>
+        <div class="ministry-lightbox-footer">
+            <span id="ministryLightboxCount"></span>
+            <div class="ministry-lightbox-thumbs" id="ministryLightboxThumbs"></div>
+        </div>
+    </div>
+    <button class="ministry-lightbox-arrow next" id="ministryLightboxNext" type="button" aria-label="Next image"><i class="fas fa-chevron-right"></i></button>
 </div>
 
 <script src="js/supabase.js"></script>

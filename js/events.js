@@ -11,7 +11,6 @@ var allDevotions = [];
 var SB_URL = 'https://mtmgvmvhgkoqjuhiqvsk.supabase.co/rest/v1/';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10bWd2bXZoZ2tvcWp1aGlxdnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDUxNTEsImV4cCI6MjEwNzEyMTE1MX0.NqaWJyVulLgAvakFDqn5M8TD-IpSSgSn2LLEmL16c_U';
 
-var MAX_PROGRAMS = 4;
 var _loadStarted = false;
 
 // ---------- HELPERS ----------
@@ -88,7 +87,7 @@ function renderPrograms() {
         return;
     }
 
-    grid.innerHTML = allPrograms.slice(0, MAX_PROGRAMS).map(function (p, idx) {
+    grid.innerHTML = allPrograms.map(function (p, idx) {
         var lines = (p.schedule || '').split('\n').filter(Boolean);
         var schedHtml = lines.map(function (l) {
             return '<span class="sched-line"><i class="fas fa-clock"></i> ' + escapeHtml(l) + '</span>';
@@ -96,8 +95,12 @@ function renderPrograms() {
 
         var statusText = p.day_of_week ? p.day_of_week.toUpperCase() : 'WEEKLY';
         var statusClass = p.day_of_week ? '' : ' upcoming';
+        var imageHtml = p.image_url
+            ? '<div class="program-image"><img src="' + escapeHtml(p.image_url) + '" alt="' + escapeHtml(p.title || 'Church program') + '" loading="lazy" onerror="this.parentElement.remove()"></div>'
+            : '';
 
         return '<article class="program-card" data-program="' + idx + '" role="button" tabindex="0">'
+            + imageHtml
             + '<span class="program-status' + statusClass + '">' + escapeHtml(statusText) + '</span>'
             + '<div class="program-icon"><i class="fas ' + escapeHtml(p.icon || 'fa-church') + '"></i></div>'
             + '<div class="program-title">' + escapeHtml(p.title || '') + '</div>'
@@ -120,6 +123,7 @@ function openProgramDetails(p) {
     }).join('');
 
     var html = ''
+        + (p.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(p.image_url) + '" alt="' + escapeHtml(p.title || 'Church program') + '" onerror="this.remove()">': '')
         + '<div class="modal-content">'
         +   '<div class="modal-icon-wrapper"><i class="fas ' + escapeHtml(p.icon || 'fa-church') + '"></i></div>'
         +   '<h2>' + escapeHtml(p.title || '') + '</h2>'
@@ -153,7 +157,7 @@ function renderEvents() {
     grid.innerHTML = allEvents.map(function (e, idx) {
         return '<article class="event-card" data-event="' + idx + '" role="button" tabindex="0">'
             + '<div class="event-image">'
-            +   (e.image_url ? '<img src="' + escapeHtml(e.image_url) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '')
+            +   (e.image_url ? '<img src="' + escapeHtml(e.image_url) + '" alt="' + escapeHtml(e.title || 'Church event') + '" loading="lazy" onerror="this.remove()">' : '')
             +   '<div class="event-date-badge"><span class="event-badge-month">' + escapeHtml(e.month_label || '') + '</span><span class="event-badge-day">' + escapeHtml(e.day_label || '') + '</span></div>'
             +   (e.category ? '<span class="event-cat-badge">' + escapeHtml(e.category) + '</span>' : '')
             + '</div>'
@@ -173,7 +177,7 @@ function renderEvents() {
 function openEventDetails(e) {
     if (!e) return;
     var html = ''
-        + (e.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(e.image_url) + '" alt="">' : '')
+        + (e.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(e.image_url) + '" alt="' + escapeHtml(e.title || 'Church event') + '" onerror="this.remove()">' : '')
         + '<div class="modal-content">'
         +   (e.category ? '<span class="event-tag">' + escapeHtml(e.category) + '</span>' : '')
         +   '<h2>' + escapeHtml(e.title || '') + '</h2>'
@@ -318,6 +322,7 @@ function renderAnnouncements() {
 
     grid.innerHTML = allAnnouncements.map(function (a, idx) {
         return '<div class="announcement-card" data-ann="' + idx + '" role="button" tabindex="0">'
+            + (a.image_url ? '<div class="announcement-image"><img src="' + escapeHtml(a.image_url) + '" alt="' + escapeHtml(a.title || 'Church announcement') + '" loading="lazy" onerror="this.parentElement.remove()"></div>' : '')
             + '<div class="announcement-icon"><i class="fas fa-bullhorn"></i></div>'
             + '<h4 class="announcement-title">' + escapeHtml(a.title || '') + '</h4>'
             + '<div class="announcement-meta">'
@@ -335,7 +340,7 @@ function renderAnnouncements() {
 function openAnnouncementModal(a) {
     if (!a) return;
     var html = ''
-        + (a.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(a.image_url) + '" alt="">' : '')
+        + (a.image_url ? '<img class="modal-hero-image" src="' + escapeHtml(a.image_url) + '" alt="' + escapeHtml(a.title || 'Church announcement') + '" onerror="this.remove()">' : '')
         + '<div class="modal-content">'
         +   (a.category ? '<span class="event-tag">' + escapeHtml(a.category) + '</span>' : '')
         +   '<h2>' + escapeHtml(a.title || '') + '</h2>'

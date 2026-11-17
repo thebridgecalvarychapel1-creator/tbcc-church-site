@@ -12,7 +12,6 @@ function setText(id, val) { var el = document.getElementById(id); if (el && val 
 function setHTML(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.innerHTML = val; }
 function escapeHtml(str) { if (str === null || str === undefined) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function money(n) { return 'UGX ' + Number(n || 0).toLocaleString(); }
-function secImg(name) { var s = siteContent[name] || {}; return s.image || s.hero_image || s.background_image || ''; }
 function showToast(msg) {
     var t = document.createElement('div'); t.className = 'bcc-toast';
     t.innerHTML = '<i class="fas fa-check-circle"></i> ' + escapeHtml(msg);
@@ -25,12 +24,14 @@ function showToast(msg) {
 // MODAL
 // ============================================
 var modalLastFocused = null;
-window.openModal = function (html) {
+window.openModal = function (html, panelClass) {
     var overlay = document.getElementById('modalOverlay');
     var panel = document.getElementById('modalPanel');
     var body = document.getElementById('modalBody');
     if (!panel || !body) return;
     modalLastFocused = document.activeElement;
+    panel.classList.remove('mobile-money-panel', 'donation-wizard-panel');
+    if (panelClass === 'mobile-money-panel' || panelClass === 'donation-wizard-panel') panel.classList.add(panelClass);
     body.innerHTML = html;
     overlay.classList.add('active');
     panel.removeAttribute('inert');
@@ -61,14 +62,105 @@ function renderHero() {
     setText('heroEyebrow', h.eyebrow || 'BRIDGE CALVARY CHAPEL');
     var titleEl = document.getElementById('heroTitle');
     if (titleEl && h.title_line1) {
-        titleEl.innerHTML = escapeHtml(h.title_line1) + '<br>' + escapeHtml(h.title_line2 || '') + ' <span class="accent">' + escapeHtml(h.title_line3 || '') + '</span>';
+        titleEl.innerHTML = '<span class="hero-title-line">' + escapeHtml(h.title_line1) + '</span>'
+            + '<span class="hero-title-line">' + escapeHtml(h.title_line2 || '') + ' <span class="accent">' + escapeHtml(h.title_line3 || '') + '</span></span>';
     } else if (titleEl) {
-        titleEl.innerHTML = 'Give &amp; Support the <span class="accent">Ministry</span>';
+        titleEl.innerHTML = '<span class="hero-title-line">Give &amp; Support the</span><span class="hero-title-line"><span class="accent">Ministry</span></span>';
     }
     setText('heroVerse', h.verse || '"Each of you should give what you have decided in your heart to give..." — 2 Corinthians 9:7');
     setText('heroDesc', h.description || 'Your generous gifts help us serve people, spread the Gospel, and meet real community needs.');
-    var url = secImg('donations_hero');
-    if (url) { var bg = document.getElementById('heroBg'); if (bg) bg.style.backgroundImage = 'url("' + url + '")'; }
+    var hero = document.querySelector('.donations-hero');
+    if (hero && hero.dataset.clickAnimationBound !== 'true') {
+        hero.dataset.clickAnimationBound = 'true';
+        var heroAnimationTimer;
+        hero.addEventListener('click', function () {
+            hero.classList.remove('hero-clicked');
+            void hero.offsetWidth;
+            hero.classList.add('hero-clicked');
+            window.clearTimeout(heroAnimationTimer);
+            heroAnimationTimer = window.setTimeout(function () {
+                hero.classList.remove('hero-clicked');
+            }, 1100);
+        });
+    }
+    var video = document.getElementById('donationHeroVideo');
+    if (video) {
+        var fallback = document.getElementById('donationVideoFallback');
+        var toggle = document.getElementById('heroVideoToggle');
+        var videoUrl = h.video_url || h.video;
+        if (fallback) fallback.hidden = true;
+        video.onerror = function () {
+            if (fallback) fallback.hidden = false;
+            if (toggle) toggle.hidden = true;
+        };
+        video.src = videoUrl || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
+        video.load();
+        var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var autoplayRetryInProgress = false;
+        function removeAutoplayRetry() {
+            document.removeEventListener('pointerdown', retryAutoplay, true);
+            document.removeEventListener('keydown', retryAutoplay, true);
+        }
+        function retryAutoplay(event) {
+            if (toggle && event && toggle.contains(event.target)) return;
+            if (reducedMotion || !video.paused || autoplayRetryInProgress) return;
+            autoplayRetryInProgress = true;
+            var retryRequest = video.play();
+            if (retryRequest && retryRequest.then) {
+                retryRequest.then(function () {
+                    autoplayRetryInProgress = false;
+                    removeAutoplayRetry();
+                }).catch(function () {
+                    autoplayRetryInProgress = false;
+                    updateVideoToggle(false);
+                });
+            } else {
+                autoplayRetryInProgress = false;
+                removeAutoplayRetry();
+            }
+        }
+        function enableAutoplayRetry() {
+            document.addEventListener('pointerdown', retryAutoplay, true);
+            document.addEventListener('keydown', retryAutoplay, true);
+        }
+        function updateVideoToggle(playing) {
+            if (!toggle) return;
+            toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
+            toggle.setAttribute('aria-label', playing ? 'Pause background video' : 'Play background video');
+            toggle.innerHTML = '<i class="fas ' + (playing ? 'fa-pause' : 'fa-play') + '" aria-hidden="true"></i><span>' + (playing ? 'Pause video' : 'Play video') + '</span>';
+        }
+        video.onplay = function () {
+            removeAutoplayRetry();
+            updateVideoToggle(true);
+        };
+        video.onpause = function () { updateVideoToggle(false); };
+        if (toggle) {
+            toggle.hidden = false;
+            toggle.onclick = function () {
+                if (video.paused) {
+                    var playRequest = video.play();
+                    if (playRequest && playRequest.catch) playRequest.catch(function () { updateVideoToggle(false); });
+                } else {
+                    video.pause();
+                }
+            };
+        }
+        if (reducedMotion) {
+            video.autoplay = false;
+            video.pause();
+            updateVideoToggle(false);
+        } else {
+            var autoplayRequest = video.play();
+            if (autoplayRequest && autoplayRequest.catch) {
+                autoplayRequest.catch(function () {
+                    updateVideoToggle(false);
+                    enableAutoplayRetry();
+                });
+            } else if (video.paused) {
+                enableAutoplayRetry();
+            }
+        }
+    }
     var statsHTML = '';
     for (var i = 1; i <= 3; i++) {
         var num = h['stat' + i + '_number']; var lbl = h['stat' + i + '_label'];
@@ -129,71 +221,55 @@ function renderDirectGiving() {
 window.openMobileMoneyPanel = function () {
     var d = siteContent.donations_bank || {};
     var p = siteContent.mm_procedure || {};
-    var mobileNum  = d.mobile_number || '9030026398737';
-    var mobileNet  = d.mobile_network || 'MTN MoMo / Airtel Money';
+    var mobileNum = d.mobile_number || '9030026398737';
     var mobileAcct = d.mobile_account || 'The Bridge of Calvary Chapel';
-
-    var steps = [];
-    for (var i = 1; i <= 7; i++) { var s = p['step' + i]; if (s) steps.push(s); }
-    if (!steps.length) {
-        steps = [
-            'Dial your mobile money menu (MTN: *165#, Airtel: *185#).',
-            'Choose "Send Money".',
-            'Enter the number: ' + mobileNum,
-            'Enter the amount you wish to give.',
-            'Reference: type your full name, then "Donation".',
-            'Confirm with your PIN and wait for the SMS confirmation.',
-            'Fill the form on the right so we can verify and thank you.'
-        ];
-    }
-    var stepsHtml = steps.map(function (s, idx) {
-        return '<div class="mm-procedure-step"><span class="num">' + (idx + 1) + '</span><span>' + escapeHtml(s) + '</span></div>';
+    var networks = [
+        {
+            name: 'MTN MoMo',
+            steps: [
+                'Dial *165# and choose Send Money.',
+                'Choose the Mobile Money recipient option.',
+                'Enter ' + mobileNum + ' and the amount you want to give.',
+                'Confirm the account name: ' + mobileAcct + '.',
+                'Enter your PIN, then keep the transaction SMS.'
+            ]
+        },
+        {
+            name: 'Airtel Money',
+            steps: [
+                'Dial *185# and choose Send Money.',
+                'Choose the Airtel Money recipient option.',
+                'Enter ' + mobileNum + ' and the amount you want to give.',
+                'Confirm the account name: ' + mobileAcct + '.',
+                'Enter your PIN, then keep the transaction SMS.'
+            ]
+        }
+    ];
+    var networkCards = networks.map(function (network) {
+        var stepsHtml = network.steps.map(function (step, index) {
+            return '<li><span class="num">' + (index + 1) + '</span><span>' + escapeHtml(step) + '</span></li>';
+        }).join('');
+        return '<article class="mm-network-card">'
+            + '<div class="mm-network-label"><i class="fas fa-signal"></i> ' + escapeHtml(network.name) + '</div>'
+            + '<h3>Give with ' + escapeHtml(network.name) + '</h3>'
+            + '<ol class="mm-network-steps">' + stepsHtml + '</ol>'
+            + '<button class="modal-btn modal-btn-primary mm-give-button" type="button" data-give-network="' + escapeHtml(network.name) + '">Give with ' + escapeHtml(network.name) + ' <i class="fas fa-arrow-right"></i></button>'
+            + '</article>';
     }).join('');
-
-    var rightHtml = ''
-        + '<div class="mm-detail-list">'
-        +   '<div><strong>Network</strong>' + escapeHtml(mobileNet) + '</div>'
-        +   '<div><strong>Send to</strong>' + escapeHtml(mobileNum) + '</div>'
-        +   '<div><strong>Account Name</strong>' + escapeHtml(mobileAcct) + '</div>'
-        + '</div>'
-        + '<form id="mmConfirmForm" class="mm-form">'
-        +   '<label>Your Name *<input type="text" name="name" required></label>'
-        +   '<label>Your Phone *<input type="tel" name="phone" required></label>'
-        +   '<label>Amount Sent (UGX) *<input type="number" name="amount" required placeholder="e.g. 50000"></label>'
-        +   '<label>Transaction Reference *<input type="text" name="reference" required placeholder="From the SMS confirmation"></label>'
-        +   '<label>Note (optional)<textarea name="note" rows="2" placeholder="Any extra detail"></textarea></label>'
-        + '</form>'
-        + '<div class="modal-actions">'
-        +   '<button class="modal-btn modal-btn-whatsapp" id="btnMMWhatsApp"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>'
-        +   '<button class="modal-btn modal-btn-email" id="btnMMEmail"><i class="fas fa-envelope"></i> Send Gmail</button>'
-        + '</div>';
 
     var html = '<div class="modal-content">'
         + '<div class="modal-icon-wrapper" style="background:linear-gradient(135deg,#005BEA,#078BFF);"><i class="fas fa-mobile-alt"></i></div>'
-        + '<h2>' + escapeHtml(p.title || 'How to Send via Mobile Money') + '</h2>'
-        + '<p style="text-align:center;font-size:12.5px;color:#49658A;">Follow the steps on the left, then complete the form on the right.</p>'
-        + '<div class="mm-panel">'
-        +   '<div class="mm-side"><h4>Payment Procedure</h4><div>' + stepsHtml + '</div>'
-        +     (p.note ? '<div class="mm-note">' + escapeHtml(p.note) + '</div>' : '')
-        +   '</div>'
-        +   '<div class="mm-side"><h4>Confirm Your Payment</h4>' + rightHtml + '</div>'
-        + '</div>'
-        + '<div class="modal-actions" style="margin-top:14px;"><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button></div>'
+        + '<h2>' + escapeHtml(p.title || 'Give with Mobile Money') + '</h2>'
+        + '<p class="mm-intro">Choose your network, follow its steps, then select Give to choose Tithe or Offering and share your details.</p>'
+        + '<div class="mm-network-grid">' + networkCards + '</div>'
+        + (p.note ? '<p class="mm-note">' + escapeHtml(p.note) + '</p>' : '')
+        + '<div class="modal-actions mm-close-row"><button class="modal-btn modal-btn-secondary" onclick="closeModal()" type="button">Close</button></div>'
         + '</div>';
-    openModal(html);
-
-    function buildMessage(p) { return ['📱 MOBILE MONEY CONFIRMATION', 'Name: ' + (p.name || ''), 'Phone: ' + (p.phone || ''), 'Amount: UGX ' + (p.amount || '0'), 'Reference: ' + (p.reference || ''), (p.note ? 'Note: ' + p.note : '')].filter(Boolean).join('\n'); }
-    function collect() { var p = {}; new FormData(document.getElementById('mmConfirmForm')).forEach(function (v, k) { p[k] = v; }); return p; }
-
-    document.getElementById('btnMMWhatsApp').addEventListener('click', function () {
-        var p = collect(); if (!p.name || !p.phone || !p.amount || !p.reference) { alert('Please fill all required fields.'); return; }
-        var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
-        window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage(p)), '_blank');
-    });
-    document.getElementById('btnMMEmail').addEventListener('click', function () {
-        var p = collect(); if (!p.name || !p.phone || !p.amount || !p.reference) { alert('Please fill all required fields.'); return; }
-        var c = window.CHURCH_CONTACT || { email: 'thebridgecalvarychapel1@gmail.com' };
-        window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Mobile Money Confirmation') + '&body=' + encodeURIComponent(buildMessage(p)), '_blank');
+    openModal(html, 'mobile-money-panel');
+    document.querySelectorAll('[data-give-network]').forEach(function (button) {
+        button.addEventListener('click', function () {
+            window.openMonetaryDonation(button.dataset.giveNetwork);
+        });
     });
 };
 
@@ -328,87 +404,92 @@ function openSpecialProjectForm(name) {
 // ============================================
 // MONEY WIZARD
 // ============================================
-var monetaryWizard = { step: 1, fund: 'general', amount: 0, donor: { name: '', email: '', phone: '' }, notes: '' };
-window.openMonetaryDonation = function () { monetaryWizard = { step: 1, fund: 'general', amount: 0, donor: { name: '', email: '', phone: '' }, notes: '' }; renderMonetaryStep(); };
+var monetaryWizard = { step: 1, fund: '', network: '', amount: 0, donor: { name: '', email: '', phone: '' }, notes: '' };
+window.openMonetaryDonation = function (network) {
+    monetaryWizard = { step: 1, fund: '', network: network || '', amount: 0, donor: { name: '', email: '', phone: '' }, notes: '' };
+    renderMonetaryStep();
+};
 function fundChoice(val, icon, title, sub) {
     var active = monetaryWizard.fund === val ? 'active' : '';
-    return '<div class="donation-panel-choice ' + active + '" data-value="' + val + '"><i class="fas ' + icon + '"></i><div class="donation-panel-choice-title">' + title + '</div><div class="donation-panel-choice-sub">' + sub + '</div></div>';
+    return '<button type="button" class="donation-panel-choice ' + active + '" data-value="' + val + '" aria-pressed="' + (active ? 'true' : 'false') + '"><i class="fas ' + icon + '"></i><span class="donation-panel-choice-title">' + title + '</span><span class="donation-panel-choice-sub">' + sub + '</span></button>';
 }
 function renderMonetaryStep() {
-    var step = monetaryWizard.step; var body = '';
+    var step = monetaryWizard.step;
+    var body = '';
     if (step === 1) {
-        body = '<div class="wizard-title">Step 1: Choose a Fund</div><div class="wizard-subtitle">Where should your gift go?</div>'
+        body = '<div class="wizard-title">Choose Your Gift</div><div class="wizard-subtitle">Select whether this gift is a tithe or an offering.</div>'
             + '<div class="donation-panel-choice-row">'
-            + fundChoice('general', 'fa-church', 'General', 'Ministry operations')
-            + fundChoice('missions', 'fa-globe-africa', 'Missions', 'Outreach')
-            + fundChoice('building', 'fa-hard-hat', 'Building', 'Repairs')
-            + fundChoice('benevolence', 'fa-hands-helping', 'Benevolence', 'Help families')
+            + fundChoice('tithe', 'fa-hands-praying', 'Tithe', 'A faithful portion given to God')
+            + fundChoice('offering', 'fa-heart', 'Offering', 'Support the church and its ministry')
             + '</div>';
-    } else if (step === 2) {
-        body = '<div class="wizard-title">Step 2: Amount</div><div class="amount-preset-grid">'
-            + ['10000', '25000', '50000', '100000'].map(function (a) {
-                return '<button class="amount-preset ' + (monetaryWizard.amount === parseInt(a) ? 'active' : '') + '" onclick="setMonetaryAmount(' + a + ')">UGX ' + parseInt(a).toLocaleString() + '</button>';
-            }).join('') + '</div>'
-            + '<div class="modal-custom-input"><span>UGX</span><input type="number" id="monCustomAmount" placeholder="Custom amount" value="' + (monetaryWizard.amount || '') + '"></div>'
-            + '<div class="modal-custom-input"><i class="fas fa-comment"></i><input type="text" id="monNotes" placeholder="Note or prayer request" value="' + escapeHtml(monetaryWizard.notes) + '"></div>';
-    } else if (step === 3) {
-        body = '<div class="wizard-title">Step 3: Your Details</div><div class="wizard-form">'
-            + '<label>Full Name *<input type="text" id="monName" value="' + escapeHtml(monetaryWizard.donor.name) + '"></label>'
-            + '<label>Email *<input type="email" id="monEmail" value="' + escapeHtml(monetaryWizard.donor.email) + '"></label>'
-            + '<label>Phone<input type="tel" id="monPhone" value="' + escapeHtml(monetaryWizard.donor.phone) + '"></label></div>';
-    } else if (step === 4) {
-        var fundName = { general: 'General Fund', missions: 'Missions', building: 'Building Fund', benevolence: 'Benevolence' }[monetaryWizard.fund];
-        body = '<div class="wizard-title">Step 4: Review</div>'
-            + '<div class="donation-summary-receipt"><h4>Summary</h4>'
-            + '<div class="donation-summary-row"><span class="label">Fund</span><span class="value">' + fundName + '</span></div>'
-            + '<div class="donation-summary-row"><span class="label">Amount</span><span class="value">' + money(monetaryWizard.amount) + '</span></div>'
-            + '<div class="donation-summary-row"><span class="label">Donor</span><span class="value">' + escapeHtml(monetaryWizard.donor.name) + '</span></div>'
-            + '<div class="donation-summary-row total"><span class="label">Total</span><span class="value">' + money(monetaryWizard.amount) + '</span></div></div>'
-            + '<div class="wizard-note">This is a pledge. The church will share verified payment instructions.</div>'
-            + '<div class="wizard-actions"><button class="modal-btn modal-btn-whatsapp" id="monWhatsApp"><i class="fab fa-whatsapp"></i> WhatsApp</button><button class="modal-btn modal-btn-email" id="monEmailBtn"><i class="fas fa-envelope"></i> Email</button></div>';
+    } else {
+        var d = siteContent.donations_bank || {};
+        var mobileNum = d.mobile_number || '9030026398737';
+        var mobileAcct = d.mobile_account || 'The Bridge of Calvary Chapel';
+        body = '<div class="wizard-title">Your Giving Details</div>'
+            + '<div class="wizard-subtitle">Your message will open in WhatsApp or email for you to send.</div>'
+            + '<div class="wizard-payment-summary"><strong>' + escapeHtml(monetaryWizard.network || 'MTN MoMo or Airtel Money') + '</strong>'
+            + '<span>Send to ' + escapeHtml(mobileNum) + ' · ' + escapeHtml(mobileAcct) + '</span></div>'
+            + '<form id="monDonorForm" class="wizard-form">'
+            + '<label>Gift type<input type="text" value="' + (monetaryWizard.fund === 'tithe' ? 'Tithe' : 'Offering') + '" readonly></label>'
+            + '<label>Amount (UGX) *<input type="number" id="monAmount" name="amount" min="1000" step="1000" required placeholder="e.g. 50,000"></label>'
+            + '<label>Full Name *<input type="text" id="monName" name="name" required autocomplete="name"></label>'
+            + '<label>Email *<input type="email" id="monEmail" name="email" required autocomplete="email"></label>'
+            + '<label>Phone Number *<input type="tel" id="monPhone" name="phone" required autocomplete="tel"></label>'
+            + '<label>Note (optional)<textarea id="monNotes" name="notes" rows="2" placeholder="Add a note"></textarea></label>'
+            + '</form>'
+            + '<div class="wizard-actions"><button type="button" class="modal-btn modal-btn-whatsapp" id="monWhatsApp"><i class="fab fa-whatsapp"></i> Continue with WhatsApp</button><button type="button" class="modal-btn modal-btn-email" id="monEmailBtn"><i class="fas fa-envelope"></i> Continue with Email</button></div>';
     }
-    var html = '<div class="wizard"><div class="wizard-progress">' + [1, 2, 3, 4].map(function (n) {
+    var html = '<div class="wizard"><div class="wizard-progress">' + [1, 2].map(function (n) {
         var cls = n < step ? 'done' : (n === step ? 'current' : '');
-        return '<div class="wizard-progress-step ' + cls + '"><span class="wizard-progress-num">' + n + '</span></div>';
+        return '<div class="wizard-progress-step ' + cls + '"><span class="wizard-progress-num">' + n + '</span><span class="wizard-progress-label">' + (n === 1 ? 'Gift type' : 'Your details') + '</span></div>';
     }).join('') + '</div>' + body + '<div class="wizard-nav">'
-        + (step > 1 ? '<button class="modal-btn modal-btn-secondary" id="monBack"><i class="fas fa-arrow-left"></i> Back</button>' : '')
-        + (step < 4 ? '<button class="modal-btn modal-btn-primary" id="monNext">Continue <i class="fas fa-arrow-right"></i></button>' : '')
+        + (step === 2 ? '<button class="modal-btn modal-btn-secondary" id="monBack" type="button"><i class="fas fa-arrow-left"></i> Back</button>' : '')
+        + (step === 1 ? '<button class="modal-btn modal-btn-primary" id="monNext" type="button">Continue <i class="fas fa-arrow-right"></i></button>' : '')
         + '</div></div>';
-    openModal(html);
-    if (step === 1) document.querySelectorAll('.donation-panel-choice').forEach(function (b) {
-        b.addEventListener('click', function () { monetaryWizard.fund = b.dataset.value; renderMonetaryStep(); });
+    openModal(html, 'donation-wizard-panel');
+    if (step === 1) document.querySelectorAll('.donation-panel-choice').forEach(function (button) {
+        button.addEventListener('click', function () {
+            monetaryWizard.fund = button.dataset.value;
+            document.querySelectorAll('.donation-panel-choice').forEach(function (choice) {
+                choice.classList.toggle('active', choice === button);
+                choice.setAttribute('aria-pressed', choice === button ? 'true' : 'false');
+            });
+        });
     });
-    var back = document.getElementById('monBack'); var next = document.getElementById('monNext');
-    if (back) back.addEventListener('click', function () { monetaryWizard.step--; renderMonetaryStep(); });
+    var back = document.getElementById('monBack');
+    var next = document.getElementById('monNext');
+    if (back) back.addEventListener('click', function () { monetaryWizard.step = 1; renderMonetaryStep(); });
     if (next) next.addEventListener('click', advanceMonetary);
-    if (step === 4) {
+    if (step === 2) {
         document.getElementById('monWhatsApp').addEventListener('click', function () { submitMonetary('whatsapp'); });
         document.getElementById('monEmailBtn').addEventListener('click', function () { submitMonetary('email'); });
     }
 }
-window.setMonetaryAmount = function (amt) { monetaryWizard.amount = amt; renderMonetaryStep(); };
 function advanceMonetary() {
-    var step = monetaryWizard.step;
-    if (step === 2) {
-        var c = document.getElementById('monCustomAmount'); if (c && c.value) monetaryWizard.amount = parseInt(c.value) || 0;
-        var n = document.getElementById('monNotes'); if (n) monetaryWizard.notes = n.value;
-        if (!monetaryWizard.amount || monetaryWizard.amount < 1000) { alert('Minimum UGX 1,000.'); return; }
-    }
-    if (step === 3) {
-        var name = document.getElementById('monName').value.trim();
-        var email = document.getElementById('monEmail').value.trim();
-        var phone = document.getElementById('monPhone').value.trim();
-        if (!name || !email) { alert('Please enter name and email.'); return; }
-        monetaryWizard.donor = { name: name, email: email, phone: phone };
-    }
-    monetaryWizard.step++; renderMonetaryStep();
+    if (!monetaryWizard.fund) { alert('Please choose Tithe or Offering.'); return; }
+    monetaryWizard.step = 2;
+    renderMonetaryStep();
 }
 function submitMonetary(method) {
-    var fundName = { general: 'General Fund', missions: 'Missions', building: 'Building Fund', benevolence: 'Benevolence' }[monetaryWizard.fund];
+    var form = document.getElementById('monDonorForm');
+    if (!form || !form.reportValidity()) return;
+    var data = new FormData(form);
+    monetaryWizard.amount = Number(data.get('amount'));
+    monetaryWizard.donor = {
+        name: String(data.get('name') || '').trim(),
+        email: String(data.get('email') || '').trim(),
+        phone: String(data.get('phone') || '').trim()
+    };
+    monetaryWizard.notes = String(data.get('notes') || '').trim();
+    var fundName = monetaryWizard.fund === 'tithe' ? 'Tithe' : 'Offering';
+    var d = siteContent.donations_bank || {};
+    var mobileNum = d.mobile_number || '9030026398737';
+    var mobileAcct = d.mobile_account || 'The Bridge of Calvary Chapel';
     var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
-    var msg = '🙏 MONETARY DONATION PLEDGE\nFund: ' + fundName + '\nAmount: ' + money(monetaryWizard.amount) + '\nDonor: ' + monetaryWizard.donor.name + '\nEmail: ' + monetaryWizard.donor.email + (monetaryWizard.donor.phone ? '\nPhone: ' + monetaryWizard.donor.phone : '') + (monetaryWizard.notes ? '\nNote: ' + monetaryWizard.notes : '');
+    var msg = 'MONETARY GIFT\nGift type: ' + fundName + '\nAmount: ' + money(monetaryWizard.amount) + '\nPayment method: ' + (monetaryWizard.network || 'MTN MoMo or Airtel Money') + '\nMobile money number: ' + mobileNum + '\nAccount name: ' + mobileAcct + '\nName: ' + monetaryWizard.donor.name + '\nEmail: ' + monetaryWizard.donor.email + '\nPhone: ' + monetaryWizard.donor.phone + (monetaryWizard.notes ? '\nNote: ' + monetaryWizard.notes : '');
     if (method === 'whatsapp') window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
-    else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Donation Pledge') + '&body=' + encodeURIComponent(msg), '_blank');
+    else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent(fundName + ' Donation') + '&body=' + encodeURIComponent(msg), '_blank');
     showThankYouDonation('monetary', monetaryWizard.amount);
 }
 
@@ -514,7 +595,7 @@ function submitMaterial(method) {
 
 function showThankYouDonation(type, amount) {
     var title = type === 'monetary' ? 'Thank You for Your Gift!' : 'Thank You for Your Donation!';
-    var msg = type === 'monetary' ? 'Your pledge of ' + money(amount) + ' has been prepared. Our team will contact you with payment instructions.' : 'Your donation request has been prepared. Our team will contact you to arrange drop-off or collection.';
+    var msg = type === 'monetary' ? 'Your ' + money(amount) + ' gift details are ready. Please send the pre-filled message in WhatsApp or email so the church can confirm it.' : 'Your donation request has been prepared. Our team will contact you to arrange drop-off or collection.';
     openModal('<div class="wizard" style="text-align:center;">'
         + '<div class="thankyou-icon"><i class="fas fa-heart"></i></div>'
         + '<h2 style="font-size:22px;color:var(--navy-deep);margin-bottom:8px;">' + title + '</h2>'
