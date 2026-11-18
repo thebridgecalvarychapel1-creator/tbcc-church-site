@@ -243,15 +243,181 @@ function renderAnnouncement() {
 }
 
 // ---------- RENDER: HERO ----------
+function setHeroLetters(id, value) {
+    var element = document.getElementById(id);
+    if (!element) return;
+
+    var text = String(value || '');
+    element.textContent = '';
+    element.setAttribute('aria-label', text);
+    element.classList.add('hero-letters');
+    var characterIndex = 0;
+
+    text.split(/(\s+)/).forEach(function (part) {
+        if (!part) return;
+        if (/^\s+$/.test(part)) {
+            element.appendChild(document.createTextNode(part));
+            return;
+        }
+
+        var word = document.createElement('span');
+        word.className = 'hero-word';
+        Array.from(part).forEach(function (character) {
+            var letter = document.createElement('span');
+            letter.className = 'hero-letter';
+            letter.textContent = character;
+            letter.style.setProperty('--letter-delay', Math.min(characterIndex * 38, 900) + 'ms');
+            word.appendChild(letter);
+            characterIndex++;
+        });
+        element.appendChild(word);
+    });
+}
+
+function getYouTubeVideoId(url) {
+    var match = String(url || '').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/))([A-Za-z0-9_-]{6,})/);
+    return match ? match[1] : '';
+}
+
+function renderHeroVideo(heroContent) {
+    var media = document.getElementById('heroMedia');
+    var toggle = document.getElementById('homeHeroVideoToggle');
+    if (!media || !toggle) return;
+
+    var source = String(heroContent.video_url || heroContent.video || '').trim();
+    if (!source || /^(?:PASTE|ADD|ENTER|YOUR)[\s_-]/i.test(source)) source = 'assets/videos/church-welcome.mp4';
+    if (!source || media.dataset.videoSource === source) return;
+    media.dataset.videoSource = source;
+    media.innerHTML = '';
+    toggle.hidden = false;
+    var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var autoplayRetry;
+
+    function updateToggle(playing) {
+        toggle.setAttribute('aria-pressed', playing ? 'true' : 'false');
+        toggle.setAttribute('aria-label', playing ? 'Pause background video' : 'Play background video');
+        toggle.innerHTML = '<i class="fas ' + (playing ? 'fa-pause' : 'fa-play') + '" aria-hidden="true"></i><span>' + (playing ? 'Pause video' : 'Play video') + '</span>';
+    }
+
+    function removeAutoplayRetry() {
+        if (!autoplayRetry) return;
+        document.removeEventListener('pointerdown', autoplayRetry, true);
+        document.removeEventListener('keydown', autoplayRetry, true);
+        autoplayRetry = null;
+    }
+
+    var youtubeId = getYouTubeVideoId(source);
+    if (youtubeId) {
+        var iframe = document.createElement('iframe');
+        var params = new URLSearchParams({
+            autoplay: reducedMotion ? '0' : '1',
+            mute: '1',
+            loop: '1',
+            playlist: youtubeId,
+            controls: '0',
+            playsinline: '1',
+            enablejsapi: '1',
+            rel: '0'
+        });
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+            params.set('origin', window.location.origin);
+        }
+        iframe.className = 'hero-background-youtube';
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + youtubeId + '?' + params.toString();
+        iframe.title = 'Bridge Calvary Chapel welcome video';
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+        iframe.setAttribute('tabindex', '-1');
+        iframe.setAttribute('loading', 'eager');
+        media.appendChild(iframe);
+
+        var playing = !reducedMotion;
+        updateToggle(playing);
+        toggle.onclick = function () {
+            playing = !playing;
+            iframe.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: playing ? 'playVideo' : 'pauseVideo',
+                args: []
+            }), 'https://www.youtube-nocookie.com');
+            updateToggle(playing);
+        };
+        if (reducedMotion) {
+            toggle.setAttribute('aria-pressed', 'false');
+        } else {
+            autoplayRetry = function (event) {
+                if (toggle.contains(event.target)) return;
+                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), 'https://www.youtube-nocookie.com');
+                removeAutoplayRetry();
+            };
+            document.addEventListener('pointerdown', autoplayRetry, true);
+            document.addEventListener('keydown', autoplayRetry, true);
+        }
+        return;
+    }
+
+    var video = document.createElement('video');
+    video.className = 'hero-background-video';
+    video.autoplay = !reducedMotion;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    video.setAttribute('aria-hidden', 'true');
+    video.src = source;
+    media.appendChild(video);
+    video.onplay = function () {
+        removeAutoplayRetry();
+        updateToggle(true);
+    };
+    video.onpause = function () { updateToggle(false); };
+    video.onerror = function () {
+        media.innerHTML = '';
+        toggle.hidden = true;
+        removeAutoplayRetry();
+        console.warn('Homepage hero video is unavailable. Add the video at assets/videos/church-welcome.mp4 or set hero.video_url in site content.');
+    };
+    toggle.onclick = function () {
+        if (video.paused) {
+            var playRequest = video.play();
+            if (playRequest && playRequest.catch) playRequest.catch(function () { updateToggle(false); });
+        } else {
+            video.pause();
+        }
+    };
+    updateToggle(!reducedMotion);
+    if (reducedMotion) {
+        video.pause();
+        return;
+    }
+    var autoplayRequest = video.play();
+    if (autoplayRequest && autoplayRequest.catch) {
+        autoplayRequest.catch(function () {
+            updateToggle(false);
+            autoplayRetry = function (event) {
+                if (toggle.contains(event.target)) return;
+                var retryRequest = video.play();
+                if (retryRequest && retryRequest.then) retryRequest.then(removeAutoplayRetry).catch(function () { updateToggle(false); });
+                else removeAutoplayRetry();
+            };
+            document.addEventListener('pointerdown', autoplayRetry, true);
+            document.addEventListener('keydown', autoplayRetry, true);
+        });
+    }
+}
+
 function renderHero() {
     var h = siteContent.hero || {};
     setText('heroEyebrow', h.eyebrow);
-    setText('heroLine1', h.title_line1);
-    setText('heroLine2', h.title_line2);
+    setHeroLetters('heroLine1', h.title_line1);
+    setHeroLetters('heroLine2', h.title_line2);
     setText('heroLine3', h.title_line3);
+    var highlight = document.getElementById('heroLine3');
+    if (highlight) highlight.classList.add('hero-float-in');
     setText('heroTagline', h.tagline);
     setText('heroDescription', h.description);
-    setSrc('heroImage', sectionImg('hero'));
+    var heroContent = document.querySelector('.hero-content');
+    if (heroContent) heroContent.classList.add('is-animated');
+    renderHeroVideo(h);
 }
 
 // ---------- RENDER: FAMILY ----------
@@ -270,6 +436,8 @@ function renderFamily() {
 // ---------- RENDER: SERVICE ----------
 function renderService(service) {
     if (!service) return;
+    var card = document.querySelector('.service-card');
+    if (card) card.classList.add('is-animated');
     setText('serviceTitle', service.title);
     setText('serviceDay', service.day_label);
     setText('serviceTime', service.time_label);

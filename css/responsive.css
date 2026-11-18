@@ -158,6 +158,7 @@ h1, h2, h3, h4, h5, p, a, span, li {
     .hero-buttons .btn,
     .hero-buttons .btn-hero { width: 100%; justify-content: center; padding: 12px 20px; font-size: 13px; }
     .hero-divider svg, .hero-wave svg { height: 28px; }
+    .home-hero-video-toggle { right: 16px; bottom: 12px; min-height: 36px; padding: 7px 11px; }
     .service-card { max-width: 100% !important; padding: 22px 20px; }
     .service-time { font-size: 34px !important; }
     .service-invite { font-size: 24px !important; }
