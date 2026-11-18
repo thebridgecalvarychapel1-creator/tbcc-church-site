@@ -9,7 +9,7 @@ const SUPABASE_URL = 'https://mtmgvmvhgkoqjuhiqvsk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10bWd2bXZoZ2tvcWp1aGlxdnNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1NDUxNTEsImV4cCI6MjEwNzEyMTE1MX0.NqaWJyVulLgAvakFDqn5M8TD-IpSSgSn2LLEmL16c_U';
 
 window.CHURCH_CONTACT = {
-    whatsapp: '256785228381',
+    whatsapp: '256793240756',
     email: 'thebridgecalvarychapel1@gmail.com',
     name: 'Bridge Calvary Chapel'
 };

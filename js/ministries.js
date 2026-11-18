@@ -463,7 +463,7 @@ window.openSupportForm = function (ministryIdx) {
 function openSupportSummary(p, m) {
     var church = window.CHURCH_CONTACT || {};
     var churchEmail = church.email || 'thebridgecalvarychapel1@gmail.com';
-    var churchPhone = (church.whatsapp || '256785228381').replace(/[^\d]/g, '');
+    var churchPhone = (church.whatsapp || '256793240756').replace(/[^\d]/g, '');
 
     var lines = [
         'Support Request',

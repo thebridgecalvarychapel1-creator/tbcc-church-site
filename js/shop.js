@@ -599,7 +599,7 @@ function openReceiptScreen(p, orderRef, orderDate, total) {
     }
 
     document.getElementById('btnSendWhatsApp').addEventListener('click', function () {
-        var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
+        var c = window.CHURCH_CONTACT || { whatsapp: '256793240756' };
         window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage()), '_blank');
     });
     document.getElementById('btnSendEmail').addEventListener('click', function () {

@@ -186,7 +186,7 @@ function renderWelcome() {
 
 // HELP
 function renderHelp() {
-    var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
+    var c = window.CHURCH_CONTACT || { whatsapp: '256793240756', email: 'thebridgecalvarychapel1@gmail.com' };
     setText('helpCallNumber', '+' + c.whatsapp);
     setText('helpEmailAddress', c.email);
     var call = document.getElementById('helpCall'); if (call) call.href = 'tel:+' + c.whatsapp;
@@ -323,7 +323,7 @@ async function handleVisitSubmit(e) {
 
         if (!res.ok) throw new Error('Failed to save');
 
-        var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
+        var c = window.CHURCH_CONTACT || { whatsapp: '256793240756' };
         var lines = ['Hello Bridge Calvary Chapel, I would like to plan my visit.', '', '👤 Name: ' + (payload.full_name || '—'), '📧 Email: ' + (payload.email || '—')];
         if (payload.phone) lines.push('📱 Phone: ' + payload.phone);
         if (payload.preferred_date) lines.push('📅 Preferred Date: ' + payload.preferred_date);

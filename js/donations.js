@@ -329,7 +329,7 @@ function openMinistrySupportForm(name) {
     function buildMessage(p) { return ['Support Request — ' + name, '', 'Name: ' + (p.name||''), 'Email: ' + (p.email||''), 'Phone: ' + (p.phone||'—'), 'Support Type: ' + (p.supportType||''), 'Amount / Note: ' + (p.amount||'—'), 'Message: ' + (p.message||'—')].join('\n'); }
     document.getElementById('btnMinWhatsApp').addEventListener('click', function () {
         var p = collect(); if (!p.name || !p.email) { alert('Please fill name and email.'); return; }
-        var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
+        var c = window.CHURCH_CONTACT || { whatsapp: '256793240756' };
         window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage(p)), '_blank');
     });
     document.getElementById('btnMinEmail').addEventListener('click', function () {
@@ -391,7 +391,7 @@ function openSpecialProjectForm(name) {
     function buildMessage(p) { return ['Special Project Support — ' + name, '', 'Name: ' + (p.name||''), 'Email: ' + (p.email||''), 'Phone: ' + (p.phone||'—'), 'Amount: UGX ' + (p.amount||'—'), 'Message: ' + (p.message||'—')].join('\n'); }
     document.getElementById('btnProjWhatsApp').addEventListener('click', function () {
         var p = collect(); if (!p.name || !p.email) { alert('Please fill name and email.'); return; }
-        var c = window.CHURCH_CONTACT || { whatsapp: '256785228381' };
+        var c = window.CHURCH_CONTACT || { whatsapp: '256793240756' };
         window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(buildMessage(p)), '_blank');
     });
     document.getElementById('btnProjEmail').addEventListener('click', function () {
@@ -486,7 +486,7 @@ function submitMonetary(method) {
     var d = siteContent.donations_bank || {};
     var mobileNum = d.mobile_number || '9030026398737';
     var mobileAcct = d.mobile_account || 'The Bridge of Calvary Chapel';
-    var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
+    var c = window.CHURCH_CONTACT || { whatsapp: '256793240756', email: 'thebridgecalvarychapel1@gmail.com' };
     var msg = 'MONETARY GIFT\nGift type: ' + fundName + '\nAmount: ' + money(monetaryWizard.amount) + '\nPayment method: ' + (monetaryWizard.network || 'MTN MoMo or Airtel Money') + '\nMobile money number: ' + mobileNum + '\nAccount name: ' + mobileAcct + '\nName: ' + monetaryWizard.donor.name + '\nEmail: ' + monetaryWizard.donor.email + '\nPhone: ' + monetaryWizard.donor.phone + (monetaryWizard.notes ? '\nNote: ' + monetaryWizard.notes : '');
     if (method === 'whatsapp') window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
     else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent(fundName + ' Donation') + '&body=' + encodeURIComponent(msg), '_blank');
@@ -586,7 +586,7 @@ function advanceMaterial() {
 }
 function submitMaterial(method) {
     var catNames = { bibles: 'Bibles & Books', clothing: 'Clothing & Shoes', food: 'Food & Essentials', school: 'School Supplies', medical: 'Medical Items', household: 'Household Items' };
-    var c = window.CHURCH_CONTACT || { whatsapp: '256785228381', email: 'thebridgecalvarychapel1@gmail.com' };
+    var c = window.CHURCH_CONTACT || { whatsapp: '256793240756', email: 'thebridgecalvarychapel1@gmail.com' };
     var msg = '🙏 MATERIAL DONATION REQUEST\nCategory: ' + (catNames[materialWizard.category] || '') + '\nItems: ' + materialWizard.items + '\nQuantity: ' + (materialWizard.qty || '—') + '\nCondition: ' + materialWizard.condition + '\nMethod: ' + (materialWizard.deliveryMethod === 'dropoff' ? 'Drop Off' : 'Collection') + '\nDonor: ' + materialWizard.donor.name + '\nPhone: ' + materialWizard.donor.phone + (materialWizard.donor.email ? '\nEmail: ' + materialWizard.donor.email : '') + (materialWizard.donor.address ? '\nAddress: ' + materialWizard.donor.address : '');
     if (method === 'whatsapp') window.open('https://wa.me/' + c.whatsapp + '?text=' + encodeURIComponent(msg), '_blank');
     else window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(c.email) + '&su=' + encodeURIComponent('Material Donation') + '&body=' + encodeURIComponent(msg), '_blank');
