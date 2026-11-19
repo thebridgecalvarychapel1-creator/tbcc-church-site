@@ -215,6 +215,26 @@ window.db = {
         return true;
     },
 
+    async submitEventRegistration(payload) {
+        if (!supabaseClient) throw new Error('Supabase not ready');
+        const clean = {
+            full_name: payload.full_name,
+            phone_number: payload.phone_number,
+            team_name: payload.team_name || null,
+            presentation_type: payload.presentation_type,
+            group_size: payload.group_size,
+            presentation_description: payload.presentation_description,
+            additional_information: payload.additional_information || null,
+            event_name: payload.event_name,
+            event_date: payload.event_date
+        };
+        const { error } = await supabaseClient
+            .from('event_registrations')
+            .insert([clean]);
+        if (error) throw error;
+        return true;
+    },
+
     async subscribeNewsletter(email) {
         if (!supabaseClient) throw new Error('Supabase not ready');
         const { error } = await supabaseClient

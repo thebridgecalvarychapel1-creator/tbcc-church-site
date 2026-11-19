@@ -322,7 +322,7 @@ function renderAnnouncements() {
 
     grid.innerHTML = allAnnouncements.map(function (a, idx) {
         return '<div class="announcement-card" data-ann="' + idx + '" role="button" tabindex="0">'
-            + (a.image_url ? '<div class="announcement-image"><img src="' + escapeHtml(a.image_url) + '" alt="' + escapeHtml(a.title || 'Church announcement') + '" loading="lazy" onerror="this.parentElement.remove()"></div>' : '')
+            + (a.image_url ? '<div class="announcement-image"><img src="' + escapeHtml(a.image_url) + '" alt="' + escapeHtml(a.title || 'Church announcement') + '" loading="lazy" onerror="this.remove()"></div>' : '')
             + '<div class="announcement-icon"><i class="fas fa-bullhorn"></i></div>'
             + '<h4 class="announcement-title">' + escapeHtml(a.title || '') + '</h4>'
             + '<div class="announcement-meta">'

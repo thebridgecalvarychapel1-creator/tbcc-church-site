@@ -2155,13 +2155,13 @@ h1, h2, h3, h4, h5, p, a, span, li {
 
 .events-page #announcementsGrid > .announcement-card {
     position: relative;
-    flex: 0 0 280px !important;
-    width: 280px !important;
-    min-height: 370px;
+    flex: 0 0 240px !important;
+    width: 240px !important;
+    min-height: 320px;
     height: auto !important;
     aspect-ratio: auto !important;
     align-items: stretch;
-    padding: 18px;
+    padding: 14px;
     overflow: hidden;
     border: 1px solid #D6E4F4;
     border-radius: 20px;
@@ -2178,20 +2178,29 @@ h1, h2, h3, h4, h5, p, a, span, li {
     box-shadow: 0 16px 34px rgba(8, 35, 75, 0.13), 0 0 20px rgba(8, 123, 255, 0.12);
 }
 
+.events-page #announcementsGrid > .announcement-card:active {
+    animation: announcementTap 260ms ease;
+}
+
+@keyframes announcementTap {
+    0%, 100% { transform: scale(1); }
+    45% { transform: scale(0.97); }
+}
+
 .events-page .announcement-image {
-    width: calc(100% + 36px);
-    height: 154px;
-    flex: 0 0 154px;
-    margin: -18px -18px 16px;
+    width: calc(100% + 28px);
+    height: 120px;
+    flex: 0 0 120px;
+    margin: -14px -14px 12px;
     overflow: hidden;
     background: linear-gradient(135deg, #0A2B56, #087BFF);
 }
 
 .events-page .announcement-icon {
-    width: 42px;
-    height: 42px;
-    flex: 0 0 42px;
-    margin: 0 0 12px;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    margin: 0 0 8px;
     background: #E7F2FF;
     color: #0755C8;
     box-shadow: inset 0 0 0 1px #D2E6FA;
@@ -2199,15 +2208,15 @@ h1, h2, h3, h4, h5, p, a, span, li {
 
 .events-page .announcement-title {
     min-height: 0;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: #10213A;
-    font-size: 16px;
-    line-height: 1.45;
+    font-size: 14px;
+    line-height: 1.4;
 }
 
 .events-page .announcement-meta {
     min-height: 22px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     align-items: center;
     color: #445A73;
 }
@@ -2227,18 +2236,18 @@ h1, h2, h3, h4, h5, p, a, span, li {
 
 .events-page .announcement-desc {
     display: -webkit-box;
-    min-height: 60px;
-    margin-bottom: 16px;
+    min-height: 42px;
+    margin-bottom: 10px;
     overflow: hidden;
     color: #50627A;
-    font-size: 13px;
-    line-height: 1.65;
+    font-size: 12px;
+    line-height: 1.55;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
 }
 
 .events-page .announcement-link {
-    min-height: 42px;
+    min-height: 38px;
     margin-top: auto;
     border: 1px solid #D6E8FB;
     border-radius: 12px;
@@ -2390,9 +2399,9 @@ h1, h2, h3, h4, h5, p, a, span, li {
     }
 
     .events-page #announcementsGrid > .announcement-card {
-        flex-basis: min(82vw, 310px) !important;
-        width: min(82vw, 310px) !important;
-        min-height: 360px;
+        flex-basis: min(76vw, 260px) !important;
+        width: min(76vw, 260px) !important;
+        min-height: 300px;
     }
 
     .events-page .modal-hero-image {
@@ -2411,6 +2420,9 @@ h1, h2, h3, h4, h5, p, a, span, li {
         animation: none !important;
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
+    }
+    .events-page #announcementsGrid > .announcement-card:active {
+        animation: none !important;
     }
 }
 

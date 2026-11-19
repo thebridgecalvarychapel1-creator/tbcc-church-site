@@ -1,0 +1,397 @@
+.event-join-trigger {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 10000;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 19px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 999px;
+    background: #C81016 !important;
+    box-shadow: 0 8px 24px rgba(200, 16, 22, 0.42), 0 0 0 5px rgba(200, 16, 22, 0.13), 0 0 22px rgba(23, 107, 69, 0.2);
+    color: #FFFFFF;
+    font: 800 12px/1 'Inter', sans-serif;
+    letter-spacing: 1px;
+    cursor: pointer;
+    animation: eventJoinGlow 2.8s ease-in-out infinite;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.event-join-trigger:hover,
+.event-join-trigger:focus-visible {
+    transform: translateY(-3px) scale(1.03);
+    background: #A60C13 !important;
+    box-shadow: 0 12px 30px rgba(200, 16, 22, 0.52), 0 0 0 7px rgba(200, 16, 22, 0.16), 0 0 26px rgba(23, 107, 69, 0.28);
+}
+
+.event-join-trigger:focus-visible,
+.event-registration-panel button:focus-visible,
+.event-registration-panel a:focus-visible,
+.event-registration-panel input:focus-visible,
+.event-registration-panel select:focus-visible,
+.event-registration-panel textarea:focus-visible {
+    outline: 3px solid #F4B942;
+    outline-offset: 3px;
+}
+
+.event-join-trigger i { font-size: 15px; }
+
+@keyframes eventJoinGlow {
+    0%, 100% { box-shadow: 0 8px 24px rgba(200, 16, 22, 0.42), 0 0 0 4px rgba(200, 16, 22, 0.12), 0 0 18px rgba(23, 107, 69, 0.18); }
+    50% { box-shadow: 0 9px 30px rgba(200, 16, 22, 0.5), 0 0 0 8px rgba(200, 16, 22, 0.19), 0 0 28px rgba(23, 107, 69, 0.34); }
+}
+
+.event-registration-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+    overflow: hidden;
+    background: rgba(4, 15, 32, 0.88);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 220ms ease, visibility 220ms ease;
+}
+
+.event-registration-backdrop::before {
+    position: absolute;
+    inset: -20%;
+    content: '';
+    pointer-events: none;
+    background-image:
+        radial-gradient(2px 2px at 40px 60px, rgba(255,255,255,.9) 50%, transparent 60%),
+        radial-gradient(2px 2px at 130px 160px, rgba(255,255,255,.65) 50%, transparent 60%),
+        radial-gradient(3px 3px at 210px 95px, rgba(255,255,255,.75) 50%, transparent 60%);
+    background-size: 250px 220px;
+    opacity: .48;
+    animation: christmasSnow 16s linear infinite;
+}
+
+@keyframes christmasSnow {
+    from { transform: translateY(-45px); }
+    to { transform: translateY(45px); }
+}
+
+@keyframes christmasPanelGlow {
+    0%, 100% { box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42), 0 0 24px rgba(200, 16, 22, 0.3), 0 0 32px rgba(23, 107, 69, 0.16); }
+    50% { box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42), 0 0 32px rgba(200, 16, 22, 0.18), 0 0 42px rgba(23, 107, 69, 0.3); }
+}
+
+.event-registration-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.event-registration-panel {
+    position: relative;
+    width: min(760px, 100%);
+    max-height: min(92vh, 900px);
+    overflow-y: auto;
+    padding: clamp(20px, 4vw, 34px);
+    border: 2px solid rgba(200, 16, 22, 0.54);
+    border-radius: 24px;
+    background: linear-gradient(145deg, #FFFFFF 0%, #FFF6F4 54%, #F2FFF6 100%);
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42), 0 0 25px rgba(200, 16, 22, 0.26), 0 0 42px rgba(23, 107, 69, 0.2);
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+    transition: opacity 240ms ease, transform 240ms ease;
+    animation: christmasPanelGlow 4s ease-in-out infinite;
+}
+
+.event-registration-backdrop.is-open .event-registration-panel {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.event-registration-panel[hidden],
+.event-registration-panel [hidden],
+.event-registration-backdrop[hidden] { display: none !important; }
+
+.event-registration-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    border: 1px solid #E8C968;
+    border-radius: 50%;
+    background: #FFFFFF;
+    color: #C81016;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(6, 21, 47, 0.1);
+}
+
+.event-registration-heading {
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto 22px;
+    padding: 34px 42px 22px;
+    border: 1px solid rgba(244, 185, 66, 0.6);
+    border-top: 3px solid #C81016;
+    border-radius: 17px;
+    background: linear-gradient(135deg, #071E42 0%, #12385A 72%, #176B45 155%);
+    box-shadow: inset 0 -3px 0 rgba(23, 107, 69, 0.7), 0 9px 22px rgba(7, 30, 66, 0.16);
+    text-align: center;
+}
+
+.event-christmas-lights {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: min(300px, 60%);
+    height: 18px;
+    transform: translateX(-50%);
+    border-top: 2px solid #176B45;
+}
+
+.event-christmas-lights::before {
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 100%;
+    height: 16px;
+    content: '';
+    background:
+        radial-gradient(circle, #C81016 0 3px, transparent 4px) 8% 8px / 36px 14px repeat-x,
+        radial-gradient(circle, #F4B942 0 3px, transparent 4px) 27% 6px / 36px 14px repeat-x,
+        radial-gradient(circle, #176B45 0 3px, transparent 4px) 48% 8px / 36px 14px repeat-x,
+        radial-gradient(circle, #C81016 0 3px, transparent 4px) 68% 6px / 36px 14px repeat-x,
+        radial-gradient(circle, #F4B942 0 3px, transparent 4px) 88% 8px / 36px 14px repeat-x;
+}
+
+.event-pine-branch {
+    position: absolute;
+    top: 13px;
+    display: flex;
+    gap: 0;
+    color: #176B45;
+    font-size: 15px;
+    opacity: .8;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.event-pine-branch-left {
+    left: 16px;
+    transform: rotate(-28deg);
+}
+
+.event-pine-branch-right {
+    right: 16px;
+    transform: scaleX(-1) rotate(-28deg);
+}
+
+.event-pine-branch i + i { margin-left: -5px; }
+
+.event-registration-eyebrow {
+    display: inline-block;
+    margin-bottom: 5px;
+    color: #F4B942;
+    font: 800 10px/1.5 'Inter', sans-serif;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+}
+
+.event-registration-eyebrow::before,
+.event-registration-eyebrow::after {
+    color: #F4B942;
+    content: '\2726';
+    padding: 0 6px;
+}
+
+.event-registration-heading h2 {
+    color: #FFFFFF;
+    font: 800 clamp(20px, 4vw, 29px)/1.2 'Inter', sans-serif;
+    text-shadow: 0 2px 16px rgba(200, 16, 22, 0.28);
+}
+
+.event-registration-heading p {
+    margin-top: 7px;
+    color: rgba(255, 255, 255, 0.88);
+    font: 400 13px/1.5 'Inter', sans-serif;
+}
+
+.event-registration-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.event-registration-card {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid #B9DCC6;
+    border-top: 3px solid #C81016;
+    border-radius: 18px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 24px rgba(7, 30, 66, 0.09);
+}
+
+.event-registration-card-header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 15px;
+}
+
+.event-registration-card-icon {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    place-items: center;
+    border-radius: 13px;
+    background: linear-gradient(135deg, #FFF0EE, #FFF7E4);
+    color: #C81016;
+    font-size: 17px;
+}
+
+.event-registration-card-header h3 {
+    color: #10213A;
+    font: 800 16px/1.3 'Inter', sans-serif;
+}
+
+.event-registration-card-header p {
+    margin-top: 2px;
+    color: #546A84;
+    font: 700 11px/1.4 'Inter', sans-serif;
+}
+
+.event-registration-form {
+    display: grid;
+    gap: 11px;
+}
+
+.event-registration-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.event-registration-field {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+    color: #29435F;
+    font: 700 11px/1.4 'Inter', sans-serif;
+}
+
+.event-registration-field.is-wide { grid-column: 1 / -1; }
+
+.event-registration-field input,
+.event-registration-field select,
+.event-registration-field textarea {
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 10px;
+    border: 1px solid #C8DCCF;
+    border-radius: 9px;
+    background: #FFFFFF;
+    color: #10213A;
+    font: 500 12px/1.4 'Inter', sans-serif;
+}
+
+.event-registration-field textarea {
+    min-height: 72px;
+    resize: vertical;
+}
+
+.event-registration-field input::placeholder,
+.event-registration-field textarea::placeholder { color: #7A8DA4; }
+
+.event-registration-field input:focus,
+.event-registration-field select:focus,
+.event-registration-field textarea:focus {
+    border-color: #176B45;
+    box-shadow: 0 0 0 3px rgba(23, 107, 69, 0.12);
+}
+
+.event-registration-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.event-registration-submit,
+.event-registration-whatsapp-submit,
+.event-registration-whatsapp {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 10px;
+    background: #C81016;
+    box-shadow: 0 6px 16px rgba(200, 16, 22, 0.22);
+    color: #FFFFFF;
+    font: 800 12px/1.3 'Inter', sans-serif;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.event-registration-submit:hover:not(:disabled) { background: #A60C13; }
+
+.event-registration-whatsapp-submit {
+    background: #176B45;
+    box-shadow: 0 6px 16px rgba(23, 107, 69, 0.24);
+}
+
+.event-registration-whatsapp-submit:hover:not(:disabled) { background: #105638; }
+
+.event-registration-submit:disabled,
+.event-registration-whatsapp-submit:disabled {
+    cursor: wait;
+    opacity: 0.72;
+}
+
+.event-registration-message {
+    min-height: 0;
+    color: #A32032;
+    font: 600 12px/1.5 'Inter', sans-serif;
+}
+
+.event-registration-message:empty { display: none; }
+.event-registration-message.is-success { color: #167447; }
+
+.event-registration-whatsapp {
+    width: 100%;
+    background: linear-gradient(120deg, #159447, #25B85A);
+    box-shadow: 0 6px 16px rgba(37, 184, 90, 0.2);
+}
+
+@media (max-width: 720px) {
+    .event-registration-backdrop { padding: 10px; }
+    .event-registration-panel { max-height: 94vh; padding: 20px 14px; border-radius: 18px; }
+    .event-registration-heading { padding: 30px 18px 18px; margin-bottom: 16px; }
+    .event-registration-grid { grid-template-columns: 1fr; }
+    .event-registration-card { padding: 15px; }
+}
+
+@media (max-width: 420px) {
+    .event-join-trigger { right: 14px; bottom: 14px; min-height: 44px; padding: 0 15px; }
+    .event-registration-fields { grid-template-columns: 1fr; gap: 9px; }
+    .event-registration-actions { grid-template-columns: 1fr; }
+    .event-registration-field.is-wide { grid-column: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .event-join-trigger { animation: none; }
+    .event-registration-backdrop::before { animation: none; }
+    .event-registration-panel { animation: none; }
+    .event-registration-backdrop,
+    .event-registration-panel,
+    .event-join-trigger { transition-duration: 0.01ms; }
+}

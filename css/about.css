@@ -949,3 +949,43 @@ ul { list-style: none; }
         color: #fff;
     }
 }
+
+/* About page profile panels use the site's navy, maroon, and gold palette. */
+.about-page .modal-panel:not(.devotion-panel) {
+    border: 1px solid rgba(139, 26, 47, 0.28) !important;
+    border-radius: 22px !important;
+    background: linear-gradient(155deg, #FFFFFF 0%, #F8FAFD 100%) !important;
+    box-shadow: 0 28px 76px rgba(6, 21, 41, 0.34), 0 0 28px rgba(139, 26, 47, 0.14) !important;
+}
+
+.about-page .modal-panel:not(.devotion-panel) .modal-panel-body {
+    background: transparent !important;
+    color: #10213A !important;
+}
+
+.about-page .modal-panel:not(.devotion-panel) .modal-panel-body h2 {
+    color: #061529 !important;
+}
+
+.about-page .modal-panel:not(.devotion-panel) .modal-subtitle,
+.about-page .modal-panel:not(.devotion-panel) .modal-section-title {
+    color: #8B1A2F !important;
+}
+
+.about-page .modal-panel:not(.devotion-panel) .modal-description {
+    color: #4B5D75 !important;
+}
+
+.about-page .modal-panel:not(.devotion-panel) .modal-contact-btn,
+.about-page .modal-panel:not(.devotion-panel) .modal-leader-social-icons a {
+    border-color: #E5CCD1 !important;
+    background: #FFFFFF !important;
+    color: #0A2547 !important;
+}
+
+.about-page .modal-panel:not(.devotion-panel) .modal-contact-btn:hover,
+.about-page .modal-panel:not(.devotion-panel) .modal-leader-social-icons a:hover {
+    border-color: #8B1A2F !important;
+    background: #8B1A2F !important;
+    color: #FFFFFF !important;
+}
